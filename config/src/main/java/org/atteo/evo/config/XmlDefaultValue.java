@@ -28,6 +28,10 @@ import javax.xml.bind.annotation.XmlElement;
  * See <a href="http://jaxb.java.net/guide/Element_default_values_and_unmarshalling.html">this link</a>
  * for an explanation how ordinary {@link XmlElement} default value works.
  * </p>
+ * <p>
+ * This annotation can be used to obtain given property value when it is specified on the field
+ * which is never filled by JAXB.
+ * </p>
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

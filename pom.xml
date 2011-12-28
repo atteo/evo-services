@@ -38,6 +38,7 @@
 		<module>classindex</module>
 		<module>classindex-transformer</module>
 		<module>config</module>
+		<module>janino</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
