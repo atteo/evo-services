@@ -110,7 +110,7 @@ public class Filtering {
 	 * Filter <code>${name}</code> place holders found within the XML element.
 	 * 
 	 * <p>
-	 * The structure of the XML document won't be changed. Each attribute and element text will be filtered
+	 * The structure of the XML document is not changed. Each attribute and element text is filtered
 	 * separately.
 	 * </p>
 	 * @param element

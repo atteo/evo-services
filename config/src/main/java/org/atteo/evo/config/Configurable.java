@@ -14,6 +14,8 @@
 package org.atteo.evo.config;
 
 import javax.validation.constraints.Pattern;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 
@@ -26,6 +28,7 @@ import org.atteo.evo.classindex.IndexSubclasses;
  * from other places using standard ID/IDREF functionality of the XML schema.
  */
 @IndexSubclasses
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class Configurable {
 	/**
 	 * Id by which this element can be referenced.

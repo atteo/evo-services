@@ -176,7 +176,7 @@ public class ScopedIdResolver extends IDResolver {
 
 	@Override
 	public Callable<?> resolve(final String id, final Class targetType) throws SAXException {
-		return new Callable() {
+		return new Callable<Object>() {
 			@Override
 			public Object call() throws Exception {
 				return map.get(new Key(targetType, id));

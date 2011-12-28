@@ -22,7 +22,25 @@ import java.lang.annotation.Target;
 import org.atteo.evo.config.Combine;
 
 /**
- * Specifies how to combine this XML element.
+ * Specifies how to combine XML nodes corresponding to the annotated class
+ * or to the annotated field.
+ * 
+ * <p>
+ * The default behavior is {@link Combine#MERGE}.
+ * </p>
+ * <p>
+ * For instance the following code will instruct {@link XmlCombiner} to merge the entries in the append field:
+ * <pre>
+ * {@code
+ * public class Root {
+ * .   @XmlCombine(Combine.APPEND)
+ * .   @XmlElementWrapper(name = "append")
+ * .   @XmlElementRef
+ *     List<Entry> append;
+ * }
+ * }
+ * </pre>
+ * </p>
  */
 @Documented
 @Target({ ElementType.FIELD, ElementType.TYPE})

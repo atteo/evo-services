@@ -16,6 +16,7 @@ package org.atteo.evo.filtering;
 /**
  * Returned when property with the given name is not found.
  */
+@SuppressWarnings("serial")
 public class PropertyNotFoundException extends Exception {
 	public PropertyNotFoundException(String propertyName) {
 		super("Property not found: '" + propertyName + "'");

@@ -33,7 +33,7 @@ import java.util.Set;
  *   <li>property name 'variable_i' will be resolved into value '${constant}'</li>
  *   <li>finally value '${constant}' will be recursively resolved into 'value'</li>
  * </ul>
- * Used algorithm returns error when circular dependency between properties is detected.
+ * Resolver algorithm returns error when circular dependency between properties is detected.
  * </p>
  */
 public class RecursivePropertyResolver implements PropertyResolver {

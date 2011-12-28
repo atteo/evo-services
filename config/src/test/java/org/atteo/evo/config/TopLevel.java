@@ -13,7 +13,6 @@
  */
 package org.atteo.evo.config;
 
-import org.atteo.evo.xmlcombiner.XmlCombine;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,6 +20,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.atteo.evo.xmlcombiner.XmlCombine;
 
 @XmlRootElement
 public class TopLevel extends Configurable {

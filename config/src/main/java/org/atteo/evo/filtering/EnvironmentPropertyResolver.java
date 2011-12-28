@@ -14,8 +14,11 @@
 package org.atteo.evo.filtering;
 
 /**
- * Resolvers any properties prefixed with 'env.' as {@link System#getenv(String) environment
+ * Resolves any properties prefixed with 'env.' as {@link System#getenv(String) environment
  * variables}.
+ * <p>
+ * For instance {@code ${env.PATH}} will be resolved into the value of the '{@code PATH}' environment variable.
+ * </p>
  */
 public class EnvironmentPropertyResolver implements PropertyResolver {
 	private final String prefix = "env.";

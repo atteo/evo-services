@@ -34,6 +34,7 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -63,30 +64,50 @@ import com.sun.xml.bind.v2.model.runtime.RuntimeNonElement;
 import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
 
 /**
- * Reads two XML files, combines them, filters and unmarshals using JAXB.
+ * Provides a generic configuration facility which enables the application
+ * to read configuration data stored in a number of XML files.
  *
  * <p>
  * Usage:
  * <pre>
- *    Root root = new Configuration(jaxbClassess).read(Root.class, "first.xml, "second.xml");
+ *    Root root = new Configuration().read(Root.class, "first.xml, "second.xml");
  * </pre>
  * </p>
  * <p>
  * The following actions are performed:
  * <ul>
- * <li>Both files are parsed as XML files</li>
- * <li>The files are combined. See {@link XmlCombiner} for details.</li>
- * <li>Any placeholders <code>${name}</code> are substituted with the value generated using 
- * {@link #setPropertyResolver(PropertyResolver)}.</li>
- * <li>The result is unmarshalled using {@link Unmarshaller JAXB}</li>
- * <li>Validation is performed using JSR 303 - {@link Validation Bean Validation framework}</li>
+ * <li>{@link JAXBContext} is created for all the classes extending {@link Configurable},</li>
+ * <li>provided XML files are parsed into DOM trees,</li>
+ * <li>the DOM trees are combined using {@link XmlCombiner} facility,</li>
+ * <li>any property references in the form of <code>${name}</code> are substituted
+ * with the value generated using {@link PropertyResolver} set by calling
+ * {@link #setPropertyResolver(PropertyResolver)}, see {@link Filtering} for details,</li>
+ * <li>the result is unmarshalled using {@link Unmarshaller JAXB} into provided root class,</li>
+ * <li>the unmarshalled classes are validated using JSR 303 - {@link Validation Bean Validation framework}.</li>
  * </ul>
  * </p>
  * <p>
- * Each of the unmarshalled classes must extend {@link Configurable}. {@link Configurable} defines
- * {@link Configurable#combine combine} XML attribute which controls the merge behavior. You can also
- * specify this by annotating the class or field with &#064;{@link XmlCombine}. By default
- * {@link Combine#MERGE} strategy is used for merging.
+ * Each of the configuration classes must extend {@link Configurable} which defines some useful
+ * XML attributes like {@link Configurable#id id} to uniquely assign the name to configuration element
+ * and {@link Configurable#combine combine} attribute to control XML merging behavior.
+ * </p>
+ * <p>
+ * Very useful JAXB annotation to use when defining your configuration file is {@link XmlElementRef}.
+ * Although JAXB does not support interfaces you can use abstract superclass to get polymorphism like this:
+ * <pre>
+ * {@code
+ * class Root {
+ * .   @XmlElementRef
+ * .   @Valid
+ *     private List<Color> colors;
+ * }
+ * 
+ * . @XmlRootElement(name = "red")
+ * class Red extends Color {
+ * }
+ * 
+ * }
+ * </pre>
  * </p>
  */
 public class Configuration {

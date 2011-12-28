@@ -184,7 +184,8 @@ public class XmlCombiner {
 					}
 				} else if (node instanceof Text && !lastIncluded) {
 					Text text = (Text) node;
-					if (! text.getTextContent().trim().isEmpty()) {
+					// to make nice XML output skip whitespaces if last element was not included
+					if (!text.getTextContent().trim().isEmpty()) {
 						result.appendChild(document.importNode(node, true));
 						lastIncluded = true;
 					}
@@ -198,7 +199,6 @@ public class XmlCombiner {
 		NodeList nodes = child.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
-			boolean lastIncluded = true;
 			if (node instanceof Element) {
 				Element element = (Element) node;
 				Key key = Key.fromElement(element);
@@ -211,19 +211,9 @@ public class XmlCombiner {
 				}
 				if (combined != null) {
 					result.appendChild(combined);
-					lastIncluded = true;
-				} else {
-					lastIncluded = false;
 				}
-			} else if (node instanceof Text && !lastIncluded) {
-				Text text = (Text) node;
-				if (! text.getTextContent().trim().isEmpty()) {
-					result.appendChild(document.importNode(node, true));
-					lastIncluded = true;
-				}
-			}  else {
+			} else {
 				result.appendChild(document.importNode(node, true));
-				lastIncluded = true;
 			}
 		}
 

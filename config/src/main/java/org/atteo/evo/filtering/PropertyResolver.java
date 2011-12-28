@@ -14,7 +14,7 @@
 package org.atteo.evo.filtering;
 
 /**
- * Resolves property into value.
+ * Resolves property value.
  */
 public interface PropertyResolver {
 	/**

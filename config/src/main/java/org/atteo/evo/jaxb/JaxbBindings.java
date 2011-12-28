@@ -24,7 +24,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Iterates over JAXB bindings.
+ * Utility class to iterate over JAXB bindings.
  */
 // TODO: add iteration over attributes
 public class JaxbBindings {
