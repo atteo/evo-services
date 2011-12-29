@@ -5,3 +5,4 @@ bin/
 .classpath
 .project
 .config/
+inflector/src/test/resources/enwiktionary-latest-pages-articles.xml.bz2

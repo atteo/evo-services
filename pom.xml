@@ -39,6 +39,7 @@
 		<module>classindex-transformer</module>
 		<module>config</module>
 		<module>janino</module>
+		<module>inflector</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
