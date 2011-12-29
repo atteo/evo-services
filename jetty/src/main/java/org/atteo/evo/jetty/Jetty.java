@@ -14,12 +14,12 @@
 package org.atteo.evo.jetty;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.management.MBeanServer;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.annotation.WebFilter;
@@ -133,6 +133,9 @@ public class Jetty extends TopLevelService {
 	@Inject
 	private Injector injector;
 
+	@Inject(optional = true)
+	private MBeanServer mbeanServer;
+
 	@Inject
 	@ExternalContainer
 	private Boolean externalContainer;
@@ -176,10 +179,12 @@ public class Jetty extends TopLevelService {
 		connector.setPort(port);
 		server.addConnector(connector);
 
-		MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
-		server.getContainer().addEventListener(mbContainer);
-		server.addBean(mbContainer);
-		mbContainer.addBean(Log.getLog());
+		if (mbeanServer != null) {
+			MBeanContainer mbContainer = new MBeanContainer(mbeanServer);
+			server.getContainer().addEventListener(mbContainer);
+			server.addBean(mbContainer);
+			mbContainer.addBean(Log.getLog());
+		}
 
 		try {
 			server.start();
