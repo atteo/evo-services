@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
+	<properties>
+		<first>value</first>
+		<second>${first}</second>
+		<third>${config.properties.second}</third>
+		<a.b.c>${first}.${third}.${first}</a.b.c>
+	</properties>
+	<assertions>
+		<equals>
+			<expected>value</expected>
+			<actual>${third}</actual>
+		</equals>
+		<contains>
+			<expected>value.value.value</expected>
+			<actual>${a.b.c}</actual>
+		</contains>
+	</assertions>
+</config>
