@@ -50,6 +50,10 @@
 		<module>jta</module>
 		<module>jta-atomikos</module>
 		<module>jersey</module>
+		<module>database</module>
+		<module>h2</module>
+		<module>hibernate</module>
+		<module>migrations</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
