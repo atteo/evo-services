@@ -7,9 +7,13 @@
 	<packaging>pom</packaging>
 	<name>Evo Framework</name>
 	<description>
-		Java application framework focusing on configurability and ability to unit test.
-		Promotes proven solutions and specifically avoids the use of bad and deprecated ones.
-		Separated into layers of usable modules designed to perform specific tasks.
+		Java application development framework focusing on configurability and easy testing.
+		Promotes proven and simple solutions and specifically avoids the use of complicated and deprecated ones.
+
+		It offers modular service framework based on Google Guice, Maven-like configuration management,
+		logging with SLF4J, support for common JavaEE technologies: JDBC, JPA, JMS, JTA, JMX, Java Servlet API, JAX-RS.
+		Promotes fresh approach to JavaEE development with dependency injection, annotation processing,
+		modular design and easy unit testing.
 	</description>
 	<!-- Javadoc adds /apidocs to this URL when it tries to find Javadocs. Make it happy. -->
 	<url>http://atteo.org/static/evo-framework</url>
@@ -308,6 +312,14 @@
 				<plugin>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.8</version>
+					<configuration>
+						<detectLinks>true</detectLinks>
+						<links>
+							<link>http://google-guice.googlecode.com/git/javadoc/</link>
+						</links>
+						<linksource>true</linksource>
+						<show>private</show>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-pmd-plugin</artifactId>

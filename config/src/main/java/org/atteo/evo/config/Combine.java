@@ -14,7 +14,7 @@
 package org.atteo.evo.config;
 
 /**
- * Controls merge behavior when merging two XML nodes.
+ * Controls the behavior when merging two XML nodes.
  */
 public enum Combine {
 	/**
