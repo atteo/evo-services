@@ -6,6 +6,9 @@
 		<second>${first}</second>
 		<third>${config.properties.second}</third>
 		<a.b.c>${first}.${third}.${first}</a.b.c>
+		<a.b>
+			<d>${first}</d>
+		</a.b>
 	</properties>
 	<assertions>
 		<equals>

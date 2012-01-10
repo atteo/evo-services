@@ -20,7 +20,6 @@ import javax.validation.Valid;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.injection.InjectMembers;
@@ -35,7 +34,6 @@ import org.w3c.dom.Element;
 public class Config extends Group {
 	@XmlElementWrapper(name = "properties")
 	@XmlAnyElement(lax = false)
-	@XmlMixed
 	private List<Element> properties;
 
 	@InjectMembers
