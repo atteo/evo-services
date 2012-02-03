@@ -18,6 +18,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.inject.Inject;
+
+/**
+ * Any field in test class marked with this annotation will be initialized
+ * with the mocked object. If also marked with {@link Inject}
+ * then the mocked object will be registered as an instance binding in Guice injector.
+ */
 @Target({ ElementType.FIELD })
 @Retention(value=RetentionPolicy.RUNTIME)
 public @interface Mock {

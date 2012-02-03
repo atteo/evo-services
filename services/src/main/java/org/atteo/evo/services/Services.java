@@ -138,7 +138,7 @@ public class Services extends GuiceServletContextListener {
 		this.warDirectory = warDirectory;
 		configurationFile = new File(applicationHome, "config.xml");
 		parentConfigurationStream =
-				getClass().getClassLoader().getResourceAsStream("default-config.xml");
+				getClass().getResourceAsStream("/default-config.xml");
 	}
 
 	public Services(File applicationHome, File warDirectory, InputStream configurationStream) {

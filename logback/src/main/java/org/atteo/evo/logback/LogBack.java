@@ -46,7 +46,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
  * all INFO and higher messages to the standard output. If you want to change that behavior
  * we encourage you to provide your own logback.xml file in the classpath.
  * Although {@link #configFile} attribute allows you to reconfigure LogBack with the specified
- * configuration file, keep in mind that this happens lated in the boot process.
+ * configuration file, keep in mind that this happens late in the boot process.
  * </p>
  * <p>
  * {@link #jmx} attribute turns on JMX support. It allows you to control logging levels by connecting
@@ -54,7 +54,7 @@ import ch.qos.logback.core.joran.spi.JoranException;
  * </p>
  * <p>
  * This service also registers LogBack's {@link LevelChangePropagator} which improves performance
- * for JUL logging, see <a href="http://logback.qos.ch/manual/configuration.html#LevelChangePropagator">LevelChangePropagator</a>}.
+ * for JUL logging, see <a href="http://logback.qos.ch/manual/configuration.html#LevelChangePropagator">LevelChangePropagator</a>.
  * </p>
  *
  */

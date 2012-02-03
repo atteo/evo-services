@@ -46,4 +46,28 @@ public class Migrations {
 			}
 		}
 	}
+
+	public void dropAll() {
+		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor(this.getClass()
+				.getClassLoader());
+
+		DatabaseConnection databaseConnection = null;
+
+		try {
+			databaseConnection = new JdbcConnection(dataSource.getConnection());
+			Liquibase liquibase = new Liquibase(null, resourceAccessor, databaseConnection);
+			liquibase.dropAll();
+		} catch (LiquibaseException e) {
+			throw new RuntimeException(e);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				if (databaseConnection != null && !databaseConnection.isClosed())
+					databaseConnection.close();
+			} catch (DatabaseException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 }

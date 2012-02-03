@@ -15,6 +15,7 @@ package org.atteo.evo.classindex.processor;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +42,6 @@ import org.atteo.evo.classindex.IndexSubclasses;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import java.util.Collections;
 
 /**
  * Generates index files for {@link ClassIndex}.
@@ -92,7 +92,6 @@ public class ClassIndexProcessor extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-
 		try {
 			for (Element element : roundEnv.getRootElements()) {
 				if (!(element instanceof TypeElement)) {

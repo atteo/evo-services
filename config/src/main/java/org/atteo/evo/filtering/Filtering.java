@@ -27,7 +27,7 @@ import org.w3c.dom.Text;
  */
 public class Filtering {
 	/**
-	 * Filter <code>${name}</code> place holders found within the value using given property resolver.
+	 * Filter <code>${name}</code> placeholders found within the value using given property resolver.
 	 * @param value the value to filter the properties into
 	 * @param propertyResolver resolver for the property values
 	 * @return filtered value
@@ -94,7 +94,7 @@ public class Filtering {
 	}
 
 	/**
-	 * Filter <code>${name}</code> place holders found within the value using given properties.
+	 * Filter <code>${name}</code> placeholders found within the value using given properties.
 	 * @param value the value to filter the properties into
 	 * @param properties properties to filter into the value
 	 * @return filtered value
@@ -107,7 +107,7 @@ public class Filtering {
 	}
 
 	/**
-	 * Filter <code>${name}</code> place holders found within the XML element.
+	 * Filter <code>${name}</code> placeholders found within the XML element.
 	 * 
 	 * <p>
 	 * The structure of the XML document is not changed. Each attribute and element text is filtered
@@ -124,7 +124,7 @@ public class Filtering {
 	}
 
 	/**
-	 * Filter <code>${name}</code> place holders found within the XML element. 
+	 * Filter <code>${name}</code> placeholders found within the XML element. 
 	 * 
 	 * @see #filter(Element, PropertyResolver)  
 	 */

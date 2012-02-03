@@ -174,7 +174,7 @@ public class Configuration {
 	}
 
 	/**
-	 * Set properties used to filter {@code ${name}} place holders.
+	 * Set properties used to filter {@code ${name}} placeholders.
 	 * <p>
 	 * This method wraps given properties into {@link PropertiesPropertyResolver}
 	 * and calls {@link #setPropertyResolver(PropertyResolver)}.
@@ -186,7 +186,7 @@ public class Configuration {
 	}
 
 	/**
-	 * Set {@link PropertyResolver} used to filter {@code ${name}} place holders.
+	 * Set {@link PropertyResolver} used to filter {@code ${name}} placeholders.
 	 * <p>
 	 * This will override any previously set property resolver.
 	 * </p>

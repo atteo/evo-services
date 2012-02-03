@@ -19,8 +19,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
 
+/**
+ * Logs given message.
+ */
 @XmlRootElement(name = "echo")
 public class EchoAssertion extends Assertion {
+	/**
+	 * Message to log.
+	 */
 	@XmlElement
 	private String message;
 

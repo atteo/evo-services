@@ -16,11 +16,20 @@ package org.atteo.evo.services.assertions;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Check whether actual value contains expected value.
+ */
 @XmlRootElement(name = "contains")
 public class ContainsAssertion extends Assertion {
+	/**
+	 * Expected value.
+	 */
 	@XmlElement
 	private String expected;
 
+	/**
+	 * Actual value.
+	 */
 	@XmlElement
 	private String actual;
 

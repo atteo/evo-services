@@ -11,8 +11,13 @@ import com.google.inject.Key;
 import com.google.inject.servlet.ServletScopes;
 
 /**
- * With this rule added the test acts as if it were executed as a part of a HTTP request (see
- * Guice request scope).
+ * With this rule added the test acts as if it were executed as a part of a HTTP request.
+ *
+ * <p>
+ * The test methods of the JUnit test will be executed
+ * in {@link ServletScopes#REQUEST REQUEST} scope
+ * using {@link ServletScopes#scopeRequest(java.util.concurrent.Callable, java.util.Map)}.
+ * </p>
  */
 public class RequestRule implements MethodRule {
 	@Override

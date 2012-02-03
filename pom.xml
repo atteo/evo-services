@@ -42,22 +42,23 @@
 		<module>classindex</module>
 		<module>classindex-transformer</module>
 		<module>config</module>
-		<module>janino</module>
-		<module>inflector</module>
-		<module>services</module>
-		<module>tests</module>
+		<module>config-doclet</module>
 		<module>jetty</module>
-		<module>jmx</module>
-		<module>firebuglogger</module>
-		<module>hornetq</module>
-		<module>logback</module>
-		<module>jta</module>
-		<module>jta-atomikos</module>
 		<module>jersey</module>
 		<module>database</module>
+		<module>firebuglogger</module>
 		<module>h2</module>
 		<module>hibernate</module>
+		<module>hornetq</module>
+		<module>inflector</module>
+		<module>janino</module>
+		<module>jmx</module>
+		<module>jta-atomikos</module>
+		<module>jta</module>
 		<module>migrations</module>
+		<module>services</module>
+		<module>logback</module>
+		<module>tests</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -250,9 +251,9 @@
 				<version>${jersey.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
-				<version>2.6</version>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.hsqldb</groupId>
@@ -278,10 +279,6 @@
 				<plugin>
 					<artifactId>maven-antrun-plugin</artifactId>
 					<version>1.7</version>
-				</plugin>
-				<plugin>
-					<artifactId>maven-checkstyle-plugin</artifactId>
-					<version>2.8</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
@@ -313,12 +310,10 @@
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>2.8</version>
 					<configuration>
-						<detectLinks>true</detectLinks>
 						<links>
-							<link>http://google-guice.googlecode.com/git/javadoc/</link>
+							<link>http://docs.oracle.com/javase/7/docs/jdk/api/javadoc/doclet</link>
 						</links>
-						<linksource>true</linksource>
-						<show>private</show>
+						<detectLinks>true</detectLinks>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -460,12 +455,12 @@
 									<goal>aggregate</goal>
 								</goals>
 								<configuration>
-									<doclet>com.lunatech.doclets.jax.jaxb.JAXBDoclet</doclet>
+									<doclet>org.atteo.evo.config.doclet.ConfigDoclet</doclet>
 									<docletArtifacts>
 										<docletArtifact>
-											<groupId>com.lunatech.jax-doclets</groupId>
-											<artifactId>doclets</artifactId>
-											<version>0.9.0</version>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>evo-config-doclet</artifactId>
+											<version>${project.version}</version>
 										</docletArtifact>
 									</docletArtifacts>
 								</configuration>

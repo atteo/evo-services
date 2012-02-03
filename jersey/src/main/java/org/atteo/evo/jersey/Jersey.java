@@ -38,7 +38,7 @@ public class Jersey extends TopLevelService {
 	private String path = "/*";
 
 	/**
-	 * Automatically register in Jersey any classes marked with
+	 * Automatically register in Jersey any class marked with
 	 * &#064;{@link Path} or &#064;{@link Provider} annotations.
 	 */
 	@XmlElement
