@@ -311,6 +311,8 @@ public class Services extends GuiceServletContextListener {
 		String root = ".config";
 		applicationHome = new File(root);
 		configurationFile = new File(applicationHome, "config.xml");
+		parentConfigurationStream =
+				getClass().getResourceAsStream("/default-config.xml");
 		start();
 		return injector;
 	}
