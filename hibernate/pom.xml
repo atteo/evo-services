@@ -7,31 +7,7 @@
 	</parent>
 	<artifactId>evo-hibernate</artifactId>
 	<name>Evo Hibernate</name>
-	<!-- Workaround, because Hibernate from Central has dependency on Jandex which is not in central -->
-	<repositories>
-		<repository>
-			<id>jboss</id>
-			<name>JBoss</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>evo-services</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>evo-classindex</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>evo-database</artifactId>
@@ -50,12 +26,12 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>4.0.0.CR7</version> 
+			<version>4.1.0.Final</version> 
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.0.0.CR7</version> 
+			<version>4.1.0.Final</version> 
 		</dependency>
 		<dependency> 
 			<groupId>org.javassist</groupId> 

@@ -61,6 +61,7 @@ import com.sun.xml.bind.IDResolver;
 import com.sun.xml.bind.api.AccessorException;
 import com.sun.xml.bind.api.JAXBRIContext;
 import com.sun.xml.bind.v2.model.runtime.RuntimeNonElement;
+import com.sun.xml.bind.v2.runtime.IllegalAnnotationsException;
 import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
 
 /**
@@ -153,6 +154,8 @@ public class Configuration {
 			});
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException("Cannot configure XML parser", e);
+		} catch (IllegalAnnotationsException e) {
+			throw new RuntimeException("Cannot configure unmarshaller: " + e.toString());
 		} catch (JAXBException e) {
 			throw new RuntimeException("Cannot configure unmarshaller", e);
 		}

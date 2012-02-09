@@ -49,6 +49,7 @@
 		<module>firebuglogger</module>
 		<module>h2</module>
 		<module>hibernate</module>
+		<module>hibernate-search</module>
 		<module>hornetq</module>
 		<module>inflector</module>
 		<module>janino</module>
@@ -188,7 +189,7 @@
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
-				<version>1.6.2</version>
+				<version>1.7.3</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
