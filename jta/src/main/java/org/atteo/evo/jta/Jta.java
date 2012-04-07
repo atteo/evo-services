@@ -29,6 +29,7 @@ public class Jta extends TopLevelService {
 				requestStaticInjection(Transaction.class);
 				TransactionalInterceptor interceptor = new TransactionalInterceptor();
 				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Transactional.class), interceptor);
+				bindInterceptor(Matchers.annotatedWith(Transactional.class), Matchers.any(), interceptor);
 			}
 		};
 	}
