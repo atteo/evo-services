@@ -26,6 +26,7 @@ import org.atteo.evo.services.TopLevelService;
 
 import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
+import com.sun.jersey.core.util.FeaturesAndProperties;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
@@ -44,6 +45,12 @@ public class Jersey extends TopLevelService {
 	@XmlElement
 	private boolean discoverResources = true;
 
+	/**
+	 * If true, returned XML documents will be formatted for human readability.
+	 */
+	@XmlElement
+	private boolean formatOutput = false;
+
 	@Override
 	public Module configure() {
 		return new ServletModule() {
@@ -51,6 +58,9 @@ public class Jersey extends TopLevelService {
 			protected void configureServlets() {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put(ServletContainer.FEATURE_FILTER_FORWARD_ON_404, "true");
+				if (formatOutput) {
+					params.put(FeaturesAndProperties.FEATURE_FORMATTED, "true");
+				}
 				filter(path).through(GuiceContainer.class, params);
 				bind(JAXBContextResolver.class);
 
