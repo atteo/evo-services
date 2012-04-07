@@ -7,7 +7,7 @@
 		<h2/>
 	</databases>
 	<hibernate>
-		<overwriteSchema>true</overwriteSchema>
+		<initSchema>create</initSchema>
 		<plugins>
 			<search/>
 		</plugins>

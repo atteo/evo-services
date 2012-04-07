@@ -54,12 +54,31 @@ import com.google.inject.name.Names;
 
 @XmlRootElement(name = "hibernate")
 public class Hibernate extends TopLevelService {
+	/**
+	 * Select ID of the database to use.
+	 * <p>
+	 * Only needed if more than one is configured.
+	 * </p>
+	 */
 	@XmlElement
 	@XmlIDREF
 	private DatabaseService database;
 
+	/**
+	 * Automatically initialize database schema.
+	 * 
+	 * <p>
+	 * <ul>
+	 * <li>validate: validate the schema, makes no changes to the database.</li>
+	 * <li>update: update the schema.</li>
+	 * <li>create: creates the schema, destroying previous data.</li>
+	 * <li>create-drop: drop the schema at the end of the session.</li>
+	 * </ul>
+	 * Use evo-migrations in production setups.
+	 * </p>
+	 */
 	@XmlElement
-	private boolean overwriteSchema = false;
+	private String initSchema = "validate";
 
 	/**
 	 * List of Hibernate plugins.
@@ -69,8 +88,6 @@ public class Hibernate extends TopLevelService {
 	private List<HibernatePlugin> plugins;
 
 	private EntityManagerFactory factory;
-
-
 
 	@Override
 	public Module configure() {
@@ -217,11 +234,7 @@ public class Hibernate extends TopLevelService {
 				}
 			}
 			map.put(AvailableSettings.JTA_PLATFORM, jtaPlatform);
-			if (overwriteSchema) {
-				map.put(AvailableSettings.HBM2DDL_AUTO, "create");
-			} else {
-				map.put(AvailableSettings.HBM2DDL_AUTO, "validate");
-			}
+			map.put(AvailableSettings.HBM2DDL_AUTO, initSchema);
 			factory = provider.createContainerEntityManagerFactory(info, map);
 			return factory;
 		}

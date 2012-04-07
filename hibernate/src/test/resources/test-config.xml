@@ -7,6 +7,6 @@
 		<h2/>
 	</databases>
 	<hibernate>
-		<overwriteSchema>true</overwriteSchema>
+		<initSchema>create</initSchema>
 	</hibernate>
 </config>
