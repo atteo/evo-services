@@ -31,7 +31,7 @@ public class HibernateSearch extends HibernatePlugin {
 	/**
 	 * By default, every time an object is inserted, updated or deleted through Hibernate,
 	 * Hibernate Search updates the according Lucene index. It is sometimes desirable
-	 * to disable that features if either your index is read-only
+	 * to disable that feature if either your index is read-only
 	 * or if index updates are done in a batch way.
 	 * To disable event based indexing, set this property to "manual".
 	 */
@@ -43,7 +43,7 @@ public class HibernateSearch extends HibernatePlugin {
 	 * Hibernate Search provides two implementations for this interface.
 	 * <ul>
 	 * <li>directory-based: the default implementation which uses the Lucene Directory
-	 * abstraction to mange index files.</li>
+	 * abstraction to manage index files.</li>
 	 * <li>near-real-time: avoid flushing writes to disk at each commit.
 	 * This index manager is also Directory based, but also makes uses of Lucene's NRT functionality.
 	 * </li>
