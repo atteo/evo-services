@@ -273,9 +273,11 @@ public class Services extends GuiceServletContextListener {
 		} catch (Exception e) {
 			logger.error("Stopping due to the fatal error", e);
 
-			stop();
-
-			throw new RuntimeException("Fatal error", e);
+			try {
+				stop();
+			} catch (Exception f) {
+				logger.error("Cannot properly stop services after previous fatal error", f);
+			}
 		}
 	}
 
