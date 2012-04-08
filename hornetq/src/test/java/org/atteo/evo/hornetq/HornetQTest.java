@@ -37,7 +37,7 @@ import static org.junit.Assert.assertNull;
 
 public class HornetQTest {
 	@Rule
-	public static ServicesRule services = new ServicesRule();
+	public ServicesRule services = new ServicesRule(this);
 
 	@Inject
 	private ConnectionFactory connectionFactory;

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
+	<shiro>
+		<realms>
+			<simple>
+				<accounts>
+					<account>
+						<username>admin</username>
+						<password>admin</password>
+						<roles>
+							<role>admin</role>
+						</roles>
+					</account>
+				</accounts>
+			</simple>
+		</realms>
+	</shiro>
+</config>
+

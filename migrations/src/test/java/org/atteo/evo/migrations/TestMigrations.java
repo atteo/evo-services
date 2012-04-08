@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class TestMigrations {
 	@Rule
-	public ServicesRule servicesRule = new ServicesRule("/test-config.xml");
+	public ServicesRule servicesRule = new ServicesRule(this, "/test-config.xml");
 
 	@Rule
 	public RequestRule requestRule = new RequestRule();

@@ -3,8 +3,8 @@ package org.atteo.evo.tests;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import com.google.inject.Key;
@@ -19,9 +19,9 @@ import com.google.inject.servlet.ServletScopes;
  * using {@link ServletScopes#scopeRequest(java.util.concurrent.Callable, java.util.Map)}.
  * </p>
  */
-public class RequestRule implements MethodRule {
+public class RequestRule implements TestRule {
 	@Override
-	public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+	public Statement apply(final Statement base, Description method) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {

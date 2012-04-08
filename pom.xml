@@ -60,6 +60,7 @@
 		<module>services</module>
 		<module>logback</module>
 		<module>tests</module>
+		<module>shiro</module>
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,11 +71,12 @@
 		<netbeans.checkstyle.format>true</netbeans.checkstyle.format>
 		<netbeans.hint.license>apache20</netbeans.hint.license>
 
-		<sisu-guice.version>3.1.0</sisu-guice.version>
+		<sisu-guice.version>3.1.1</sisu-guice.version>
 		<jetty.version>8.0.3.v20111011</jetty.version>
 		<jersey.version>1.9.1</jersey.version>
 		<slf4j.version>1.6.3</slf4j.version>
 		<gwt.version>2.4.0</gwt.version>
+		<shiro.version>1.2.0</shiro.version>
 	</properties>
 	<distributionManagement>
 		<snapshotRepository>
@@ -103,7 +105,7 @@
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.8.2</version>
+				<version>4.10</version>
 			</dependency>
 			<dependency>
 				<groupId>xmlunit</groupId>
@@ -149,6 +151,11 @@
 			<dependency>
 				<groupId>org.sonatype.sisu.inject</groupId>
 				<artifactId>guice-servlet</artifactId>
+				<version>${sisu-guice.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.sonatype.sisu.inject</groupId>
+				<artifactId>guice-multibindings</artifactId>
 				<version>${sisu-guice.version}</version>
 			</dependency>
 			<dependency>
@@ -257,6 +264,17 @@
 				<version>3.1</version>
 			</dependency>
 			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>1.1</version>
+				<exclusions>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
 				<groupId>org.hsqldb</groupId>
 				<artifactId>hsqldb</artifactId>
 				<version>2.2.4</version>
@@ -271,6 +289,31 @@
 				<artifactId>ant</artifactId>
 				<version>1.8.2</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-web</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-guice</artifactId>
+				<version>${shiro.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.inject</groupId>
+						<artifactId>guice</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.google.inject.extensions</groupId>
+						<artifactId>guice-multibindings</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

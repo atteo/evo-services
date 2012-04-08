@@ -37,7 +37,7 @@ import com.google.inject.Inject;
 
 public class SearchTest {
 	@Rule
-	public ServicesRule services = new ServicesRule();
+	public ServicesRule services = new ServicesRule(this);
 	
 	@Inject
 	private EntityManagerFactory factory;

@@ -33,7 +33,7 @@ import com.sun.tools.attach.AttachNotSupportedException;
 
 public class MBeanTest {
 	@Rule
-	public static ServicesRule services = new ServicesRule();
+	public ServicesRule services = new ServicesRule(this);
 
 	@Test
 	public void getData() throws IOException, MalformedObjectNameException {

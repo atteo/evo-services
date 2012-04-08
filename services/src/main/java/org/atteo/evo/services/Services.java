@@ -129,6 +129,7 @@ public class Services extends GuiceServletContextListener {
 	private Config config;
 	private List<Service> startedServices = new ArrayList<Service>();
 	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
+	private boolean throwErrors = false;
 
 	public Services() {
 	}
@@ -162,6 +163,18 @@ public class Services extends GuiceServletContextListener {
 
 	public void addCustomPropertyResolver(PropertyResolver resolver) {
 		customPropertyResolvers.addPropertyResolver(resolver);
+	}
+
+	/**
+	 * Should start method throw exception on error.
+	 * 
+	 * <p>
+	 * By default {@link #start()} method only logs the error and returns.
+	 * </p>
+	 * @param throwErrors 
+	 */
+	public void setThrowErrors(boolean throwErrors) {
+		this.throwErrors = throwErrors;
 	}
 
 	/**
@@ -271,12 +284,17 @@ public class Services extends GuiceServletContextListener {
 			}
 			logger.info("Done");
 		} catch (Exception e) {
-			logger.error("Stopping due to the fatal error", e);
+			if (!throwErrors) {
+				logger.error("Stopping due to the fatal error", e);
+			}
 
 			try {
 				stop();
 			} catch (Exception f) {
 				logger.error("Cannot properly stop services after previous fatal error", f);
+			}
+			if (throwErrors) {
+				throw new RuntimeException(e);
 			}
 		}
 	}

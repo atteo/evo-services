@@ -25,7 +25,8 @@ import java.util.Set;
 
 import org.atteo.evo.services.Service;
 import org.atteo.evo.services.Services;
-import org.junit.rules.MethodRule;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import org.junit.runners.model.TestClass;
@@ -55,32 +56,48 @@ import com.google.inject.servlet.GuiceFilter;
  * as a sole parameter to allow you to register additional Guice bindings.
  * </p>
  */
-public class ServicesRule implements MethodRule {
+public class ServicesRule implements TestRule {
 	private String config;
 	private Services services;
+	private Object target;
 
 	/**
 	 * Initializes {@link Services} environment from "/test-config.xml" configuration file.
+	 * <p>
+	 * Usage:
+	 * <pre>
+	 * {@code
+	 * class Test {
+	 *     private ServicesRule services = new ServicesRule(this);
+	 * }
+	 * }
+	 * </pre>
+	 * </p>
+	 * 
+	 * @param target object of the executed test, usually just 'this'
 	 */
-	public ServicesRule() {
+	public ServicesRule(Object target) {
+		this.target = target;
 	}
 
 	/**
 	 * Initializes {@link Services} environment from given configuration file.
 	 *
+	 * @param target object of the executed test, usually just 'this'
 	 * @param config
 	 *            resource path to the configuration file
 	 */
-	public ServicesRule(String config) {
+	public ServicesRule(Object target, String config) {
+		this.target = target;
 		this.config = config;
 	}
 
 	@Override
-	public Statement apply(final Statement base, FrameworkMethod method, final Object target) {
+	public Statement apply(final Statement base, Description method) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				configure(target);
+				configure();
 				try {
 					base.evaluate();
 				} finally {
@@ -90,7 +107,7 @@ public class ServicesRule implements MethodRule {
 		};
 	}
 
-	private void configure(final Object target) {
+	private void configure() {
 		TestClass testClass = new TestClass(target.getClass());
 		final List<FrameworkMethod> bindingsMethods = testClass.getAnnotatedMethods(Bindings.class);
 
@@ -163,6 +180,7 @@ public class ServicesRule implements MethodRule {
 		services = new Services(new File("target/test-home/"), new File("src/main/webapp/"), stream);
 		services.addModule(bindingsModule);
 		services.addModule(mocksModule);
+		services.setThrowErrors(true);
 		services.start();
 
 		try {
@@ -172,8 +190,10 @@ public class ServicesRule implements MethodRule {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		services.injector().injectMembers(target);
+		
+		if (services.injector() != null) {
+			services.injector().injectMembers(target);
+		}
 	}
 
 	private void deconfigure() {

@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class AtomikosTest {
 	@Rule
-	public ServicesRule services = new ServicesRule("/test-config.xml");
+	public ServicesRule services = new ServicesRule(this, "/test-config.xml");
 
 	@Test
 	public void trivial() {
