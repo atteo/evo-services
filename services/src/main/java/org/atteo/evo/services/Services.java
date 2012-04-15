@@ -250,6 +250,7 @@ public class Services extends GuiceServletContextListener {
 			}
 
 			for (Service service : config.getServices()) {
+				logger.info("Configuring {}...", service.getClass().getSimpleName());
 				Module module = service.configure();
 				if (module != null) {
 					modules.add(module);
@@ -278,7 +279,11 @@ public class Services extends GuiceServletContextListener {
 			injector.injectMembers(config);
 
 			for (Service service : config.getServices()) {
-				logger.info("Starting {}...", service.getClass().getSimpleName());
+				if (logger.isInfoEnabled()) {
+					if (isStartMethodOverriden(service.getClass())) {
+						logger.info("Starting {}...", service.getClass().getSimpleName());
+					}
+				}
 				service.start();
 				startedServices.add(service);
 			}
@@ -335,6 +340,19 @@ public class Services extends GuiceServletContextListener {
 				getClass().getResourceAsStream("/default-config.xml");
 		start();
 		return injector;
+	}
+
+	private static boolean isStartMethodOverriden(Class<?> klass) {
+		while (klass != Service.class) {
+			try {
+				klass.getDeclaredMethod("start");
+			} catch (NoSuchMethodException e) {
+				klass = klass.getSuperclass();
+				continue;
+			} 
+			return true;
+		}
+		return false;
 	}
 }
 

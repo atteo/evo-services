@@ -75,12 +75,4 @@ public class Jersey extends TopLevelService {
 			}
 		};
 	}
-
-	@Override
-	public void start() {
-	}
-
-	@Override
-	public void stop() {
-	}
 }

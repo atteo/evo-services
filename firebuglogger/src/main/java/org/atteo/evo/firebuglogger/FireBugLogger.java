@@ -13,6 +13,9 @@
  */
 package org.atteo.evo.firebuglogger;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.atteo.evo.services.TopLevelService;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Module;
@@ -22,8 +25,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import javax.xml.bind.annotation.XmlRootElement;
-import org.atteo.evo.services.TopLevelService;
 
 /**
  * Supports logging to the Firebug console with FirePHP installed.

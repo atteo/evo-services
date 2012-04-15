@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -37,7 +36,6 @@ import org.hornetq.jms.server.config.impl.JMSQueueConfigurationImpl;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -76,9 +74,6 @@ public class HornetQServer extends TopLevelService {
 			}
 		};
 	}
-
-	@Inject
-	private Injector injector;
 
 	private EmbeddedJMS jms;
 

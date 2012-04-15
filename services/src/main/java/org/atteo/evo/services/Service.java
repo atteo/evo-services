@@ -22,10 +22,10 @@ import com.google.inject.Provider;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Service.
+ * Basic configurable component which can be {@link #start() started} and {@link #stop() stopped}.
  *
  * <p>
- * Services are created and started by {@link Services} from configuration file.
+ * Services are created and started by {@link Services} as specified in configuration file.
  * You should try to initialize all of the service logic in {@link Provider}s registered
  * in {@link Module} returned by {@link #configure()}. In this way the order of initialization
  * will be handled by {@link Guice} based on the dependencies between the services.

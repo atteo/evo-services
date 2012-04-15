@@ -77,10 +77,6 @@ public class H2 extends DatabaseService {
 	}
 
 	@Override
-	public void start() {
-	}
-
-	@Override
 	public void stop() {
 		wrapper.close(dataSource);
 	}
