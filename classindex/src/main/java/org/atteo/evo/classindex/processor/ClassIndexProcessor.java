@@ -15,6 +15,7 @@ package org.atteo.evo.classindex.processor;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.annotation.Inherited;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -113,7 +114,6 @@ public class ClassIndexProcessor extends AbstractProcessor {
 					continue;
 				}
 
-				indexSubclasses(typeElement, typeElement);
 				for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
 					TypeElement annotationElement = (TypeElement) mirror.getAnnotationType()
 							.asElement();
@@ -122,6 +122,7 @@ public class ClassIndexProcessor extends AbstractProcessor {
 						annotatedMap.put(annotationElement, typeElement);
 					}
 				}
+				indexSupertypes(typeElement, typeElement, annotatedMap);
 
 				// root elements are enclosed by packages
 				PackageElement packageElement = (PackageElement) element.getEnclosingElement();
@@ -167,9 +168,12 @@ public class ClassIndexProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Index class if {@link IndexSubclasses} is found on any superclass.
+	 * Index super types for {@link IndexSubclasses} and any {@link IndexAnnotated}
+	 * additionally accompanied by {@link Inherited}.
 	 */
-	private void indexSubclasses(TypeElement rootElement, TypeElement element) {
+	private void indexSupertypes(TypeElement rootElement, TypeElement element,
+			Multimap<TypeElement, TypeElement> annotatedMap) {
+
 		for (TypeMirror mirror : types.directSupertypes(element.asType())) {
 			if (mirror.getKind() != TypeKind.DECLARED) {
 				continue;
@@ -180,7 +184,17 @@ public class ClassIndexProcessor extends AbstractProcessor {
 			if (superTypeElement.getAnnotation(IndexSubclasses.class) != null) {
 				subclassMap.put(superTypeElement, rootElement);
 			}
-			indexSubclasses(rootElement, superTypeElement);
+
+			for (AnnotationMirror annotationMirror : superTypeElement.getAnnotationMirrors()) {
+				TypeElement annotationElement = (TypeElement) annotationMirror.getAnnotationType()
+						.asElement();
+				if (annotationElement.getAnnotation(IndexAnnotated.class) != null
+						&& annotationElement.getAnnotation(Inherited.class) != null) {
+					annotatedMap.put(annotationElement, rootElement);
+				}
+			}
+
+			indexSupertypes(rootElement, superTypeElement, annotatedMap);
 		}
 	}
 }
