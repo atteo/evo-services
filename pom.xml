@@ -32,6 +32,7 @@
 		</developer>
 	</developers>
 	<modules>
+		<module>atomikos</module>
 		<module>core</module>
 		<module>core-test-utils</module>
 		<module>database</module>
@@ -41,13 +42,13 @@
 		<module>hibernate</module>
 		<module>hibernate-search</module>
 		<module>hornetq</module>
+		<module>hsqldb</module>
 		<module>import</module>
 		<module>jersey</module>
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>jmx</module>
 		<module>jpa</module>
-		<module>jta-atomikos</module>
 		<module>jta</module>
 		<module>logback</module>
 		<module>migrations</module>

@@ -53,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jta-atomikos</artifactId>
+			<artifactId>atomikos</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>

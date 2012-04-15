@@ -66,6 +66,9 @@ public class Atomikos extends JtaService {
 	@XmlDefaultValue("${dataHome}/atomikos/")
 	private String consoleOutputDirectory;
 
+	/**
+	 * The default timeout (in seconds) that is set for transactions when no timeout is specified.
+	 */
 	@XmlElement
 	@XmlDefaultValue("60")
 	private Integer transactionTimeout;
@@ -166,7 +169,7 @@ public class Atomikos extends JtaService {
 				properties.setProperty(AbstractUserTransactionServiceFactory.THREADED_2PC_PROPERTY_NAME,
 						"false");
 				properties.setProperty(AbstractUserTransactionServiceFactory.DEFAULT_JTA_TIMEOUT_PROPERTY_NAME,
-						Integer.toString(transactionTimeout * 60));
+						Integer.toString(transactionTimeout * 1000));
 				service = new UserTransactionServiceImp(properties);
 				try {
 					service.init();

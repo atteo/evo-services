@@ -16,12 +16,15 @@ package org.atteo.moonshine.h2;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jta.JtaDataSourceWrapper;
+import org.atteo.moonshine.jta.JtaService;
 import org.atteo.moonshine.jta.PoolOptions;
+import org.atteo.moonshine.services.ImportBindings;
 import org.h2.jdbcx.JdbcDataSource;
 
 import com.google.inject.AbstractModule;
@@ -34,6 +37,11 @@ import com.google.inject.Scopes;
  */
 @XmlRootElement(name = "h2")
 public class H2 extends DatabaseService {
+	@XmlIDREF
+	@XmlElement
+	@ImportBindings
+	private JtaService jtaService;
+
 	@XmlElement
 	@XmlDefaultValue("jdbc:h2:${dataHome}/database;AUTO_SERVER=TRUE")
 	private String url;

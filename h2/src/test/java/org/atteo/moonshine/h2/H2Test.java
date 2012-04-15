@@ -14,10 +14,6 @@
 package org.atteo.moonshine.h2;
 
 import org.atteo.moonshine.database.DatabaseTest;
-import org.atteo.moonshine.tests.MoonshineRule;
-import org.junit.Rule;
 
 public class H2Test extends DatabaseTest {
-	@Rule
-	public static MoonshineRule rule = new MoonshineRule("/test-config.xml");
 }

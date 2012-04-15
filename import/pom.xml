@@ -87,7 +87,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>jta-atomikos</artifactId>
+				<artifactId>atomikos</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
