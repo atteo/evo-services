@@ -18,6 +18,10 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.evo.jaxrs.ResourceModel;
+
+import com.google.common.collect.Iterables;
 import com.google.inject.Singleton;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
@@ -25,17 +29,21 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 @Provider
 @Singleton
 public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
+	private JAXBContext context;
 
 	public JAXBContextResolver() {
+
+		try {
+			context = new JSONJAXBContext(JSONConfiguration.natural().usePrefixesAtNaturalAttributes()
+					.rootUnwrapping(false).build(),
+					Iterables.toArray(ClassIndex.getAnnotated(ResourceModel.class), Class.class));
+		} catch (JAXBException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
 	public JAXBContext getContext(Class<?> objectType) {
-		try {
-			return new JSONJAXBContext(JSONConfiguration.natural().usePrefixesAtNaturalAttributes()
-					.rootUnwrapping(false).build(), objectType);
-		} catch (JAXBException e) {
-			throw new RuntimeException(e);
-		}
+		return context;
 	}
 }

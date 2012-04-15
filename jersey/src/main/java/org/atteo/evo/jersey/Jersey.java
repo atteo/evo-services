@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.services.TopLevelService;
 
+import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.core.util.FeaturesAndProperties;
@@ -41,6 +42,7 @@ public class Jersey extends TopLevelService {
 	/**
 	 * Automatically register in Jersey any class marked with
 	 * &#064;{@link Path} or &#064;{@link Provider} annotations.
+	 * To manually register them simply {@link Binder#bind(Class) bind} them in Guice.
 	 */
 	@XmlElement
 	private boolean discoverResources = true;
@@ -62,7 +64,6 @@ public class Jersey extends TopLevelService {
 					params.put(FeaturesAndProperties.FEATURE_FORMATTED, "true");
 				}
 				filter(path).through(GuiceContainer.class, params);
-				bind(JAXBContextResolver.class);
 
 				if (discoverResources) {
 					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {
