@@ -50,6 +50,7 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
+import com.google.inject.binder.ScopedBindingBuilder;
 import com.google.inject.name.Names;
 
 @XmlRootElement(name = "hibernate")
@@ -87,6 +88,12 @@ public class Hibernate extends TopLevelService {
 	@XmlElementWrapper(name = "plugins")
 	private List<HibernatePlugin> plugins;
 
+	/**
+	 * Should Hibernate be loaded on first use.
+	 */
+	@XmlElement
+	private boolean lazyLoading = false;
+
 	private EntityManagerFactory factory;
 
 	@Override
@@ -98,12 +105,18 @@ public class Hibernate extends TopLevelService {
 				bind(JtaPlatform.class).to(CustomJtaPlatform.class).in(Scopes.SINGLETON);
 
 				String id = getId();
+				ScopedBindingBuilder binding;
 				if (id == null) {
-					bind(EntityManagerFactory.class).toProvider(new EntityManagerFactoryProvider())
-							.in(Scopes.SINGLETON);
+					binding = bind(EntityManagerFactory.class).toProvider(
+							new EntityManagerFactoryProvider());
 				} else {
-					bind(Key.get(EntityManagerFactory.class, Names.named(id))).toProvider(
-							new EntityManagerFactoryProvider()).in(Scopes.SINGLETON);
+					binding = bind(Key.get(EntityManagerFactory.class, Names.named(id))).toProvider(
+							new EntityManagerFactoryProvider());
+				}
+				if (lazyLoading) {
+					binding.in(Scopes.SINGLETON);
+				} else {
+					binding.asEagerSingleton();
 				}
 			}
 		};
