@@ -13,24 +13,59 @@
  */
 package org.atteo.evo.janino;
 
+import java.util.Properties;
+
+import org.atteo.evo.filtering.CompoundPropertyResolver;
+import org.atteo.evo.filtering.Filtering;
+import org.atteo.evo.filtering.PropertiesPropertyResolver;
+import org.atteo.evo.filtering.PropertyNotFoundException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 public class JaninoPropertyResolverTest {
 	@Test
-	public void simple() {
+	public void simple() throws PropertyNotFoundException {
 		JaninoPropertyResolver resolver = new JaninoPropertyResolver();
-		String result = resolver.getProperty("new java.util.Date()");
+		String result = Filtering.getProperty("java:new java.util.Date()", resolver);
 		assertNotNull(result);
 
-		result = resolver.getProperty("3+3");
+		result = Filtering.getProperty("java:3+3", resolver);
 		assertEquals("6", result);
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void forced() {
+	@Test
+	public void noPrefix() throws PropertyNotFoundException {
 		JaninoPropertyResolver resolver = new JaninoPropertyResolver();
-		resolver.getProperty("java: asdf");
+
+		String result = Filtering.getProperty("3+3", resolver);
+		assertEquals(null, result);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void forced() throws PropertyNotFoundException {
+		JaninoPropertyResolver resolver = new JaninoPropertyResolver();
+		Filtering.getProperty("java: asdf", resolver);
+	}
+
+	@Test
+	public void compound() throws PropertyNotFoundException {
+		Properties properties = new Properties();
+		properties.setProperty("test1", "${java:3+3}");
+		properties.setProperty("test2", "${test${java:2-1}}");
+		CompoundPropertyResolver resolver = new CompoundPropertyResolver(
+				new JaninoPropertyResolver(),
+				new PropertiesPropertyResolver(properties));
+		assertEquals("6", Filtering.getProperty("test2", resolver));
+	}
+
+	@Test(expected = PropertyNotFoundException.class)
+	public void notFound() throws PropertyNotFoundException {
+		Properties properties = new Properties();
+		properties.setProperty("test2", "${test${java:2-1}}");
+		CompoundPropertyResolver resolver = new CompoundPropertyResolver(
+				new JaninoPropertyResolver(),
+				new PropertiesPropertyResolver(properties));
+		Filtering.getProperty("test2", resolver);
 	}
 }

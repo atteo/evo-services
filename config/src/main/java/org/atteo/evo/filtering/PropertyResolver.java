@@ -14,13 +14,15 @@
 package org.atteo.evo.filtering;
 
 /**
- * Resolves property value.
+ * Resolves property name to its value possibly resolving recursively any placeholders.
  */
 public interface PropertyResolver {
 	/**
 	 * Get value for the given property.
-	 * @param name name of the property to search for
-	 * @return value associated for the property or null if property does not exists
+	 * @param name name of the property to resolve
+	 * @param resolver property resolver for recursive resolution
+	 * @return value associated for the property or null if the property cannot be resolved by this resolver
+	 * @throws PropertyNotFoundException when we are sure the property cannot be resolved by any other resolver
 	 */
-	String getProperty(String name);
+	String resolveProperty(String name, PropertyResolver resolver) throws PropertyNotFoundException;
 }

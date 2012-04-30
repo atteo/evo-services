@@ -15,22 +15,20 @@ package org.atteo.evo.filtering;
 
 import java.util.Properties;
 
+import javax.annotation.Nonnull;
+
 /**
  * Property resolver based on predefined {@link Properties properties}.
  */
-public class PropertiesPropertyResolver implements PropertyResolver {
+public class PropertiesPropertyResolver extends SimplePropertyResolver {
 	private final Properties properties;
 
-	public PropertiesPropertyResolver(Properties properties) {
-		if (properties != null) {
-			this.properties = properties;
-		} else {
-			this.properties = new Properties();
-		}
+	public PropertiesPropertyResolver(@Nonnull Properties properties) {
+		this.properties = properties;
 	}
 
 	@Override
-	public String getProperty(String name) {
+	public String getProperty(String name) throws PropertyNotFoundException {
 		return properties.getProperty(name);
 	}
 }

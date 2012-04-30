@@ -19,15 +19,23 @@ package org.atteo.evo.filtering;
  * <p>
  * For instance {@code ${env.PATH}} will be resolved into the value of the '{@code PATH}' environment variable.
  * </p>
+ * <p>
+ * Due to security concerns it does not recursively resolve properties by default.
+ * </p>
  */
-public class EnvironmentPropertyResolver implements PropertyResolver {
+public class EnvironmentPropertyResolver extends SimplePropertyResolver {
 	private final String prefix = "env.";
 
+	public EnvironmentPropertyResolver() {
+		filterResult = false;
+	}
+
 	@Override
-	public String getProperty(String name) {
+	public String getProperty(String name) throws PropertyNotFoundException {
 		if (!name.startsWith(prefix)) {
 			return null;
 		}
-		return System.getenv(name.substring(prefix.length()));
+		name = name.substring(prefix.length());
+		return System.getenv(name);
 	}
 }

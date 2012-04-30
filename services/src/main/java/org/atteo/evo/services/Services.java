@@ -30,7 +30,7 @@ import org.atteo.evo.filtering.CompoundPropertyResolver;
 import org.atteo.evo.filtering.EnvironmentPropertyResolver;
 import org.atteo.evo.filtering.PropertiesPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
-import org.atteo.evo.filtering.RecursivePropertyResolver;
+import org.atteo.evo.filtering.SimplePropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
 import org.atteo.evo.filtering.XmlPropertyResolver;
 import org.atteo.evo.injection.InjectMembersModule;
@@ -231,15 +231,13 @@ public class Services extends GuiceServletContextListener {
 				customPropertyResolvers.addPropertyResolver(s);
 			}
 
-			final PropertyResolver propertyResolver = new RecursivePropertyResolver(
-					new CompoundPropertyResolver(
-							new PropertiesPropertyResolver(properties),
-							new SystemPropertyResolver(),
-							new EnvironmentPropertyResolver(),
-							new XmlPropertyResolver(propertiesElement, false),
-							customPropertyResolvers,
-							new XmlPropertyResolver(configuration.getRootElement(), true)
-					));
+			final PropertyResolver propertyResolver = new CompoundPropertyResolver(
+					new PropertiesPropertyResolver(properties),
+					new SystemPropertyResolver(),
+					new EnvironmentPropertyResolver(),
+					new XmlPropertyResolver(propertiesElement, false),
+					customPropertyResolvers,
+					new XmlPropertyResolver(configuration.getRootElement(), true));
 
 			configuration.setPropertyResolver(propertyResolver);
 

@@ -13,28 +13,61 @@
  */
 package org.atteo.evo.filtering;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map.Entry;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 
 /**
- * Resolves properties by trying a number of underlying property resolvers.
+ * Resolves properties by trying a number of underlying {@link PropertyResolver property resolvers}.
+ * <p>
+ * Underlying property resolver cab be an instance of {@link PrefixedPropertyResolver}.
+ * In this case it will be executed only if its prefix matches property name.
+ * If at least one resolver matches given prefix then only PrefixedPropertyResolvers
+ * matching this prefix will be executed.
  */
 public class CompoundPropertyResolver implements PropertyResolver {
-	private List<PropertyResolver> resolvers;
+	private List<PropertyResolver> resolvers = Lists.newArrayList();
+
+	private Multimap<String, PrefixedPropertyResolver> prefixedResolvers = ArrayListMultimap.create();
 
 	public CompoundPropertyResolver(PropertyResolver... resolvers) {
-		this.resolvers = Lists.newArrayList(resolvers);
+		for (PropertyResolver resolver : resolvers) {
+			addPropertyResolver(resolver);
+		}
 	}
 
-	public void addPropertyResolver(PropertyResolver resolver) {
+	public final void addPropertyResolver(PropertyResolver resolver) {
+		if (resolver instanceof PrefixedPropertyResolver) {
+			PrefixedPropertyResolver prefixedResolver = (PrefixedPropertyResolver) resolver;
+			String prefix = prefixedResolver.getPrefix();
+			if (prefix != null) {
+				prefixedResolvers.put(prefixedResolver.getPrefix(), prefixedResolver);
+				return;
+			}
+		}
 		resolvers.add(resolver);
 	}
 
 	@Override
-	public String getProperty(String name) {
+	public String resolveProperty(String name, PropertyResolver recurse) throws PropertyNotFoundException {
+		for (Entry<String, Collection<PrefixedPropertyResolver>> entry : prefixedResolvers.asMap().entrySet()) {
+			if (name.startsWith(entry.getKey())) {
+				for (PrefixedPropertyResolver resolver : entry.getValue()) {
+					String value = resolver.resolveProperty(name, recurse);
+					if (value != null) {
+						return value;
+					}
+				}
+				throw new PropertyNotFoundException(name);
+			}
+		}
+			
 		for (PropertyResolver resolver : resolvers) {
-			String value = resolver.getProperty(name);
+			String value = resolver.resolveProperty(name, recurse);
 			if (value != null) {
 				return value;
 			}

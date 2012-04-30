@@ -13,8 +13,14 @@
  */
 package org.atteo.evo.filtering;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -26,6 +32,58 @@ import org.w3c.dom.Text;
  * Properties filtering engine.
  */
 public class Filtering {
+	private final static Logger logger = LoggerFactory.getLogger(Filtering.class);
+
+	private final static class CircularCheckResolver implements PropertyResolver {
+		private Set<String> inProgress = new HashSet<String>();
+		private PropertyResolver resolver;
+
+		private CircularCheckResolver(PropertyResolver resolver) {
+			this.resolver = resolver;
+		}
+
+		@Override
+		public String resolveProperty(String name, PropertyResolver ignore) throws PropertyNotFoundException {
+			if (inProgress.contains(name)) {
+				throw new CircularPropertyResolutionException(name);
+			}
+			logger.debug("Resolving property: " + name);
+			inProgress.add(name);
+
+			String value = resolver.resolveProperty(name, this);
+
+			inProgress.remove(name);
+
+			return value;
+		}
+	}
+
+	public static final class Part {
+		private String value;
+		private boolean property;
+
+		public Part(String value, boolean property) {
+			this.value = value;
+			this.property = property;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public boolean isProperty() {
+			return property;
+		}
+	}
+
+	public static String getProperty(String value, PropertyResolver resolver) throws PropertyNotFoundException {
+		// optimization: we don't need another one
+		if (resolver instanceof CircularCheckResolver) {
+			return resolver.resolveProperty(value, null);
+		}
+		return new CircularCheckResolver(resolver).resolveProperty(value, resolver);
+	}
+
 	/**
 	 * Filter <code>${name}</code> placeholders found within the value using given property resolver.
 	 * @param value the value to filter the properties into
@@ -35,7 +93,32 @@ public class Filtering {
 	 */
 	public static String filter(String value, PropertyResolver propertyResolver)
 			throws PropertyNotFoundException {
+		List<Part> parts = splitIntoParts(value);
 		StringBuilder result = new StringBuilder();
+
+		for (Part part : parts) {
+			if (part.isProperty()) {
+				String propertyValue = getProperty(part.getValue(), propertyResolver);
+				if (propertyValue == null) {
+					throw new PropertyNotFoundException(part.getValue());
+					//result.append(value.subSequence(position, endposition + 1));
+					//break;
+				}
+				result.append(propertyValue);
+			} else {
+				result.append(part.getValue());
+			}
+		}
+		return result.toString();
+	}
+	
+	/**
+	 * Find <code>${name}</code> placeholders in the given String.
+	 * @param value the value to filter the properties into
+	 * @return list of parts
+	 */
+	public static List<Part> splitIntoParts(String value) {
+		List<Part> parts = new ArrayList<Part>();
 		int index = 0;
 
 		while (true) {
@@ -43,7 +126,9 @@ public class Filtering {
 			if (position == -1) {
 				break;
 			}
-			result.append(value.substring(index, position));
+			if (index != position) {
+				parts.add(new Part(value.substring(index, position), false));
+			}
 
 			// find '${' and '}' pair, correctly handle nested pairs
 			boolean lastDollar = false;
@@ -78,19 +163,15 @@ public class Filtering {
 				break;
 			}
 			String propertyName = value.substring(position + 2, endposition);
-			String propertyValue = propertyResolver.getProperty(propertyName);
 			index = endposition + 1;
-			if (propertyValue == null) {
-				throw new PropertyNotFoundException(propertyName);
-				//result.append(value.subSequence(position, endposition + 1));
-				//break;
-			}
 
-			result.append(propertyValue);
+			parts.add(new Part(propertyName, true));
 		}
 
-		result.append(value.substring(index));
-		return result.toString();
+		if (index != value.length()) {
+			parts.add(new Part(value.substring(index), false));
+		}
+		return parts;
 	}
 
 	/**

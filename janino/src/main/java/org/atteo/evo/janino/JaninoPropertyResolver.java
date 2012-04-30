@@ -15,9 +15,14 @@ package org.atteo.evo.janino;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.atteo.evo.filtering.Filtering;
+import org.atteo.evo.filtering.PrefixedPropertyResolver;
+import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.codehaus.janino.util.LocatedException;
+
+import sun.misc.Perf;
 
 /**
  * Java expression evaluation {@link PropertyResolver}.
@@ -27,17 +32,40 @@ import org.codehaus.janino.util.LocatedException;
  * the expression as Java prefix it with 'java:'.
  * </p>
  */
-public class JaninoPropertyResolver implements PropertyResolver {
+public class JaninoPropertyResolver implements PrefixedPropertyResolver {
+	private static final String prefix = "java:";
+	private boolean useWithoutPrefix = false;
+
 	public JaninoPropertyResolver() {
 	}
 
+	/**
+	 * If useWithoutPrefix will be set to false, this resolver will try to compile and execute every
+	 * property. It will not report errors for properties not prefixed with 'java:'.
+	 * @param useWithoutPrefix If false, 'java:' prefix will not be needed.
+	 */
+	public JaninoPropertyResolver(boolean useWithoutPrefix) {
+		this.useWithoutPrefix = useWithoutPrefix;
+	}
+
 	@Override
-	public String getProperty(String name) {
+	public String getPrefix() {
+		if (useWithoutPrefix) {
+			return null;
+		}
+		return prefix;
+	}
+
+	@Override
+	public String resolveProperty(String name, PropertyResolver resolver) throws PropertyNotFoundException {
+		name = Filtering.filter(name, resolver);
 		name = name.trim();
 		boolean throwErrors = false;
-		if (name.startsWith("java:")) {
-			name = name.substring("java:".length());
+		if (name.startsWith(prefix)) {
+			name = name.substring(prefix.length());
 			throwErrors = true;
+		} else if (!useWithoutPrefix) {
+			return null;
 		}
 		ExpressionEvaluator evaluator = new ExpressionEvaluator();
 		evaluator.setExpressionType(Object.class);

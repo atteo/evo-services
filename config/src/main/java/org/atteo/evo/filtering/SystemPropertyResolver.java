@@ -16,9 +16,9 @@ package org.atteo.evo.filtering;
 /**
  * Get property value from {@link System#getProperty(String) system properties}.
  */
-public class SystemPropertyResolver implements PropertyResolver {
+public class SystemPropertyResolver extends SimplePropertyResolver {
 	@Override
-	public String getProperty(String name) {
+	public String getProperty(String name) throws PropertyNotFoundException {
 		return System.getProperty(name);
 	}
 }

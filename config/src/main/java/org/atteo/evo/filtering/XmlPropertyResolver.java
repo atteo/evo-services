@@ -41,7 +41,7 @@ import org.w3c.dom.NodeList;
  * property {@code ${a.b.c}} will return 'test' value and property {@code ${a.e.f}} will return 'test2' value.
  * </p>
  */
-public class XmlPropertyResolver implements PropertyResolver {
+public class XmlPropertyResolver extends SimplePropertyResolver {
 	private Element rootElement;
 	private boolean matchRoot;
 
@@ -56,7 +56,15 @@ public class XmlPropertyResolver implements PropertyResolver {
 	}
 
 	@Override
-	public String getProperty(String name) {
+	public String getProperty(String name) throws PropertyNotFoundException {
+		String value = getValue(name);
+		if (value == null) {
+			return null;
+		}
+		return value;
+	}
+
+	private String getValue(String name) {
 		if (rootElement == null) {
 			return null;
 		}

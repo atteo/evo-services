@@ -15,14 +15,15 @@ package org.atteo.evo.filtering;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Properties;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -37,16 +38,15 @@ public class PropertyResolverTest {
 
 	@Test
 	public void env() throws PropertyNotFoundException {
+		if (System.getenv("PATH") != null) {
+			System.out.println("PATH not defined, environment based test skipped");
+		}
 		Filtering.filter("env: ${env.PATH}", new EnvironmentPropertyResolver());
 	}
 
-	@Test
-	public void compound() throws PropertyNotFoundException {
-		PropertyResolver resolver = new CompoundPropertyResolver(
-				new SystemPropertyResolver(),
-				new EnvironmentPropertyResolver());
-
-		Filtering.filter("system: ${testKey}, env: ${env.PATH}", resolver);
+	@Test(expected = PropertyNotFoundException.class)
+	public void envNotFound() throws PropertyNotFoundException {
+		Filtering.filter("env: ${env.ASDFASICSAPWOECM_123}", new EnvironmentPropertyResolver());
 	}
 
 	@Test
@@ -55,22 +55,50 @@ public class PropertyResolverTest {
 		System.setProperty("second", "${first} ${first}");
 		System.setProperty("third", "${first} ${second}");
 
-		PropertyResolver resolver = new RecursivePropertyResolver(new SystemPropertyResolver());
+		PropertyResolver resolver = new SystemPropertyResolver();
 		assertEquals("value value value", Filtering.filter("${third}", resolver));
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void cycle() throws PropertyNotFoundException {
+	@Test
+	public void isRecursionSafe() throws PropertyNotFoundException {
+		Properties properties = new Properties();
+		properties.setProperty("first", "${");
+		properties.setProperty("second", "test}");
+		properties.setProperty("compound", "${first}${second}");
+		PropertyResolver resolver = new PropertiesPropertyResolver(properties);
+		assertEquals("${test}", Filtering.getProperty("compound", resolver));
+	}
+
+	@Test(expected = CircularPropertyResolutionException.class)
+	public void circularRecursion() throws PropertyNotFoundException {
 		System.setProperty("first", "${third}");
 		System.setProperty("second", "${first} ${first}");
 		System.setProperty("third", "${first} ${second}");
 
-		PropertyResolver resolver = new RecursivePropertyResolver(new SystemPropertyResolver());
+		PropertyResolver resolver = new SystemPropertyResolver();
 		Filtering.filter("${third}", resolver);
 	}
 
 	@Test
-	public void xml() throws ParserConfigurationException, SAXException, IOException {
+	public void raw() throws PropertyNotFoundException {
+		PropertyResolver resolver = new RawPropertyResolver();
+		assertEquals("${abc${abc}}abc", Filtering.getProperty("raw:${abc${abc}}abc", resolver));
+	}
+
+	@Test
+	public void oneof() throws PropertyNotFoundException {
+		Properties properties = new Properties();
+		properties.setProperty("second", "value");
+		PropertyResolver propertiesResolver = new PropertiesPropertyResolver(properties);
+		PropertyResolver oneOfResolver = new OneOfPropertyResolver();
+		PropertyResolver resolver = new CompoundPropertyResolver(propertiesResolver, oneOfResolver);
+		assertEquals("value1", Filtering.filter("${oneof:1${abc}2,${second}1}", resolver));
+		assertEquals("value", Filtering.filter("${oneof:${second}}", resolver));
+		assertEquals("xx", Filtering.filter("${oneof:${abc},xx,yy,${cde}}", resolver));
+	}
+
+	@Test
+	public void xml() throws ParserConfigurationException, SAXException, IOException, PropertyNotFoundException {
 		String xml = "<config>"
 				+ "<a value='test'/>"
 				+ "<b>test2</b>"
@@ -85,14 +113,14 @@ public class PropertyResolverTest {
 		Document document = builder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
 
 		PropertyResolver resolver = new XmlPropertyResolver(document.getDocumentElement(), true);
-		assertEquals("test", resolver.getProperty("config.a.value"));
-		assertEquals("test2", resolver.getProperty("config.b"));
-		assertEquals("test3", resolver.getProperty("config.c.d"));
-		assertNull(resolver.getProperty("config.e.f"));
-		assertEquals("test6", resolver.getProperty("config.g.h.i"));
+		assertEquals("test", Filtering.getProperty("config.a.value", resolver));
+		assertEquals("test2", Filtering.getProperty("config.b", resolver));
+		assertEquals("test3", Filtering.getProperty("config.c.d", resolver));
+		assertNull(Filtering.getProperty("config.e.f", resolver));
+		assertEquals("test6", Filtering.getProperty("config.g.h.i", resolver));
 
 		resolver = new XmlPropertyResolver(document.getDocumentElement(), false);
-		assertEquals("test", resolver.getProperty("a.value"));
-		assertEquals("test6", resolver.getProperty("g.h.i"));
+		assertEquals("test", resolver.resolveProperty("a.value", resolver));
+		assertEquals("test6", resolver.resolveProperty("g.h.i", resolver));
 	}
 }

@@ -29,11 +29,10 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.custommonkey.xmlunit.Diff;
+import static org.custommonkey.xmlunit.XMLAssert.assertXMLIdentical;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLIdentical;
 
 public class XmlFilteringTest {
 	@Test
