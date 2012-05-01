@@ -15,10 +15,24 @@
  */
 package org.atteo.evo.shiro;
 
+import org.apache.shiro.realm.Realm;
 import org.atteo.evo.config.Configurable;
 
 import com.google.inject.Module;
 
+/**
+ * Shiro realm service. 
+ * 
+ * <p>
+ * Use the following code to register your {@link Realm} in Guice:
+ * <pre>
+ * {@code
+ *  Multibinder<Realm> multibinder = Multibinder.newSetBinder(binder(), Realm.class);
+ *  multibinder.addBinding().to(...);
+ * }
+ * </pre>
+ * </p>
+ */
 public abstract class ShiroRealm extends Configurable {
 	public abstract Module configure();
 }

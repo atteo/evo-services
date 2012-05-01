@@ -16,8 +16,11 @@
 package org.atteo.evo.config.doclet;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -33,6 +36,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.atteo.evo.config.Configurable;
 import org.atteo.evo.config.XmlDefaultValue;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 import com.sun.javadoc.AnnotationDesc;
@@ -397,16 +401,25 @@ public class ConfigDoclet extends Doclet {
 	}
 
 	private static void updateStyleSheet() {
+		Writer writer = null;
 		try {
-			FileWriter writer = new FileWriter("stylesheet.css", true);
+			writer = new OutputStreamWriter(new FileOutputStream("stylesheet.css", true),
+					Charsets.UTF_8);
 			writer.write("\n");
 			writer.write(".keyword {font-weight: bold !important;color: #006699 !important;}\n");
 			writer.write(".syntaxhighlighter {font-family: \"Consolas\", \"Bitstream Vera Sans Mono\", \"Courier New\", Courier, monospace !important;}\n");
 			writer.write(".syntaxhighlighter a:hover {text-decoration:underline;}\n");
 			writer.write(".syntaxhighlighter p {margin: 0px;}\n");
-			writer.close();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
 		}
 	}
 

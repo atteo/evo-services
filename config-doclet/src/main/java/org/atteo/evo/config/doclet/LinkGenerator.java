@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.PackageDoc;
@@ -52,7 +53,7 @@ public class LinkGenerator {
 		try {
 			packageListUri = new URI(url + "/package-list");
 			InputStream stream = packageListUri.toURL().openStream();
-			for (String line : CharStreams.readLines(new InputStreamReader(stream))) {
+			for (String line : CharStreams.readLines(new InputStreamReader(stream, Charsets.UTF_8))) {
 				String packageName = line.trim();
 				if (packageName.isEmpty()) {
 					continue;

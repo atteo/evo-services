@@ -15,8 +15,9 @@ package org.atteo.evo.services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,6 @@ import org.atteo.evo.filtering.CompoundPropertyResolver;
 import org.atteo.evo.filtering.EnvironmentPropertyResolver;
 import org.atteo.evo.filtering.PropertiesPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
-import org.atteo.evo.filtering.SimplePropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
 import org.atteo.evo.filtering.XmlPropertyResolver;
 import org.atteo.evo.injection.InjectMembersModule;
@@ -40,6 +40,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.google.common.base.Charsets;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -200,11 +201,14 @@ public class Services extends GuiceServletContextListener {
 				configuration.generateSchema(new File(applicationHome, schemaFileName));
 
 				if (!configurationFile.exists()) {
-					Writer writer = new FileWriter(configurationFile);
-					writer.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-							+ " xsi:noNamespaceSchemaLocation=\"" + schemaFileName
-							+ "\">\n</config>\n");
-					writer.close();
+					Writer writer = new OutputStreamWriter(new FileOutputStream(configurationFile), Charsets.UTF_8);
+					try {
+						writer.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+								+ " xsi:noNamespaceSchemaLocation=\"" + schemaFileName
+								+ "\">\n</config>\n");
+					} finally {
+						writer.close();
+					}
 				}
 
 				configurationStream = new FileInputStream(configurationFile);
@@ -287,6 +291,7 @@ public class Services extends GuiceServletContextListener {
 			}
 			logger.info("Done");
 		} catch (Exception e) {
+			// TODO: try to always throw exception
 			if (!throwErrors) {
 				logger.error("Stopping due to the fatal error", e);
 			}

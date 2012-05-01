@@ -24,7 +24,7 @@ package org.atteo.evo.filtering;
  * </p>
  */
 public class EnvironmentPropertyResolver extends SimplePropertyResolver {
-	private final String prefix = "env.";
+	private final static String prefix = "env.";
 
 	public EnvironmentPropertyResolver() {
 		filterResult = false;
