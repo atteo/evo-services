@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.realm.SimpleAccountRealm;
 import org.atteo.evo.shiro.ShiroRealm;
 
 import com.google.inject.AbstractModule;
@@ -40,10 +39,10 @@ public class SimpleRealm extends ShiroRealm {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				SimpleAccountRealm realm = new SimpleAccountRealm();
+				AdminSimpleAccountRealm realm = new AdminSimpleAccountRealm();
 				if (accounts != null) {
 					for (Account account : accounts) {
-						realm.addAccount(account.getUsername(), account.getPassword(),
+						realm.addAccount(account.getUsername(), account.getPassword(), account.isAdministrator(),
 								account.getRoles().toArray(new String[0]));
 					}
 				}

@@ -20,6 +20,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
+import org.atteo.evo.config.XmlDefaultValue;
+
 public class Account {
 	@XmlElement
 	private String username;
@@ -27,6 +29,10 @@ public class Account {
 	@XmlElement
 	private String password;
 
+	@XmlElement
+	@XmlDefaultValue("false")
+	private Boolean administrator;
+	
 	@XmlElementWrapper(name = "roles")
 	@XmlElement(name = "role")
 	private List<String> roles;
@@ -41,5 +47,9 @@ public class Account {
 
 	public String getUsername() {
 		return username;
+	}
+
+	public boolean isAdministrator() {
+		return administrator;
 	}
 }

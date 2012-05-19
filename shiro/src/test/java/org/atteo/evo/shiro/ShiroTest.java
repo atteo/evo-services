@@ -45,6 +45,7 @@ public class ShiroTest {
 	public void login() {
 		SecurityUtils.getSubject().login(new UsernamePasswordToken("admin", "admin"));
 		assertTrue(SecurityUtils.getSubject().hasRole("admin"));
+		assertTrue(SecurityUtils.getSubject().isPermitted("some_permission"));
 	}
 
 	@Test(expected = AuthenticationException.class)

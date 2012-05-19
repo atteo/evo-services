@@ -11,6 +11,7 @@
 						<roles>
 							<role>admin</role>
 						</roles>
+						<administrator>true</administrator>
 					</account>
 				</accounts>
 			</simple>
