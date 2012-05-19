@@ -376,6 +376,23 @@ public class Configuration {
 				for (Field f : klass.getDeclaredFields()) {
 					XmlDefaultValue defaultValue = f.getAnnotation(XmlDefaultValue.class);
 					if (defaultValue != null) {
+						if (f.getType().isPrimitive()) {
+							throw new RuntimeException("@XmlDefaultValue cannot be specified on primitive type: "
+									+ klass.getCanonicalName() + "." + f.getName());
+						}
+
+						boolean accessible = f.isAccessible();
+						f.setAccessible(true);
+						try {
+							if (f.get(object) != null) {
+								continue;
+							}
+						} catch (IllegalArgumentException e) {
+							throw new RuntimeException(e);
+						} catch (IllegalAccessException e) {
+							throw new RuntimeException(e);
+						}
+
 						String value = defaultValue.value();
 						try {
 							value = Filtering.filter(value, properties);
@@ -398,8 +415,6 @@ public class Configuration {
 							throw new RuntimeException(e);
 						}
 
-						boolean accessible = f.isAccessible();
-						f.setAccessible(true);
 						try {
 							f.set(object, v);
 						} catch (IllegalArgumentException e) {
@@ -407,7 +422,6 @@ public class Configuration {
 						} catch (IllegalAccessException e) {
 							throw new RuntimeException(e);
 						}
-
 						f.setAccessible(accessible);
 					}
 				}

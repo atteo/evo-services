@@ -76,15 +76,15 @@ public class Atomikos extends TopLevelService {
 
 	@XmlElement
 	@XmlDefaultValue("1")
-	private int consoleFileCount;
+	private Integer consoleFileCount;
 
 	@XmlElement
 	@XmlDefaultValue("10485760") // 10MB
-	private int consoleFileSizeLimit;
+	private Integer consoleFileSizeLimit;
 
 	@XmlElement
 	@XmlDefaultValue("60")
-	private int transactionTimeout;
+	private Integer transactionTimeout;
 
 	private UserTransactionManager manager;
 	private UserTransactionServiceImp service;

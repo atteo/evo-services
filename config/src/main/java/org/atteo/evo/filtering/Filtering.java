@@ -139,7 +139,8 @@ public class Filtering {
 				if (value.charAt(endposition) == '$') {
 					lastDollar = true;
 					continue;
-				} else if (value.charAt(endposition) == '{') {
+				}
+				if (value.charAt(endposition) == '{') {
 					if (lastDollar) {
 						count++;
 					} else {

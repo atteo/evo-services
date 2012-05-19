@@ -30,7 +30,7 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 
 @XmlRootElement(name = "simple")
-public class SimpleAccountShiroRealm extends ShiroRealm {
+public class SimpleRealm extends ShiroRealm {
 	@XmlElementWrapper(name = "accounts")
 	@XmlElement(name = "account")
 	private List<Account> accounts;

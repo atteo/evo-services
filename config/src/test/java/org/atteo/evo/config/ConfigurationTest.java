@@ -17,8 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class ConfigurationTest {
@@ -150,12 +149,15 @@ public class ConfigurationTest {
 				+ "<entry>"
 				+ "<intValue/>"
 				+ "<intValue2/>"
+				+ "<intValue4>4</intValue4>"
 				+ "</entry>"
 				+ "</topLevel>";
 		TopLevel result = parse(config, config);
 		assertEquals(5, result.entries.get(0).getIntValue());
 		assertEquals(5, result.entries.get(0).getIntValue2());
 		assertEquals(5, result.entries.get(0).getIntValue3());
+		assertEquals(4, result.entries.get(0).getIntValue4());
+		assertEquals(true, result.entries.get(0).getBooleanValue());
 	}
 
 	private TopLevel parse(String parent, String child) throws IOException,

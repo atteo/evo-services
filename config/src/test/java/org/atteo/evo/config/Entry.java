@@ -29,7 +29,15 @@ public class Entry extends Configurable {
 
 	@XmlElement
 	@XmlDefaultValue("${intValue}")
-	int intValue3;
+	Integer intValue3;
+
+	@XmlElement
+	@XmlDefaultValue("5")
+	Integer intValue4;
+
+	@XmlElement
+	@XmlDefaultValue("true")
+	Boolean booleanValue;
 
 	public String getValue() {
 		return value;
@@ -45,5 +53,13 @@ public class Entry extends Configurable {
 
 	public int getIntValue3() {
 		return intValue3;
+	}
+
+	public int getIntValue4() {
+		return intValue4;
+	}
+
+	public Boolean getBooleanValue() {
+		return booleanValue;
 	}
 }
