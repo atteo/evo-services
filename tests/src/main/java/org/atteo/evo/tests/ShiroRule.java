@@ -22,9 +22,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import com.google.inject.servlet.ServletScopes;
-
-
 /**
  * With this rule added each test is executed within the scope of new Subject.
  */

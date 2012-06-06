@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
+	<jta/>
+	<atomikos/>
+	<databases>
+		<h2/>
+	</databases>
+	<hibernate>
+		<initSchema>create</initSchema>
+	</hibernate>
+	<migrations/>
 	<shiro>
 		<realms>
 			<simple>
@@ -15,6 +24,7 @@
 					</account>
 				</accounts>
 			</simple>
+			<database/>
 		</realms>
 	</shiro>
 </config>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="testLoginRealm" author="">
+		<insert tableName="Account">
+			<column name="login" value="joey" />
+			<column name="salt" value="4719b6bd5366575568e170c7ccdf72c2f93229f594beab0f762506f88f19568e766adfee63a945782687e46eb4128da15cdcb8b25e801845083363d58475a9ad7dcc99e2bb1674618a145440618965ce0ec19d40d928535c992d34d42d058ad9b769cf958389696b4d5f3e12ef0748dda75dd1b1a1cae84ebe86ef370090ff03" />
+			<column name="hashedpassword" value="7d45247970b4dc56a7ab0682436f8e8c28cc6b44c1f11bc078ea489d558112dd" />
+		</insert>
+	</changeSet>
+
+</databaseChangeLog> 

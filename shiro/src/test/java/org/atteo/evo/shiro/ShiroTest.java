@@ -19,10 +19,15 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.atteo.evo.tests.ServicesTest;
+import org.atteo.evo.tests.ShiroRule;
 import static org.junit.Assert.assertTrue;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class ShiroTest extends ServicesTest {
+	@Rule
+	public ShiroRule shiro = new ShiroRule();
+
 	@Test
 	public void trivial() {
 	}
