@@ -48,6 +48,7 @@
 		<module>database</module>
 		<module>firebuglogger</module>
 		<module>h2</module>
+		<module>jpa</module>
 		<module>hibernate</module>
 		<module>hibernate-search</module>
 		<module>hornetq</module>

@@ -16,10 +16,8 @@ package org.atteo.evo.jta;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.evo.services.TopLevelService;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.ServletModule;
