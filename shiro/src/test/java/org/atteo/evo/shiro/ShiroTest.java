@@ -18,25 +18,11 @@ package org.atteo.evo.shiro;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.atteo.evo.tests.ServicesRule;
-import org.atteo.evo.tests.ShiroRule;
-import org.junit.After;
+import org.atteo.evo.tests.ServicesTest;
 import static org.junit.Assert.assertTrue;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.RuleChain;
-import org.junit.rules.TestRule;
 
-public class ShiroTest {
-	@Rule
-	public TestRule chain = RuleChain.outerRule(new ServicesRule(this))
-			.around(new ShiroRule());
-	
-	@After
-	public void tearDown() {
-		SecurityUtils.getSubject().logout();
-	}
-
+public class ShiroTest extends ServicesTest {
 	@Test
 	public void trivial() {
 	}

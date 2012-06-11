@@ -19,5 +19,5 @@ import org.junit.Rule;
 
 public class H2Test extends DatabaseTest {
 	@Rule
-	public ServicesRule rule = new ServicesRule(this, "/test-config.xml");
+	public static ServicesRule rule = new ServicesRule("/test-config.xml");
 }

@@ -15,18 +15,10 @@ package org.atteo.evo.migrations;
 
 import javax.inject.Inject;
 
-import org.atteo.evo.tests.RequestRule;
-import org.atteo.evo.tests.ServicesRule;
-import org.junit.Rule;
+import org.atteo.evo.tests.ServicesTest;
 import org.junit.Test;
 
-public class TestMigrations {
-	@Rule
-	public ServicesRule servicesRule = new ServicesRule(this, "/test-config.xml");
-
-	@Rule
-	public RequestRule requestRule = new RequestRule();
-
+public class TestMigrations extends ServicesTest {
 	@Inject
 	private Migrations migrations;
 	

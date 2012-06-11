@@ -27,18 +27,11 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.atteo.evo.tests.ServicesRule;
-
-import org.junit.Rule;
+import org.atteo.evo.tests.ServicesTest;
+import static org.junit.Assert.*;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-public class HornetQTest {
-	@Rule
-	public ServicesRule services = new ServicesRule(this);
-
+public class HornetQTest extends ServicesTest {
 	@Inject
 	private ConnectionFactory connectionFactory;
 

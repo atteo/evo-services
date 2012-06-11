@@ -22,19 +22,15 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.atteo.evo.tests.ServicesRule;
+import org.atteo.evo.tests.ServicesTest;
 import static org.junit.Assert.assertEquals;
-import org.junit.Rule;
 import org.junit.Test;
 
 import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 
-public class MBeanTest {
-	@Rule
-	public ServicesRule services = new ServicesRule(this);
-
+public class MBeanTest extends ServicesTest {
 	@Test
 	public void getData() throws IOException, MalformedObjectNameException {
 		JMXConnector connector = JMXConnectorFactory.connect(getServiceUrl(getVirtualMachinePid()));

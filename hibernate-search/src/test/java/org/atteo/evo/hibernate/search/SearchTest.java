@@ -24,21 +24,17 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.lucene.search.Query;
 import org.atteo.evo.jta.Transaction;
-import org.atteo.evo.tests.ServicesRule;
+import org.atteo.evo.tests.ServicesTest;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
 import com.google.inject.Inject;
 
-public class SearchTest {
-	@Rule
-	public ServicesRule services = new ServicesRule(this);
-	
+public class SearchTest extends ServicesTest {
 	@Inject
 	private EntityManagerFactory factory;
 

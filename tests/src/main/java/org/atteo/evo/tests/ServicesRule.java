@@ -17,19 +17,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.atteo.evo.services.Service;
 import org.atteo.evo.services.Services;
+import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
-import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
-import org.junit.runners.model.TestClass;
 import static org.mockito.Mockito.mock;
 
 import com.google.inject.Binder;
@@ -43,13 +42,7 @@ import com.google.inject.servlet.GuiceFilter;
  *
  * <p>
  * The {@link Services} engine will be initialized with the specified configuration
- * file. All {@link Service services} will be started and the test class itself
- * will be registered for members injection.
- * </p>
- * <p>
- * In addition any field marked with {@link Mock} annotation will be initialized
- * with the mocked object. If also marked with {@link Inject}
- * then the mocked object will be registered as an instance binding in Guice injector.
+ * file. All {@link Service services} will be started.
  * </p>
  * <p>
  * Any method marked with {@link Bindings} annotation will executed with {@link Binder}
@@ -59,7 +52,6 @@ import com.google.inject.servlet.GuiceFilter;
 public class ServicesRule implements TestRule {
 	private String config;
 	private Services services;
-	private Object target;
 
 	/**
 	 * Initializes {@link Services} environment from "/test-config.xml" configuration file.
@@ -68,36 +60,31 @@ public class ServicesRule implements TestRule {
 	 * <pre>
 	 * {@code
 	 * class Test {
-	 *     private ServicesRule services = new ServicesRule(this);
+	 *     private static ServicesRule services = new ServicesRule();
 	 * }
 	 * }
 	 * </pre>
 	 * </p>
-	 * 
-	 * @param target object of the executed test, usually just 'this'
 	 */
-	public ServicesRule(Object target) {
-		this.target = target;
+	public ServicesRule() {
 	}
 
 	/**
 	 * Initializes {@link Services} environment from given configuration file.
 	 *
-	 * @param target object of the executed test, usually just 'this'
 	 * @param config
 	 *            resource path to the configuration file
 	 */
-	public ServicesRule(Object target, String config) {
-		this.target = target;
+	public ServicesRule(String config) {
 		this.config = config;
 	}
 
 	@Override
-	public Statement apply(final Statement base, Description method) {
+	public Statement apply(final Statement base, final Description method) {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				configure();
+				configure(method.getTestClass());
 				try {
 					base.evaluate();
 				} finally {
@@ -107,44 +94,45 @@ public class ServicesRule implements TestRule {
 		};
 	}
 
-	private void configure() {
-		TestClass testClass = new TestClass(target.getClass());
-		final List<FrameworkMethod> bindingsMethods = testClass.getAnnotatedMethods(Bindings.class);
-
+	private void configure(final Class<?> klass) {
 		Module bindingsModule = new Module() {
 			@Override
 			public void configure(Binder binder) {
-				for (int i = 0; i < bindingsMethods.size(); i++) {
-					FrameworkMethod method = bindingsMethods.get(i);
-					method.getMethod().setAccessible(true);
+				for (Method method : klass.getMethods()) {
+					if (!method.isAnnotationPresent(Bindings.class)) {
+						continue;
+					}
+					if (!Modifier.isStatic(method.getModifiers())) {
+						throw new RuntimeException("Method annotated with @Bindings annotation must be static");
+					}
+					if (method.getParameterTypes().length != 1 || method.getParameterTypes()[0] != Binder.class) {
+						throw new RuntimeException("Method annotated with @Bindings must have exactly"
+								+ " one argument of type com.google.inject.Binder");
+					}
+					
+					method.setAccessible(true);
 					try {
-						method.invokeExplosively(target, binder);
-					} catch (Throwable e) {
+						method.invoke(null, binder);
+					} catch (IllegalAccessException e) {
+						throw new RuntimeException(e);
+					} catch (IllegalArgumentException e) {
+						throw new RuntimeException(e);
+					} catch (InvocationTargetException e) {
 						throw new RuntimeException(e);
 					}
 				}
 			}
 		};
 
-		Class<?> klass = target.getClass();
 		final Map<Class<?>, Object> mocks = new HashMap<Class<?>, Object>();
 		final Field fields[] = klass.getDeclaredFields();
 
 		for (final Field field : fields) {
-			if (field.isAnnotationPresent(Mock.class)) {
-				final Object m = mock(field.getType());
-				if (field.isAnnotationPresent(Inject.class)
-						|| field.isAnnotationPresent(javax.inject.Inject.class)) {
-					mocks.put(field.getType(), m);
-				}
-				field.setAccessible(true);
-				try {
-					field.set(target, m);
-				} catch (final IllegalArgumentException e) {
-					throw new RuntimeException(e);
-				} catch (final IllegalAccessException e) {
-					throw new RuntimeException(e);
-				}
+			if (field.isAnnotationPresent(Mock.class)
+					&& (field.isAnnotationPresent(javax.inject.Inject.class)
+					|| field.isAnnotationPresent(Inject.class))) {
+				Object object = mock(field.getType());
+				mocks.put(field.getType(), object);
 			}
 		}
 
@@ -153,23 +141,22 @@ public class ServicesRule implements TestRule {
 			@Override
 			public void configure(final Binder binder) {
 				// TODO: add support for binding annotated objects
-				final Set<Class<?>> keys = mocks.keySet();
-				final Iterator<Class<?>> i = keys.iterator();
-				while (i.hasNext()) {
-					final Class<?> klass = i.next();
+				for (Class<?> klass : mocks.keySet()) {
 					@SuppressWarnings("rawtypes")
 					final TypeLiteral t = TypeLiteral.get(klass);
-					final Object o = mocks.get(klass);
-					binder.bind(t).toInstance(o);
+					final Object object = mocks.get(klass);
+					binder.bind(t).toInstance(object);
 				}
+
+				binder.requestStaticInjection(klass);
 			}
 		};
 
 		InputStream stream;
 		if (config != null) {
-			stream = target.getClass().getResourceAsStream(config);
+			stream = klass.getResourceAsStream(config);
 		} else {
-			stream = target.getClass().getResourceAsStream("/test-config.xml");
+			stream = klass.getResourceAsStream("/test-config.xml");
 		}
 
 		if (stream == null && config != null) {
@@ -190,10 +177,6 @@ public class ServicesRule implements TestRule {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
-		if (services.injector() != null) {
-			services.injector().injectMembers(target);
-		}
 	}
 
 	private void deconfigure() {
@@ -202,5 +185,9 @@ public class ServicesRule implements TestRule {
 		}
 		// Workaround for the WARNING: Multiple Servlet injectors detected.
 		new GuiceFilter().destroy();
+	}
+
+	public Services getServices() {
+		return services;
 	}
 }

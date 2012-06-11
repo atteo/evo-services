@@ -75,7 +75,7 @@ public class HornetQ extends TopLevelService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(ConnectionFactory.class).toProvider(new ConnectionFactoryProvider());
+				bind(ConnectionFactory.class).toProvider(new ConnectionFactoryProvider()).in(Singleton.class);
 			}
 		};
 	}

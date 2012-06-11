@@ -13,14 +13,10 @@
  */
 package org.atteo.evo.atomikos;
 
-import org.atteo.evo.tests.ServicesRule;
-import org.junit.Rule;
+import org.atteo.evo.tests.ServicesTest;
 import org.junit.Test;
 
-public class AtomikosTest {
-	@Rule
-	public ServicesRule services = new ServicesRule(this, "/test-config.xml");
-
+public class AtomikosTest extends ServicesTest {
 	@Test
 	public void trivial() {
 	}

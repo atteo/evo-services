@@ -24,26 +24,12 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.atteo.evo.jta.Transaction;
-import org.atteo.evo.tests.RequestRule;
-import org.atteo.evo.tests.ServicesRule;
+import org.atteo.evo.tests.ServicesTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 
-public class TestHibernate {
-	@Rule
-	public ServicesRule servicesRule = new ServicesRule(this, "/test-config.xml");
-
-	@Rule
-	public RequestRule requestRule = new RequestRule();
-
-	@Before
-	public void migrate() {
-		// TODO
-	}
-
+public class TestHibernate extends ServicesTest {
 	@Inject
 	private UserTransaction transaction;
 
@@ -52,7 +38,6 @@ public class TestHibernate {
 	
 	@Test
 	public void testSaves() {
-
 		final User u = new User();
 		Transaction.require(new Transaction.Runnable() {
 			@Override
@@ -88,7 +73,7 @@ public class TestHibernate {
 			HeuristicMixedException, HeuristicRollbackException {
 		EntityManager manager = factory.createEntityManager();
 		User u = new User();
-		u.setId(7);
+		u.setId(8);
 		u.setName("frank");
 		manager.persist(u);
 		int id = u.getId();
