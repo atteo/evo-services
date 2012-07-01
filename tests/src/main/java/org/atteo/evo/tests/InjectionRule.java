@@ -17,7 +17,6 @@ package org.atteo.evo.tests;
 
 import java.lang.reflect.Field;
 
-import org.atteo.evo.services.Services;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -33,7 +32,7 @@ import com.google.inject.Inject;
  * {@code
  * class Test {
  *     private static ServicesRule services = new ServicesRule();
- *     private InjectionRule injections = new InjectionRule(this, services.getServices());
+ *     private InjectionRule injections = new InjectionRule(this, services);
  * }
  * }
  * </pre>
@@ -45,22 +44,21 @@ import com.google.inject.Inject;
  */
 public class InjectionRule implements TestRule {
 	private Object target;
-	private Services services;
+	private ServicesRule servicesRule;
 	private boolean injectMembers = true;
 
 	/**
 	 * 
 	 * @param target object of the executed test, usually just 'this'
 	 */
-	public InjectionRule(Object target, Services services) {
+	public InjectionRule(Object target, ServicesRule servicesRule) {
 		this.target = target;
-		this.services = services;
+		this.servicesRule = servicesRule;
 	}
 
 	/**
 	 * Internal. Called by {@link ServicesRunner}.
 	 * @param target object of th executed test
-	 * @param services
 	 */
 	InjectionRule(Object target) {
 		this.target = target;
@@ -97,9 +95,10 @@ public class InjectionRule implements TestRule {
 		}
 
 		if (injectMembers) {
-			if (services.injector() != null) {
-				services.injector().injectMembers(target);
+			if (servicesRule.getServices().injector() != null) {
+				servicesRule.getServices().injector().injectMembers(target);
 			}
 		}
 	}
 }
+
