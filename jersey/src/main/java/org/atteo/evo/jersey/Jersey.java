@@ -31,13 +31,16 @@ import com.sun.jersey.core.util.FeaturesAndProperties;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
+/**
+ * Start Jersey JAX-RS implementation. 
+ */
 @XmlRootElement(name = "jersey")
 public class Jersey extends TopLevelService {
 	/**
-	 * Path under which Jersey should be registered.
+	 * Prefix under which JAX-RS resources should be registered.
 	 */
 	@XmlElement
-	private String path = "/*";
+	private String prefix = "/";
 
 	/**
 	 * Automatically register in Jersey any class marked with
@@ -63,7 +66,8 @@ public class Jersey extends TopLevelService {
 				if (formatOutput) {
 					params.put(FeaturesAndProperties.FEATURE_FORMATTED, "true");
 				}
-				filter(path).through(GuiceContainer.class, params);
+				params.put(ServletContainer.PROPERTY_FILTER_CONTEXT_PATH, prefix);
+				filter(prefix + "/*").through(GuiceContainer.class, params);
 
 				if (discoverResources) {
 					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {

@@ -16,6 +16,7 @@ package org.atteo.evo.jta;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.evo.services.TopLevelService;
 
 import com.google.inject.Module;
@@ -41,6 +42,13 @@ public class Jta extends TopLevelService {
 	@XmlElement
 	private boolean registerWebFilter = false;
 
+	/**
+	 * Filter pattern matching urls for which {@link JtaFilter} will be registered.
+	 */
+	@XmlElement
+	@XmlDefaultValue("/*")
+	private String filterPattern;
+
 	@Override
 	public Module configure() {
 		return new ServletModule() {
@@ -52,7 +60,7 @@ public class Jta extends TopLevelService {
 				bindInterceptor(Matchers.annotatedWith(Transactional.class), Matchers.any(), interceptor);
 
 				if (registerWebFilter) {
-					filter("/*").through(JtaFilter.class);
+					filter(filterPattern).through(JtaFilter.class);
 				}
 			}
 		};

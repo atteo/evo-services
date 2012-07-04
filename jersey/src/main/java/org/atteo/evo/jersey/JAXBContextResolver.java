@@ -35,7 +35,7 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
 		try {
 			context = new JSONJAXBContext(JSONConfiguration.natural().usePrefixesAtNaturalAttributes()
-					.rootUnwrapping(false).build(),
+					.rootUnwrapping(true).build(),
 					Iterables.toArray(ClassIndex.getAnnotated(ResourceModel.class), Class.class));
 		} catch (JAXBException e) {
 			throw new RuntimeException(e);

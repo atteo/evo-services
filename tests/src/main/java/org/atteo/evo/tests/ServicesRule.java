@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.atteo.evo.services.Service;
 import org.atteo.evo.services.Services;
-import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -38,8 +37,18 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceFilter;
 
 /**
- * JUnit {@link MethodRule rule} which initializes {@link Services} environment.
+ * JUnit {@link TestRule rule} which initializes {@link Services} environment.
  *
+ * <pre>
+ * {@code
+ * class Test {
+ *     @ClassRule
+ *     private static ServicesRule services = new ServicesRule();
+ *     @Rule
+ *     private InjectionRule injections = new InjectionRule(this, services);
+ * }
+ * }
+ * </pre>
  * <p>
  * The {@link Services} engine will be initialized with the specified configuration
  * file. All {@link Service services} will be started.

@@ -31,7 +31,9 @@ import com.google.inject.Inject;
  * <pre>
  * {@code
  * class Test {
+ *     @ClassRule
  *     private static ServicesRule services = new ServicesRule();
+ *     @Rule
  *     private InjectionRule injections = new InjectionRule(this, services);
  * }
  * }
