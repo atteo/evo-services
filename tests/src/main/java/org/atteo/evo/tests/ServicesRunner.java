@@ -35,8 +35,13 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected List<TestRule> classRules() {
+		if (getTestClass().getJavaClass().isAnnotationPresent(ServicesConfigurationFile.class))
+			servicesRule = new ServicesRule(getTestClass().getJavaClass()
+					.getAnnotation(ServicesConfigurationFile.class).value());
+		else
+			servicesRule = new ServicesRule();
+
 		List<TestRule> rules = super.classRules();
-		servicesRule = new ServicesRule();
 		rules.add(servicesRule);
 		return rules;
 	}
