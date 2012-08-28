@@ -26,6 +26,8 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.ResourceAccessor;
 
 public class Migrations {
+	private static final String BEFORE_LAST_UPDATE = "BEFORE_LAST_UPDATE";
+	
 	private DataSource dataSource;
 
 	Migrations(DataSource dataSource) {
@@ -37,14 +39,14 @@ public class Migrations {
 	}
 
 	public void migrate(String changelog, String contexts) {
-		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor(this.getClass()
-				.getClassLoader());
+		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
 		DatabaseConnection databaseConnection = null;
 
 		try {
 			databaseConnection = new JdbcConnection(dataSource.getConnection());
 			Liquibase liquibase = new Liquibase(changelog, resourceAccessor, databaseConnection);
+			liquibase.tag(BEFORE_LAST_UPDATE);
 			liquibase.update(contexts);
 		} catch (LiquibaseException e) {
 			throw new RuntimeException(e);
@@ -59,10 +61,40 @@ public class Migrations {
 			}
 		}
 	}
+	
+	public void rollbackLastUpdate(String changelog) {
+		rollback(changelog, null, BEFORE_LAST_UPDATE);
+	}
+	
+	public void rollbackLastUpdate(String changelog, String contexts) {
+		rollback(changelog, contexts, BEFORE_LAST_UPDATE) ;
+	}
+	
+	private void rollback(String changelog, String contexts, String tag) {
+		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
+		DatabaseConnection databaseConnection = null;
+
+		try {
+			databaseConnection = new JdbcConnection(dataSource.getConnection());
+			Liquibase liquibase = new Liquibase(changelog, resourceAccessor, databaseConnection);
+			liquibase.rollback(tag, contexts);
+		} catch (LiquibaseException e) {
+			throw new RuntimeException(e);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				if (databaseConnection != null && !databaseConnection.isClosed())
+					databaseConnection.close();
+			} catch (DatabaseException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
 	public void dropAll() {
-		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor(this.getClass()
-				.getClassLoader());
+		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
 		DatabaseConnection databaseConnection = null;
 

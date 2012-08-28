@@ -62,7 +62,13 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>evo-tests</artifactId>
+			<artifactId>evo-tests-services</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>evo-tests-shiro</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>

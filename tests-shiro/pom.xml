@@ -6,21 +6,13 @@
 		<artifactId>evo-framework</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>evo-tests</artifactId>
-	<name>Evo Test Utilities</name>
+	<artifactId>evo-tests-shiro</artifactId>
+	<name>Evo Shiro Test Utilities</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>evo-services</artifactId>
 			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sonatype.sisu</groupId>
-			<artifactId>sisu-guice</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.sonatype.sisu.inject</groupId>
-			<artifactId>guice-servlet</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
@@ -29,10 +21,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
 		</dependency>
 	</dependencies>
 </project>

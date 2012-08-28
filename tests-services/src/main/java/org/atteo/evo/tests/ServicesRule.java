@@ -13,6 +13,8 @@
  */
 package org.atteo.evo.tests;
 
+import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +30,6 @@ import org.atteo.evo.services.Services;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import static org.mockito.Mockito.mock;
 
 import com.google.inject.Binder;
 import com.google.inject.Inject;
@@ -104,6 +105,13 @@ public class ServicesRule implements TestRule {
 	}
 
 	private void configure(final Class<?> klass) {
+		Module testClassModule = new Module() {
+			@Override
+			public void configure(Binder binder) {
+				binder.bind(klass);
+			}
+		};
+		
 		Module bindingsModule = new Module() {
 			@Override
 			public void configure(Binder binder) {
@@ -174,6 +182,7 @@ public class ServicesRule implements TestRule {
 
 		// TODO: where to get those paths from?
 		services = new Services(new File("target/test-home/"), new File("src/main/webapp/"), stream);
+		services.addModule(testClassModule);
 		services.addModule(bindingsModule);
 		services.addModule(mocksModule);
 		services.setThrowErrors(true);
