@@ -38,9 +38,11 @@ public class JaxbBindings {
 		void run(Element element, Object object, @Nullable Field field);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private Binder binder;
 	private Runnable runnable;
 
+	@SuppressWarnings("rawtypes")
 	private JaxbBindings(Binder binder, Runnable runnable) {
 		this.binder = binder;
 		this.runnable = runnable;
@@ -52,7 +54,9 @@ public class JaxbBindings {
 	 * @param binder binder with the binding info
 	 * @param runnable runnable to run for each {@link Element}/{@link Object} pair.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void iterate(Element root, Binder binder, Runnable runnable) {
+		@SuppressWarnings("unchecked")
 		Object object = binder.getJAXBNode(root);
 		JaxbBindings bindRecurse = new JaxbBindings(binder, runnable);
 		try {
@@ -73,6 +77,7 @@ public class JaxbBindings {
 				continue;
 			}
 			Element e = (Element) node;
+			@SuppressWarnings("unchecked")
 			Object child = binder.getJAXBNode(node);
 			Field f;
 			if (child != null) {

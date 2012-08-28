@@ -15,6 +15,7 @@
  */
 package org.atteo.evo.filtering;
 
+@SuppressWarnings("serial")
 public class CircularPropertyResolutionException extends RuntimeException {
 	public CircularPropertyResolutionException(String property) {
 		super("Property resolution depends recursively on itself: " + property);

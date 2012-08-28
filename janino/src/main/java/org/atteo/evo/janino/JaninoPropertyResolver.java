@@ -22,8 +22,6 @@ import org.atteo.evo.filtering.PropertyResolver;
 import org.codehaus.janino.ExpressionEvaluator;
 import org.codehaus.janino.util.LocatedException;
 
-import sun.misc.Perf;
-
 /**
  * Java expression evaluation {@link PropertyResolver}.
  *

@@ -17,7 +17,6 @@ package org.atteo.evo.config.doclet;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -281,6 +280,7 @@ public class ConfigDoclet extends Doclet {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private static <T> T getAnnotationElementValue(AnnotationDesc annotation, String elementName) {
 		for (ElementValuePair pair : annotation.elementValues()) {
 			AnnotationTypeElementDoc annotationElement;

@@ -62,7 +62,6 @@ public class GuiceBindings implements DynamicMBean {
 
 		for (Entry<Key<?>, Binding<?>> entry : injector.getAllBindings().entrySet()) {
 			Key<?> key = entry.getKey();
-			Binding<?> binding = entry.getValue();
 
 			list.add(new Attribute(key.toString(), key));
 		}
@@ -86,7 +85,6 @@ public class GuiceBindings implements DynamicMBean {
 		int i = 0;
 		for (Entry<Key<?>, Binding<?>> entry : injector.getAllBindings().entrySet()) {
 			Key<?> key = entry.getKey();
-			Binding<?> binding = entry.getValue();
 			attributes[i] = new MBeanAttributeInfo(key.toString(), "java.lang.String",
 					"Key " + key.toString(), true, false, false);
 			i++;

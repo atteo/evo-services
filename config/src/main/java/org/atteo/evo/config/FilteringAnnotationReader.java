@@ -32,8 +32,8 @@ import com.sun.xml.bind.v2.model.annotation.RuntimeInlineAnnotationReader;
 import com.sun.xml.bind.v2.model.core.ErrorHandler;
 
 /**
- * Custom JAXB annotation reader which filters {@link XmlElement} {@link XmlElement#defaultValue() default values}
- * with properties.
+ * Custom JAXB annotation reader which filters {@link XmlElement}
+ * {@link XmlElement#defaultValue() default values} with properties.
  */
 public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 	private RuntimeAnnotationReader delegate = new RuntimeInlineAnnotationReader();
@@ -53,7 +53,8 @@ public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 	}
 
 	@Override
-	public <A extends Annotation> A getFieldAnnotation(Class<A> annotation, Field field, Locatable srcpos) {
+	public <A extends Annotation> A getFieldAnnotation(Class<A> annotation, Field field,
+			Locatable srcpos) {
 		A original = delegate.getFieldAnnotation(annotation, field, srcpos);
 		if (annotation == XmlElement.class) {
 			final XmlElement xmlElement = (XmlElement) original;
@@ -97,6 +98,7 @@ public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 					return defaultValue;
 				}
 
+				@SuppressWarnings("rawtypes")
 				@Override
 				public Class type() {
 					return xmlElement.type();
@@ -116,6 +118,7 @@ public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 		return delegate.hasFieldAnnotation(annotationType, field);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean hasClassAnnotation(Class clazz, Class<? extends Annotation> annotationType) {
 		return delegate.hasClassAnnotation(clazz, annotationType);
@@ -127,12 +130,14 @@ public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 	}
 
 	@Override
-	public <A extends Annotation> A getMethodAnnotation(Class<A> annotation, Method getter, Method setter, Locatable srcpos) {
+	public <A extends Annotation> A getMethodAnnotation(Class<A> annotation, Method getter,
+			Method setter, Locatable srcpos) {
 		return delegate.getMethodAnnotation(annotation, getter, setter, srcpos);
 	}
 
 	@Override
-	public boolean hasMethodAnnotation(Class<? extends Annotation> annotation, String propertyName, Method getter, Method setter, Locatable srcPos) {
+	public boolean hasMethodAnnotation(Class<? extends Annotation> annotation, String propertyName,
+			Method getter, Method setter, Locatable srcPos) {
 		return delegate.hasMethodAnnotation(annotation, propertyName, getter, setter, srcPos);
 	}
 
@@ -142,7 +147,8 @@ public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 	}
 
 	@Override
-	public <A extends Annotation> A getMethodAnnotation(Class<A> annotation, Method method, Locatable srcpos) {
+	public <A extends Annotation> A getMethodAnnotation(Class<A> annotation, Method method,
+			Locatable srcpos) {
 		return delegate.getMethodAnnotation(annotation, method, srcpos);
 	}
 
@@ -152,17 +158,22 @@ public class FilteringAnnotationReader implements RuntimeAnnotationReader {
 	}
 
 	@Override
-	public <A extends Annotation> A getMethodParameterAnnotation(Class<A> annotation, Method method, int paramIndex, Locatable srcPos) {
+	public <A extends Annotation> A getMethodParameterAnnotation(Class<A> annotation,
+			Method method, int paramIndex, Locatable srcPos) {
 		return delegate.getMethodParameterAnnotation(annotation, method, paramIndex, srcPos);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public <A extends Annotation> A getClassAnnotation(Class<A> annotation, Class clazz, Locatable srcpos) {
+	public <A extends Annotation> A getClassAnnotation(Class<A> annotation, Class clazz,
+			Locatable srcpos) {
 		return delegate.getClassAnnotation(annotation, clazz, srcpos);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
-	public <A extends Annotation> A getPackageAnnotation(Class<A> annotation, Class clazz, Locatable srcpos) {
+	public <A extends Annotation> A getPackageAnnotation(Class<A> annotation, Class clazz,
+			Locatable srcpos) {
 		return delegate.getPackageAnnotation(annotation, clazz, srcpos);
 	}
 

@@ -85,21 +85,12 @@ public class XmlCombiner {
 			return id;
 		}
 
-		public void setId(String id) {
-			this.id = id;
-		}
-
 		public String getName() {
 			return name;
 		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
 	}
 
-	public static Document combine(DocumentBuilder documentBuilder, Document parent,
-			Document child) {
+	public static Document combine(DocumentBuilder documentBuilder, Document parent, Document child) {
 		Document resultDocument = documentBuilder.newDocument();
 		Element result = combine(resultDocument, parent.getDocumentElement(),
 				child.getDocumentElement());
@@ -150,13 +141,13 @@ public class XmlCombiner {
 			return result;
 		}
 
-		assert(combine == Combine.MERGE);
+		assert (combine == Combine.MERGE);
 
 		Element result = document.createElement(child.getTagName());
 
 		copyAttributes(document, parent, result);
 		copyAttributes(document, child, result);
-		
+
 		// TODO: insert comments with next node
 		Map<Key, List<Element>> parentMap = mapSubElements(parent);
 		Map<Key, List<Element>> childMap = mapSubElements(child);
@@ -184,12 +175,13 @@ public class XmlCombiner {
 					}
 				} else if (node instanceof Text && !lastIncluded) {
 					Text text = (Text) node;
-					// to make nice XML output skip whitespaces if last element was not included
+					// to make nice XML output skip whitespaces if last element
+					// was not included
 					if (!text.getTextContent().trim().isEmpty()) {
 						result.appendChild(document.importNode(node, true));
 						lastIncluded = true;
 					}
-				} else  {
+				} else {
 					result.appendChild(document.importNode(node, true));
 					lastIncluded = true;
 				}
@@ -230,7 +222,7 @@ public class XmlCombiner {
 	private static void appendRecursively(Document document, Element element, Element result) {
 		copyAttributes(document, element, result);
 		NodeList nodes = element.getChildNodes();
-		for (int i=0; i<nodes.getLength(); i++) {
+		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
 			if (node instanceof Element) {
 				Element child = (Element) node;
@@ -244,51 +236,52 @@ public class XmlCombiner {
 		}
 	}
 
-	private static void copyAttributes(Document document,@Nullable Element element,
-			Element result) {
+	private static void copyAttributes(Document document, @Nullable Element element, Element result) {
 		if (element == null) {
 			return;
 		}
 		NamedNodeMap attributes = element.getAttributes();
-		for (int i=0; i<attributes.getLength(); i++) {
+		for (int i = 0; i < attributes.getLength(); i++) {
 			Attr attribute = (Attr) attributes.item(i);
-			// contrary to the documentation setAttributeNodeNS does not override attribute value
+			// contrary to the documentation setAttributeNodeNS does not
+			// override attribute value
 			result.removeAttributeNS(attribute.getNamespaceURI(), attribute.getName());
-			result.setAttributeNodeNS((Attr)document.importNode(attribute, true));
+			result.setAttributeNodeNS((Attr) document.importNode(attribute, true));
 		}
 	}
 
 	/**
 	 * Creates a map of (tagName, id) to list of elements.
-	 * @param element root element of the tree to map
+	 * 
+	 * @param element
+	 *            root element of the tree to map
 	 * @return calculated map
 	 */
-	@SuppressWarnings("unchecked")
 	private static Map<Key, List<Element>> mapSubElements(@Nullable Element element) {
-			Map<Key, List<Element>> map = new HashMap<Key, List<Element>>();
-			if (element == null) {
-				return map;
-			}
-			NodeList nodes = element.getChildNodes();
-			for (int i=0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-				if (node instanceof Element) {
-					Element subelement = (Element) node;
-					Attr idNode = subelement.getAttributeNode("id");
-					String id = null;
-					if (idNode != null) {
-						id = idNode.getValue();
-					}
-					Key key = new Key(subelement.getTagName(), id);
-					List<Element> list = map.get(key);
-					if (list == null) {
-						list = new LinkedList<Element>();
-						map.put(key, list);
-					}
-					list.add(subelement);
-				}
-			}
+		Map<Key, List<Element>> map = new HashMap<Key, List<Element>>();
+		if (element == null) {
 			return map;
+		}
+		NodeList nodes = element.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			if (node instanceof Element) {
+				Element subelement = (Element) node;
+				Attr idNode = subelement.getAttributeNode("id");
+				String id = null;
+				if (idNode != null) {
+					id = idNode.getValue();
+				}
+				Key key = new Key(subelement.getTagName(), id);
+				List<Element> list = map.get(key);
+				if (list == null) {
+					list = new LinkedList<Element>();
+					map.put(key, list);
+				}
+				list.add(subelement);
+			}
+		}
+		return map;
 	}
 
 	private static Combine getCombineAttribute(@Nullable Element element) {
@@ -302,7 +295,7 @@ public class XmlCombiner {
 				combine = Combine.valueOf(combineAttribute.getValue());
 			} catch (IllegalArgumentException e) {
 				throw new RuntimeException("The attribute 'combine' of element '"
-						+ element.getTagName()	+ "' has invalid value '"
+						+ element.getTagName() + "' has invalid value '"
 						+ combineAttribute.getValue(), e);
 			}
 		}

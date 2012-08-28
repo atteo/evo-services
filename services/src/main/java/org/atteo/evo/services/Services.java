@@ -277,7 +277,6 @@ public class Services extends GuiceServletContextListener {
 			modules.add(new InjectMembersModule());
 
 			injector = Guice.createInjector(modules);
-
 			injector.injectMembers(config);
 
 			for (Service service : config.getServices()) {

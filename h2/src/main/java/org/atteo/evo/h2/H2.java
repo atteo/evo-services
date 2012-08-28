@@ -25,9 +25,7 @@ import org.atteo.evo.jta.PoolOptions;
 import org.h2.jdbcx.JdbcDataSource;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.MembersInjector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;

@@ -17,13 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.injection.InjectMembers;
-import org.w3c.dom.Element;
 
 /**
  * Root element for the {@link Services} configuration file.
@@ -32,10 +29,6 @@ import org.w3c.dom.Element;
  */
 @XmlRootElement
 public class Config extends Group {
-	@XmlElementWrapper(name = "properties")
-	@XmlAnyElement(lax = false)
-	private List<Element> properties;
-
 	@InjectMembers
 	@XmlElementRef
 	@Valid

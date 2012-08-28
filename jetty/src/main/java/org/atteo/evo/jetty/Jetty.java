@@ -104,6 +104,7 @@ public class Jetty extends TopLevelService {
 					}
 
 					String[] restOfUrls = Arrays.copyOfRange(urls, 1, urls.length - 1);
+					@SuppressWarnings("unchecked")
 					Class<? extends HttpServlet> servletClass = (Class<? extends HttpServlet>) klass;
 					serve(urls[0], restOfUrls).with(servletClass, params);
 					bind(servletClass).in(Singleton.class);
@@ -122,6 +123,7 @@ public class Jetty extends TopLevelService {
 					}
 
 					String[] restOfUrls = Arrays.copyOfRange(urls, 1, urls.length - 1);
+					@SuppressWarnings("unchecked")
 					Class<? extends Filter> filterClass = (Class<? extends Filter>) klass;
 					filter(urls[0], restOfUrls).through(filterClass, params);
 					bind(filterClass).in(Singleton.class);
@@ -147,6 +149,7 @@ public class Jetty extends TopLevelService {
 
 	private Server server;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void start() {
 		if (externalContainer) {

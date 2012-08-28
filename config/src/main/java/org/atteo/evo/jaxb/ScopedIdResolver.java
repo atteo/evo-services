@@ -175,7 +175,7 @@ public class ScopedIdResolver extends IDResolver {
 	}
 
 	@Override
-	public Callable<?> resolve(final String id, final Class targetType) throws SAXException {
+	public Callable<?> resolve(final String id, @SuppressWarnings("rawtypes") final Class targetType) throws SAXException {
 		return new Callable<Object>() {
 			@Override
 			public Object call() throws Exception {

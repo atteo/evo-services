@@ -16,6 +16,7 @@ package org.atteo.evo.config;
 /**
  * Thrown when the configuration is incorrect.
  */
+@SuppressWarnings("serial")
 public class IncorrectConfigurationException extends Exception {
 	public IncorrectConfigurationException(String message) {
 		super(message);
