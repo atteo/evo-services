@@ -42,6 +42,7 @@ public class FireBugLogger extends TopLevelService {
 		return new ServletModule() {
 			@Override
 			protected void configureServlets() {
+				bind(FireBugFilter.class);
 				filter("/*").through(FireBugFilter.class);
 			}
 		};
