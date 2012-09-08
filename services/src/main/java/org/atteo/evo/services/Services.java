@@ -507,8 +507,8 @@ public class Services extends GuiceServletContextListener {
 						logger.info("Starting {}...", service.getClass().getSimpleName());
 					}
 				}
-				service.start();
 				startedServices.add(service);
+				service.start();
 			}
 			logger.info("Done");
 		} catch (Exception e) {
