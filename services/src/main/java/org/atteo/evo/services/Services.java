@@ -15,18 +15,22 @@ package org.atteo.evo.services;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.config.Configuration;
+import org.atteo.evo.config.IncorrectConfigurationException;
+import org.atteo.evo.config.XmlUtils;
 import org.atteo.evo.filtering.CompoundPropertyResolver;
 import org.atteo.evo.filtering.EnvironmentPropertyResolver;
 import org.atteo.evo.filtering.PropertiesPropertyResolver;
@@ -118,36 +122,233 @@ import com.google.inject.servlet.ServletModule;
  * </p>
  */
 public class Services extends GuiceServletContextListener {
-	private File applicationHome;
-	private File configurationFile;
-	private InputStream configurationStream;
-	private InputStream parentConfigurationStream;
-	private File warDirectory;
+	public final String SCHEMA_FILE_NAME = "schema.xsd";
+	public final String CONFIG_FILE_NAME = "config.xml";
+	public final String DEFAULT_CONFIG_RESOURCE_NAME = "/default-config.xml";
+	private Logger logger = LoggerFactory.getLogger("Evo Services");
+	private final String applicationName;
+	private File homeDirectory;
+	private File dataHome;
+	private File configHome;
+	private File cacheHome;
+	private File runtimeDirectory;
+	private File dataDir;
+	private List<File> configDirs;
+	private List<Module> modules = new ArrayList<Module>();
+	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
+	
+	private Configuration configuration;
 	private Injector injector;
 	private boolean externalContainer = false;
-	private List<Module> modules = new ArrayList<Module>();
-	private Logger logger = LoggerFactory.getLogger("Evo Services");
 	private Config config;
+	private PropertyResolver propertyResolver;
 	private List<Service> startedServices = new ArrayList<Service>();
-	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
-	private boolean throwErrors = false;
 
 	public Services() {
+		this("test");
 	}
 
-	public Services(File applicationHome, File warDirectory) {
-		this.applicationHome = applicationHome;
-		this.warDirectory = warDirectory;
-		configurationFile = new File(applicationHome, "config.xml");
-		parentConfigurationStream =
-				getClass().getResourceAsStream("/default-config.xml");
+	public Services(String applicationName) {
+		this.applicationName = applicationName;
+		// Redirect messages from JUL through SLF4J
+		SLF4JBridgeHandler.install();
+		configuration = new Configuration();
+
+		homeDirectory = new File(".");
 	}
 
-	public Services(File applicationHome, File warDirectory, InputStream configurationStream) {
-		this(applicationHome, warDirectory);
+	private static void createDirectory(File directory) {
+		if (directory == null) {
+			return;
+		}
+		directory = directory.getAbsoluteFile(); // exists() fails for "" (current dir)
+		if (!directory.exists() && !directory.mkdirs()) {
+			throw new RuntimeException("Cannot create directory: "
+					+ directory.getAbsolutePath());
+		}
+	}
 
-		configurationFile = null;
-		this.configurationStream = configurationStream;
+	public void setHomeDirectory(File homeDirectory) {
+		this.homeDirectory = homeDirectory;
+	}
+
+	public File getHomeDirectory() {
+		if (homeDirectory != null) {
+			return homeDirectory;
+		}
+		return new File(System.getProperty("user.home"));
+	}
+
+	public File getDataHome() {
+		if (dataHome != null) {
+			return dataHome;
+		}
+		String xdgDataHome = System.getenv("XDG_DATA_HOME");
+		if (xdgDataHome != null) {
+			return new File(xdgDataHome + "/" + applicationName);
+		}
+		
+		return new File(homeDirectory, ".local/share/" + applicationName);
+	}
+
+	public File getConfigHome() {
+		if (configHome != null) {
+			return configHome;
+		}
+		String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
+		if (xdgConfigHome != null) {
+			return new File(xdgConfigHome + "/" + applicationName);
+		}
+		return new File(homeDirectory, ".config/" + applicationName);
+	}
+
+	public File getDataDir() {
+		if (dataDir != null) {
+			return dataDir;
+		}
+		return new File("./");
+	}
+
+	public List<File> getConfigDirs() {
+		if (configDirs != null) {
+			return configDirs;
+		}
+		// TODO: XDG_CONFIG_DIRS
+		return Collections.emptyList();
+	}
+
+	public File getCacheHome() {
+		if (cacheHome != null) {
+			return cacheHome;
+		}
+		String xdgCacheHome = System.getenv("XDG_CACHE_HOME");
+		if (xdgCacheHome != null) {
+			return new File(xdgCacheHome + "/" + applicationName);
+		}
+		return new File(homeDirectory, ".cache/" + applicationName);
+	}
+
+	public File getRuntimeDirectory() {
+		if (runtimeDirectory != null) {
+			return runtimeDirectory;
+		}
+		String xdgRuntimeDir = System.getenv("XDG_RUNTIME_DIR");
+		if (xdgRuntimeDir != null) {
+			return new File(xdgRuntimeDir);
+		}
+		return new File(homeDirectory, ".run");
+	}
+
+	public void setDataHome(File dataHome) {
+		this.dataHome = dataHome;
+	}
+
+	public void setConfigHome(File configHome) {
+		this.configHome = configHome;
+	}
+
+	public void setCacheHome(File cacheHome) {
+		this.cacheHome = cacheHome;
+	}
+
+	public void setDataDir(File dataDir) {
+		this.dataDir = dataDir;
+	}
+
+	public void setConfigDirs(List<File> configDirs) {
+		this.configDirs = configDirs;
+	}
+
+	public void setRuntimeDirectory(File runtimeDirectory) {
+		this.runtimeDirectory = runtimeDirectory;
+	}
+
+	/**
+	 * Reads configuration from '/default-config.xml' resource.
+	 */
+	public void combineDefaultConfiguration() {
+		try {
+			combineConfigurationFromResource(DEFAULT_CONFIG_RESOURCE_NAME, false);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectConfigurationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Reads configuration from config.xml files found in ${configDirs} and ${configHome} directories.
+	 */
+	public void combineConfigDirConfiguration() throws IncorrectConfigurationException, IOException {
+		for (File configDir : getConfigDirs()) {
+			combineConfigurationFromFile(new File(configDir, CONFIG_FILE_NAME), false);
+		}
+		combineConfigurationFromFile(new File(configHome, CONFIG_FILE_NAME), false);
+	}
+
+	/**
+	 * Reads configuration from given resource.
+	 * @param resourcePath path to the resource
+	 * @throws IncorrectConfigurationException when configuration is incorrect
+	 * @throws IOException when cannot read resource
+	 */
+	public void combineConfigurationFromResource(String resourcePath, boolean throwIfNotFound)
+			throws IncorrectConfigurationException, IOException {
+		InputStream stream = null;
+		try {
+			// TODO: what if more than one resource with given name?
+			stream = getClass().getResourceAsStream(resourcePath);
+			if (stream != null) {
+				configuration.combine(stream);
+			} else if (throwIfNotFound) {
+				throw new RuntimeException("Configuration resource not found: " + resourcePath);
+			}
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+		} 
+	}
+
+	public void combineConfigurationFromStream(InputStream stream)
+			throws IncorrectConfigurationException, IOException {
+		configuration.combine(stream);
+	}
+
+	/**
+	 * Reads configuration from given file.
+	 * @param file file with configuration
+	 * @throws IncorrectConfigurationException when configuration is incorrect
+	 * @throws IOException when cannot read file
+	 */
+	public void combineConfigurationFromFile(File file, boolean throwIfNotFound)
+			throws IncorrectConfigurationException, IOException {
+		if (!file.exists()) {
+			if (throwIfNotFound) {
+				throw new RuntimeException("Configuration file not found: " + file.getAbsolutePath());
+			} else {
+				return;
+			}
+		}
+		InputStream stream = null;
+		try {
+			stream = new FileInputStream(file);
+			configuration.combine(stream);
+		} finally {
+			if (stream != null) {
+				try {
+					stream.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
+
+	public String printCombinedXml() {
+		return XmlUtils.prettyPrint(configuration.getRootElement());
 	}
 
 	/**
@@ -166,84 +367,109 @@ public class Services extends GuiceServletContextListener {
 		customPropertyResolvers.addPropertyResolver(resolver);
 	}
 
-	/**
-	 * Should start method throw exception on error.
-	 * 
-	 * <p>
-	 * By default {@link #start()} method only logs the error and returns.
-	 * </p>
-	 * @param throwErrors 
-	 */
-	public void setThrowErrors(boolean throwErrors) {
-		this.throwErrors = throwErrors;
+	public void generateTemplateConfigurationFile() throws FileNotFoundException, IOException {
+		configuration.generateSchema(new File(getConfigHome(), SCHEMA_FILE_NAME));
+		File configurationFile = new File(getConfigHome(), CONFIG_FILE_NAME);
+		if (configurationFile.exists()) {
+			return;
+		}
+		Writer writer = new OutputStreamWriter(new FileOutputStream(configurationFile), Charsets.UTF_8);
+		try {
+			writer.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+					+ " xsi:noNamespaceSchemaLocation=\"" + SCHEMA_FILE_NAME
+					+ "\">\n</config>\n");
+		} finally {
+			writer.close();
+		}
+	}
+
+	public void setup(ServicesCommandLineParameters params)
+			throws IncorrectConfigurationException, IOException {
+		if (params.getHomeDirectory() != null) {
+			setHomeDirectory(new File(params.getHomeDirectory()));
+		}
+		if (params.getDataHome() != null) {
+			setDataHome(new File(params.getDataHome()));
+		}
+		if (params.getConfigHome() != null) {
+			setConfigHome(new File(params.getConfigHome()));
+		}
+		if (params.getCacheHome() != null) {
+			setCacheHome(new File(params.getCacheHome()));
+		}
+		if (params.getDataDir() != null) {
+			setDataDir(new File(params.getDataDir()));
+		}
+		List<File> dirs = new ArrayList<File>();
+		for (String dir : params.getConfigDirs()) {
+			dirs.add(new File(dir));
+		}
+		setConfigDirs(dirs);
+		if (params.getRuntimeDirectory() != null) {
+			setRuntimeDirectory(new File(params.getRuntimeDirectory()));
+		}
+		if (!params.isNoDefaults()) {
+			combineDefaultConfiguration();
+		}
+		if (params.getConfigurationFiles().isEmpty()) {
+			combineConfigDirConfiguration();
+		} else {
+			for (String file : params.getConfigurationFiles()) {
+				combineConfigurationFromFile(new File(file), true);
+			}
+		}
+
+		if (params.isPrintConfig()) {
+			System.out.println(printCombinedXml());
+			System.exit(0);
+		}
+
+		if (params.isPrintFilteredConfig()) {
+			filterConfiguration();
+			System.out.println(printCombinedXml());
+			System.exit(0);
+		}
+	}
+
+	private void filterConfiguration() throws IncorrectConfigurationException {
+		Properties properties = new Properties();
+		properties.setProperty("configHome", getConfigHome().getAbsolutePath());
+		properties.setProperty("dataHome", getDataHome().getAbsolutePath());
+		properties.setProperty("cacheHome", getCacheHome().getAbsolutePath());
+		properties.setProperty("dataDir", getDataDir().getAbsolutePath());
+		properties.setProperty("runtimeDirectory", getRuntimeDirectory().getAbsolutePath());
+		
+		Element propertiesElement = null;
+		if (configuration.getRootElement() != null) {
+			NodeList nodesList = configuration.getRootElement().getElementsByTagName("properties");
+			if (nodesList.getLength() == 1) {
+				propertiesElement = (Element) nodesList.item(0);
+			}
+		}
+		
+		propertyResolver = new CompoundPropertyResolver(
+				new PropertiesPropertyResolver(properties),
+				new SystemPropertyResolver(),
+				new EnvironmentPropertyResolver(),
+				new XmlPropertyResolver(propertiesElement, false),
+				customPropertyResolvers,
+				new XmlPropertyResolver(configuration.getRootElement(), true));
+		
+		configuration.filter(propertyResolver);
 	}
 
 	/**
 	 * Reads configuration file and starts all services.
 	 */
 	public void start() {
-		applicationHome = applicationHome.getAbsoluteFile(); // exists() fails for "" (current dir)
-		if (!applicationHome.exists() && !applicationHome.mkdirs()) {
-			throw new RuntimeException("Cannot create application directory: "
-					+ applicationHome.getAbsolutePath());
-		}
-		// first log message, triggers reading logback.xml if LogBack is used
-		logger.info("Booting...");
-
-		// Redirect messages from JUL through SLF4J
-		SLF4JBridgeHandler.install();
-
 		try {
-			Configuration configuration = new Configuration();
+			createDirectory(getHomeDirectory());
+			createDirectory(getConfigHome());
+			createDirectory(getDataHome());
+			createDirectory(getCacheHome());
+			createDirectory(getRuntimeDirectory());
 
-			if (configurationFile != null) {
-				final String schemaFileName = "schema.xsd";
-				configuration.generateSchema(new File(applicationHome, schemaFileName));
-
-				if (!configurationFile.exists()) {
-					Writer writer = new OutputStreamWriter(new FileOutputStream(configurationFile), Charsets.UTF_8);
-					try {
-						writer.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-								+ " xsi:noNamespaceSchemaLocation=\"" + schemaFileName
-								+ "\">\n</config>\n");
-					} finally {
-						writer.close();
-					}
-				}
-
-				configurationStream = new FileInputStream(configurationFile);
-			}
-
-			if (parentConfigurationStream != null) {
-				configuration.combine(parentConfigurationStream);
-			}
-
-			if (configurationStream != null) {
-				configuration.combine(configurationStream);
-			}
-
-			Properties properties = new Properties();
-			properties.setProperty("applicationHome", applicationHome.getAbsolutePath());
-			Element propertiesElement = null;
-			NodeList nodesList = configuration.getRootElement().getElementsByTagName("properties");
-			if (nodesList.getLength() == 1) {
-				propertiesElement = (Element) nodesList.item(0);
-			}
-
-			for (Class<?> klass : ClassIndex.getAnnotated(ApplicationProperties.class)) {
-				PropertyResolver s = (PropertyResolver) klass.newInstance();
-				customPropertyResolvers.addPropertyResolver(s);
-			}
-
-			final PropertyResolver propertyResolver = new CompoundPropertyResolver(
-					new PropertiesPropertyResolver(properties),
-					new SystemPropertyResolver(),
-					new EnvironmentPropertyResolver(),
-					new XmlPropertyResolver(propertiesElement, false),
-					customPropertyResolvers,
-					new XmlPropertyResolver(configuration.getRootElement(), true));
-
-			configuration.setPropertyResolver(propertyResolver);
+			filterConfiguration();
 
 			config = configuration.read(Config.class);
 
@@ -265,10 +491,6 @@ public class Services extends GuiceServletContextListener {
 				public void configureServlets() {
 					bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
 							.toInstance(propertyResolver);
-					if (warDirectory != null) {
-						bind(Key.get(File.class, ContentDirectory.class))
-							.toInstance(warDirectory);
-					}
 					bind(Key.get(Boolean.class, ExternalContainer.class))
 							.toInstance(externalContainer);
 					bind(Services.class).toInstance(Services.this);
@@ -291,18 +513,14 @@ public class Services extends GuiceServletContextListener {
 			logger.info("Done");
 		} catch (Exception e) {
 			// TODO: try to always throw exception
-			if (!throwErrors) {
-				logger.error("Stopping due to the fatal error", e);
-			}
+			logger.error("Stopping due to the fatal error", e);
 
 			try {
 				stop();
 			} catch (Exception f) {
 				logger.error("Cannot properly stop services after previous fatal error", f);
 			}
-			if (throwErrors) {
-				throw new RuntimeException(e);
-			}
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -335,11 +553,7 @@ public class Services extends GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
 		externalContainer = true;
-		String root = ".config";
-		applicationHome = new File(root);
-		configurationFile = new File(applicationHome, "config.xml");
-		parentConfigurationStream =
-				getClass().getResourceAsStream("/default-config.xml");
+		configHome = new File(".config");
 		start();
 		return injector;
 	}

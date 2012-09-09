@@ -34,7 +34,7 @@ import com.google.inject.name.Names;
 @XmlRootElement(name = "h2")
 public class H2 extends DatabaseService {
 	@XmlElement
-	@XmlDefaultValue("jdbc:h2:${applicationHome}/database;AUTO_SERVER=TRUE")
+	@XmlDefaultValue("jdbc:h2:${dataHome}/database;AUTO_SERVER=TRUE")
 	private String url;
 
 	@XmlElement

@@ -55,15 +55,15 @@ public class HornetQServer extends TopLevelService {
 	List<String> queues;
 
 	@XmlElement
-	@XmlDefaultValue("${applicationHome}/jms/journal")
+	@XmlDefaultValue("${dataHome}/jms/journal")
 	private String journalDirectory;
 
 	@XmlElement
-	@XmlDefaultValue("${applicationHome}/jms/bindings")
+	@XmlDefaultValue("${dataHome}/jms/bindings")
 	private String bindingsDirectory;
 
 	@XmlElement
-	@XmlDefaultValue("${applicationHome}/jms/largeMessages")
+	@XmlDefaultValue("${dataHome}/jms/largeMessages")
 	private String largeMessagesDirectory;
 
 	@Override

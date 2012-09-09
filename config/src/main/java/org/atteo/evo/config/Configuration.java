@@ -117,7 +117,7 @@ public class Configuration {
 	private final Iterable<Class<? extends Configurable>> klasses;
 	private DocumentBuilder builder;
 	private Document document;
-	private PropertyResolver properties;
+	private PropertyResolver propertyResolver;
 
 	/**
 	 * Create Configuration by discovering all {@link Configurable}s.
@@ -129,7 +129,7 @@ public class Configuration {
 	 * @throws JAXBException when JAXB context creation fails
 	 * @throws IOException when index file cannot be read
 	 */
-	public Configuration() throws IOException {
+	public Configuration() {
 		this(ClassIndex.getSubclasses(Configurable.class));
 	}
 
@@ -140,6 +140,7 @@ public class Configuration {
 	 */
 	public Configuration(Iterable<Class<? extends Configurable>> klasses) {
 		this.klasses = klasses;
+		this.propertyResolver = new PropertiesPropertyResolver(new Properties());
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
 			builder = factory.newDocumentBuilder();
@@ -152,6 +153,7 @@ public class Configuration {
 					return true;
 				}
 			});
+			document = builder.newDocument();
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException("Cannot configure XML parser", e);
 		} catch (IllegalAnnotationsException e) {
@@ -177,28 +179,33 @@ public class Configuration {
 	}
 
 	/**
-	 * Set properties used to filter {@code ${name}} placeholders.
+	 * Filter {@code #{name}} placeholders using given properties.
 	 * <p>
 	 * This method wraps given properties into {@link PropertiesPropertyResolver}
-	 * and calls {@link #setPropertyResolver(PropertyResolver)}.
+	 * and calls {@link #filter(PropertyResolver)}.
 	 * </p>
 	 * @param properties properties to filter into configuration files
 	 */
-	public void setProperties(Properties properties) {
-		this.properties = new PropertiesPropertyResolver(properties);
+	public void filter(Properties properties) throws IncorrectConfigurationException {
+		filter(new PropertiesPropertyResolver(properties));
 	}
 
 	/**
-	 * Set {@link PropertyResolver} used to filter {@code ${name}} placeholders.
-	 * <p>
-	 * This will override any previously set property resolver.
-	 * </p>
+	 * Filter {@code #{name}} placeholders using values from given {@link PropertyResolver}.
 	 * 
 	 * @param resolver property resolver used in filtering into configuration files
 	 * @see CompoundPropertyResolver
 	 */
-	public void setPropertyResolver(PropertyResolver resolver) {
-		this.properties = resolver;
+	public void filter(PropertyResolver resolver) throws IncorrectConfigurationException {
+		this.propertyResolver = resolver;
+		if (document.getDocumentElement() == null) {
+			return;
+		}
+		try {
+			Filtering.filter(document.getDocumentElement(), resolver);
+		} catch (PropertyNotFoundException e) {
+			throw new IncorrectConfigurationException("Cannot filter properties", e);
+		}
 	}
 
 	/**
@@ -213,12 +220,12 @@ public class Configuration {
 		try {
 			document = builder.parse(stream);
 
-			if (parentDocument != null) {
-				// Unmarshall the parent document to assign combine attributes annotated on classes
-				Element root = parentDocument.getDocumentElement();
+			// Unmarshall the parent document to assign combine attributes annotated on classes
+			Element root = parentDocument.getDocumentElement();
+			if (root != null) {
 				binder.unmarshal(root);
 				JaxbBindings.iterate(root, binder, new CombineAssigner());
-
+				
 				// Combine with parent
 				document = XmlCombiner.combine(builder, parentDocument, document);
 			}
@@ -243,15 +250,13 @@ public class Configuration {
 	 * @throws IncorrectConfigurationException if configuration is incorrect
 	 */
 	public <T extends Configurable> T read(Class<T> rootClass) throws IncorrectConfigurationException {
-		if (document == null) {
+		if (document.getDocumentElement() == null) {
 			return null;
 		}
 		T result;
 		try {
-			Filtering.filter(document.getDocumentElement(), properties);
-
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put(JAXBRIContext.ANNOTATION_READER, new FilteringAnnotationReader(properties));
+			map.put(JAXBRIContext.ANNOTATION_READER, new FilteringAnnotationReader(propertyResolver));
 			context = JAXBContext.newInstance(Iterables.toArray(klasses, Class.class), map);
 			binder = context.createBinder();
 			binder.setProperty(IDResolver.class.getName(), new ScopedIdResolver());
@@ -265,7 +270,7 @@ public class Configuration {
 			});
 			result = rootClass.cast(binder.unmarshal(document.getDocumentElement()));
 			JaxbBindings.iterate(document.getDocumentElement(), binder,
-					new DefaultsSetter(context, properties));
+					new DefaultsSetter(context, propertyResolver));
 
 			ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 			Validator validator = validatorFactory.getValidator();
@@ -281,8 +286,6 @@ public class Configuration {
 				throw new IncorrectConfigurationException("Error found while validating"
 						+ " configuration file. Errors where listed above.");
 			}
-		} catch (PropertyNotFoundException e) {
-			throw new IncorrectConfigurationException("Cannot filter properties", e);
 		} catch (UnmarshalException e) {
 			if (e.getLinkedException() != null) {
 				throw new IncorrectConfigurationException("Cannot parse configuration file: "

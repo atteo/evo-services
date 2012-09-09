@@ -193,7 +193,7 @@ public class WarStarter {
 	 *
 	 * <ul>
 	 *  <li> <b>--root</b> - set the root directory for the application, the default is "~/.appconfig"</li>
-	 *  <li> <b>--expaned</b> - specifies where content of the extracted WAR file resides,
+	 *  <li> <b>--expanded</b> - specifies where content of the extracted WAR file resides,
 	 * this skips extracting the WAR file and class loader setup
 	 *  <li> any other argument is forwarded to the Services.start() routine.
 	 * </ul>

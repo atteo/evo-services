@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
+	<jetty>
+		<connectors>
+			<selectchannel>
+				<port>33080</port>
+			</selectchannel>
+			<blockingchannel>
+				<port>33081</port>
+			</blockingchannel>
+			<selectchannel>
+				<port>33082</port>
+			</selectchannel>
+		</connectors>
+		<handlers>
+			<servlets/>
+		</handlers>
+	</jetty>
+</config>

@@ -72,7 +72,7 @@ public class HibernateSearch extends HibernatePlugin {
 	 * Base directory for "filesystem" directory provider.
 	 */
 	@XmlElement
-	@XmlDefaultValue("${applicationHome}/indexes")
+	@XmlDefaultValue("${dataHome}/indexes")
 	private String indexBase;
 	
 	@Override

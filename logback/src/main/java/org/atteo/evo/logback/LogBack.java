@@ -72,26 +72,25 @@ public class LogBack extends TopLevelService {
 	@XmlElement(defaultValue = "false")
 	private boolean jmx = false;
 
-	@XmlDefaultValue("${applicationHome}")
-	private File home;
+	@XmlDefaultValue("${configHome}")
+	private File configHome;
 
 	@Inject
 	Logger logger;
 
 	@Override
 	public void start() {
-
 		if (configFile != null) {
 			File file = new File(configFile);
 			if (!file.isAbsolute()) {
-				file = new File(home, configFile);
+				file = new File(configHome, configFile);
 			}
 			if (!file.exists()) {
 				throw new RuntimeException("Logback configuration file not found: " + configFile);
 			}
 			loadConfig(file);
 		} else {
-			File file = new File(home, "logback.xml");
+			File file = new File(configHome, "logback.xml");
 			if (file.exists()) {
 				loadConfig(file);
 			}

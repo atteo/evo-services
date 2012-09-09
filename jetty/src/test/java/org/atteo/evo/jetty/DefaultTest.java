@@ -11,29 +11,13 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atteo.evo.services;
+package org.atteo.evo.jetty;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.atteo.evo.config.IncorrectConfigurationException;
+import org.atteo.evo.tests.ServicesTest;
 import org.junit.Test;
 
-public class ServicesTest {
+public class DefaultTest extends ServicesTest {
 	@Test
-	public void empty() {
-		Services services = new Services();
-		services.start();
-		services.stop();
-	}
-
-	@Test
-	public void simple() throws IncorrectConfigurationException, IOException {
-		Services services = new Services();
-		services.setHomeDirectory(new File("target/test-home/"));
-		services.combineConfigurationFromResource("/test-config.xml", true);
-
-		services.start();
-		services.stop();
+	public void dummy() {
 	}
 }

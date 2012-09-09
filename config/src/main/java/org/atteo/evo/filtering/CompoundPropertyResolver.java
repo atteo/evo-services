@@ -24,7 +24,7 @@ import com.google.common.collect.Multimap;
 /**
  * Resolves properties by trying a number of underlying {@link PropertyResolver property resolvers}.
  * <p>
- * Underlying property resolver cab be an instance of {@link PrefixedPropertyResolver}.
+ * Underlying property resolver can be an instance of {@link PrefixedPropertyResolver}.
  * In this case it will be executed only if its prefix matches property name.
  * If at least one resolver matches given prefix then only PrefixedPropertyResolvers
  * matching this prefix will be executed.

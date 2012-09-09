@@ -59,11 +59,11 @@ public class Atomikos extends TopLevelService {
 	private Integer maxActiveTransactions = -1;
 
 	@XmlElement
-	@XmlDefaultValue("${applicationHome}/atomikos/logs")
+	@XmlDefaultValue("${dataHome}/atomikos/logs")
 	private String logDirectory;
 
 	@XmlElement
-	@XmlDefaultValue("${applicationHome}/atomikos/")
+	@XmlDefaultValue("${dataHome}/atomikos/")
 	private String consoleOutputDirectory;
 
 	@XmlElement

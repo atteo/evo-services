@@ -17,7 +17,6 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.services.Service;
 import org.atteo.evo.services.Services;
 import org.junit.rules.TestRule;
@@ -60,7 +60,8 @@ import com.google.inject.servlet.GuiceFilter;
  * </p>
  */
 public class ServicesRule implements TestRule {
-	private String config;
+	public final static String[] DEFAULT_CONFIG = { "/test-config.xml" };
+	private String[] configs;
 	private Services services;
 
 	/**
@@ -77,16 +78,25 @@ public class ServicesRule implements TestRule {
 	 * </p>
 	 */
 	public ServicesRule() {
+		this.configs = DEFAULT_CONFIG;
+	}
+
+	/**
+	 * Initializes {@link Services} environment from given configuration files.
+	 *
+	 * @param configs resource path to the configuration files
+	 */
+	public ServicesRule(String[] configs) {
+		this.configs = configs;
 	}
 
 	/**
 	 * Initializes {@link Services} environment from given configuration file.
 	 *
-	 * @param config
-	 *            resource path to the configuration file
+	 * @param config resource path to the configuration file
 	 */
 	public ServicesRule(String config) {
-		this.config = config;
+		this.configs = new String[] { config };
 	}
 
 	@Override
@@ -169,30 +179,19 @@ public class ServicesRule implements TestRule {
 			}
 		};
 
-		InputStream stream;
-		if (config != null) {
-			stream = klass.getResourceAsStream(config);
-		} else {
-			stream = klass.getResourceAsStream("/test-config.xml");
-		}
-
-		if (stream == null && config != null) {
-			throw new RuntimeException("Configuration resource not found: " + config);
-		}
-
-		// TODO: where to get those paths from?
-		services = new Services(new File("target/test-home/"), new File("src/main/webapp/"), stream);
-		services.addModule(testClassModule);
-		services.addModule(bindingsModule);
-		services.addModule(mocksModule);
-		services.setThrowErrors(true);
-		services.start();
-
 		try {
-			if (stream != null) {
-				stream.close();
+			services = new Services();
+			services.setHomeDirectory(new File("target/test-home"));
+			for (String config : configs) {
+				services.combineConfigurationFromResource(config, configs != DEFAULT_CONFIG);
 			}
+		services.addModule(testClassModule);
+			services.addModule(bindingsModule);
+			services.addModule(mocksModule);
+			services.start();
 		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (IncorrectConfigurationException e) {
 			throw new RuntimeException(e);
 		}
 	}

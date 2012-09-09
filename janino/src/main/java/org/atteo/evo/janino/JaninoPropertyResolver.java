@@ -19,8 +19,8 @@ import org.atteo.evo.filtering.Filtering;
 import org.atteo.evo.filtering.PrefixedPropertyResolver;
 import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
+import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.janino.ExpressionEvaluator;
-import org.codehaus.janino.util.LocatedException;
 
 /**
  * Java expression evaluation {@link PropertyResolver}.
@@ -69,8 +69,8 @@ public class JaninoPropertyResolver implements PrefixedPropertyResolver {
 		evaluator.setExpressionType(Object.class);
 		try {
 			evaluator.cook(name);
-			return evaluator.evaluate(null).toString();
-		} catch (LocatedException e) {
+			return evaluator.evaluate(new Object[] {}).toString();
+		} catch (CompileException e) {
 			if (!throwErrors) {
 				return null;
 			}

@@ -165,7 +165,7 @@ public class ConfigurationTest {
 		Configuration configuration = new Configuration();
 		Properties properties = new Properties();
 		properties.setProperty("intValue", "5");
-		configuration.setProperties(properties);
+		configuration.filter(properties);
 		return configuration.read(TopLevel.class,
 				new ByteArrayInputStream(parent.getBytes("UTF-8")),
 				new ByteArrayInputStream(child.getBytes("UTF-8")));

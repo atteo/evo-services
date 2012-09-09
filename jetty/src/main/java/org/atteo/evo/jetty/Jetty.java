@@ -13,42 +13,32 @@
  */
 package org.atteo.evo.jetty;
 
-import java.io.File;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.management.MBeanServer;
-import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.evo.services.ContentDirectory;
 import org.atteo.evo.services.ExternalContainer;
 import org.atteo.evo.services.TopLevelService;
 import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.nio.BlockingChannelConnector;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.log.Log;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-import com.google.inject.servlet.GuiceFilter;
-import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
 /**
@@ -74,22 +64,38 @@ import com.google.inject.servlet.ServletModule;
 @XmlRootElement(name = "jetty")
 public class Jetty extends TopLevelService {
 	/**
-	 * Port on which the server will listen.
+	 * Support {@link WebServlet}, {@link WebFilter} and {@link WebInitParam} annotations
+	 * by automatically registering annotated classes using {@link ServletModule}.
 	 */
 	@XmlElement
-	private Integer port = 8080;
+	private boolean registerAnnotatedServlets = true;
+			
+	/**
+	 * List of connectors.
+	 */
+	@XmlElementWrapper(name = "connectors")
+	@XmlElementRef
+	private ConnectorConfig[] connectors = new ConnectorConfig[] {
+		new BlockingChannelConnectorConfig()
+	};
 
 	/**
-	 * Default page to open.
+	 * List of handlers.
 	 */
-	@XmlElement
-	private String welcomeFile = "Application.html";
+	@XmlElementWrapper(name = "handlers")
+	@XmlElementRef
+	private HandlerConfig[] handlers = new HandlerConfig[] {
+		new ServletContextHandlerConfig()
+	};
 
 	@Override
 	public Module configure() {
 		return new ServletModule() {
 			@Override
 			protected void configureServlets() {
+				if (!registerAnnotatedServlets) {
+					return;
+				}
 				for (Class<?> klass : ClassIndex.getAnnotated(WebServlet.class)) {
 					WebServlet annotation = klass.getAnnotation(WebServlet.class);
 					String[] urls = annotation.value();
@@ -132,20 +138,12 @@ public class Jetty extends TopLevelService {
 		};
 	}
 
-	@Inject
-	private Injector injector;
-
 	@Inject(optional = true)
 	private MBeanServer mbeanServer;
 
 	@Inject
 	@ExternalContainer
 	private Boolean externalContainer;
-
-	@Inject(optional = true)
-	// not set when in external container
-	@ContentDirectory
-	private File warDirectory;
 
 	private Server server;
 
@@ -157,30 +155,15 @@ public class Jetty extends TopLevelService {
 		}
 		server = new Server();
 
-		ServletContextHandler servlets = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		servlets.setResourceBase(warDirectory.getAbsolutePath());
+		HandlerList handlerList = new HandlerList();
+		for (HandlerConfig config : handlers) {
+			handlerList.addHandler(config.getHandler());
+		}
+		server.setHandler(handlerList);
 
-		servlets.addFilter(GuiceFilter.class, "/*", EnumSet.noneOf(DispatcherType.class));
-		servlets.addEventListener(new GuiceServletContextListener() {
-			@Override
-			protected Injector getInjector() {
-				return injector;
-			}
-		});
-		servlets.addServlet(DefaultServlet.class, "/");
-
-		ResourceHandler resources = new ResourceHandler();
-		resources.setWelcomeFiles(new String[] { welcomeFile });
-		resources.setResourceBase(warDirectory.getAbsolutePath());
-
-		HandlerList handlers = new HandlerList();
-		handlers.addHandler(resources);
-		handlers.addHandler(servlets);
-		server.setHandler(handlers);
-
-		Connector connector = new BlockingChannelConnector();
-		connector.setPort(port);
-		server.addConnector(connector);
+		for (ConnectorConfig config : connectors) {
+			server.addConnector(config.getConnector());
+		}
 
 		if (mbeanServer != null) {
 			MBeanContainer mbContainer = new MBeanContainer(mbeanServer);
@@ -191,6 +174,8 @@ public class Jetty extends TopLevelService {
 
 		try {
 			server.start();
+		} catch (RuntimeException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

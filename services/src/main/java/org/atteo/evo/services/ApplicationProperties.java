@@ -27,22 +27,17 @@ import org.atteo.evo.filtering.PropertyResolver;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Marks property resolver used by {@link Service} framework.
+ * Allows injecting property resolver used by {@link Service} framework.
  *
  * <p>
  * When used on field of type {@link PropertyResolver} and marked with {@link Inject}
  * annotation triggers the injection of property resolver
  * used in the {@link Service} framework.
  * </p>
- * <p>
- * When used on class of type {@link PropertyResolver} the class will be instantiated using
- * the default constructor and automatically added to the list of
- * {@link Services#addCustomPropertyResolver(PropertyResolver) custom property resolvers}.
- * </p>
  */
 @BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD, ElementType.TYPE})
+@Target(ElementType.FIELD)
 @IndexAnnotated
 @Documented
 public @interface ApplicationProperties {

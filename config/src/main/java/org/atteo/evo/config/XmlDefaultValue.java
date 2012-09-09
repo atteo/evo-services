@@ -29,8 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
  * for an explanation how ordinary {@link XmlElement} default value works.
  * </p>
  * <p>
- * This annotation can be used to obtain given property value when it is specified on the field
- * which is never filled by JAXB.
+ * This annotation can also be used on properties which would not be touched by JAXB otherwise.
  * </p>
  */
 @Documented
