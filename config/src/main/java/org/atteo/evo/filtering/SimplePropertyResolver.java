@@ -27,7 +27,7 @@ public abstract class SimplePropertyResolver implements PropertyResolver {
 	public void setFilterResult(boolean filterResult) {
 		this.filterResult = filterResult;
 	}
-	
+
 	@Override
 	public String resolveProperty(String name, PropertyResolver resolver) throws PropertyNotFoundException {
 		name = Filtering.filter(name, resolver);

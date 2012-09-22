@@ -93,7 +93,7 @@ public class ElementDescription {
 	public Type getElementType() {
 		return elementType;
 	}
-	
+
 	public void setElementType(Type elementType) {
 		this.elementType = elementType;
 	}

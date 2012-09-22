@@ -24,7 +24,7 @@ import org.atteo.evo.config.Combine;
 /**
  * Specifies how to combine XML nodes corresponding to the annotated class
  * or to the annotated field.
- * 
+ *
  * <p>
  * The default behavior is {@link Combine#MERGE}.
  * </p>

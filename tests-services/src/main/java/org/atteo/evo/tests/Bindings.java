@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 /**
  * These methods are run before a test is started and can contain bindings, they must be public.
  * Example:
- * 
+ *
  * <pre>
  * {@code
  * \@Bindings
@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * ...
  * }
  * }</pre>
- * 
+ *
  */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

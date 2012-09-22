@@ -40,7 +40,7 @@ import com.google.inject.Module;
 
 /**
  * Starts HornetQ JMS server.
- * 
+ *
  * <p>
  * Currently the transport supports only clients in the same JVM.
  * </p>

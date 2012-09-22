@@ -33,7 +33,7 @@ public class SimpleRealm extends ShiroRealm {
 	@XmlElementWrapper(name = "accounts")
 	@XmlElement(name = "account")
 	private List<Account> accounts;
-	
+
 	@Override
 	public Module configure() {
 		return new AbstractModule() {
@@ -46,7 +46,7 @@ public class SimpleRealm extends ShiroRealm {
 								account.getRoles().toArray(new String[0]));
 					}
 				}
-				
+
 				Multibinder.newSetBinder(binder(), Realm.class).addBinding().toInstance(realm);
 			}
 		};

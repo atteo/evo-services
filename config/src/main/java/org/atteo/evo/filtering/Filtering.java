@@ -111,7 +111,7 @@ public class Filtering {
 		}
 		return result.toString();
 	}
-	
+
 	/**
 	 * Find <code>${name}</code> placeholders in the given String.
 	 * @param value the value to filter the properties into
@@ -190,14 +190,14 @@ public class Filtering {
 
 	/**
 	 * Filter <code>${name}</code> placeholders found within the XML element.
-	 * 
+	 *
 	 * <p>
 	 * The structure of the XML document is not changed. Each attribute and element text is filtered
 	 * separately.
 	 * </p>
 	 * @param element
 	 * @param propertyResolver
-	 * @throws PropertyNotFoundException 
+	 * @throws PropertyNotFoundException
 	 */
 	public static void filter(Element element, PropertyResolver propertyResolver)
 			throws PropertyNotFoundException {
@@ -206,9 +206,9 @@ public class Filtering {
 	}
 
 	/**
-	 * Filter <code>${name}</code> placeholders found within the XML element. 
-	 * 
-	 * @see #filter(Element, PropertyResolver)  
+	 * Filter <code>${name}</code> placeholders found within the XML element.
+	 *
+	 * @see #filter(Element, PropertyResolver)
 	 */
 	public static void filter(Element element, Properties properties)
 			throws PropertyNotFoundException {

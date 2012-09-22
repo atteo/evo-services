@@ -4,7 +4,7 @@
 # Start H2 database and console
 #
 
-if [ ! -e ~/tmp/mop.jar ]; then 
+if [ ! -e ~/tmp/mop.jar ]; then
 	wget http://mop.fusesource.org/repo/release/org/fusesource/mop/mop-core/1.0-m1/mop-core-1.0-m1.jar -O ~/tmp/mop.jar
 fi
 

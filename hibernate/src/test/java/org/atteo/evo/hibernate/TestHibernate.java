@@ -35,7 +35,7 @@ public class TestHibernate extends ServicesTest {
 
 	@Inject
 	private EntityManagerFactory factory;
-	
+
 	@Test
 	public void testSaves() {
 		final User u = new User();
@@ -46,7 +46,7 @@ public class TestHibernate extends ServicesTest {
 				u.setId(7);
 				u.setName("frank");
 				manager.persist(u);
-				
+
 				manager.flush();
 				manager.close();
 			}
@@ -59,7 +59,7 @@ public class TestHibernate extends ServicesTest {
 			public void run() {
 				EntityManager manager = factory.createEntityManager();
 				User loaded = (User) manager.find(User.class, id);
-				
+
 				assertNotNull(loaded);
 				assertEquals(u.getName(), loaded.getName());
 				manager.close();

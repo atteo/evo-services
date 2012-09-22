@@ -28,7 +28,7 @@ import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Handles servlets and filters registered in Guice using {@link ServletModule}. 
+ * Handles servlets and filters registered in Guice using {@link ServletModule}.
  */
 @XmlRootElement(name = "servlets")
 public class ServletContextHandlerConfig extends HandlerConfig {
@@ -38,7 +38,7 @@ public class ServletContextHandlerConfig extends HandlerConfig {
 
 		handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
 		handler.addServlet(DefaultServlet.class, "/");
-		
+
 		return handler;
 	}
 }

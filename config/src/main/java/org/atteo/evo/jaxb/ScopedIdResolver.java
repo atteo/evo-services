@@ -80,7 +80,7 @@ public class ScopedIdResolver extends IDResolver {
 			return klass;
 		}
 	}
-	
+
 	private static class DuplicateValidationEvent implements ValidationEvent {
 		private String id;
 

@@ -46,7 +46,7 @@ public class DatabaseRealmTest extends ServicesTest {
 	public static void init() {
 		migrations.migrate("fixtures/login-realm.xml");
 	}
-	
+
 	@After
 	public void tearDown() {
 		SecurityUtils.getSubject().logout();

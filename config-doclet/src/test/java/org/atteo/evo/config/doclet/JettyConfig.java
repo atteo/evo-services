@@ -23,7 +23,7 @@ import org.atteo.evo.config.XmlDefaultValue;
 
 /**
  * Wrapper around Jetty.
- * 
+ *
  * <p>
  * This element will execute Jetty instance on the specified port.
  * </p>
@@ -38,14 +38,14 @@ public class JettyConfig extends ConfigEntry {
 
 	/**
 	 * Port on which shutdown commands will be received.
-	 * 
+	 *
 	 * This port must be specified on Windows where there is no other
 	 * method of shutting down the application.
 	 */
 	@XmlElement
 	@XmlDefaultValue("-1")
 	int shutdownPort;
-	
+
 	@XmlElement
 	private void setBase(String base) {
 	}

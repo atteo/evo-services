@@ -30,7 +30,7 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 
 	@Inject
 	private TransactionManager transactionManager;
-	
+
 	private EntityManager entityManager = null;
 
 	@Override
@@ -47,7 +47,7 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 					@Override
 					public void beforeCompletion() {
 					}
-					
+
 					@Override
 					public void afterCompletion(int status) {
 						if (entityManager != null) {

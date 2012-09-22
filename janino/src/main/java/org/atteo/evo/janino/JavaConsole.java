@@ -44,7 +44,7 @@ public class JavaConsole extends TopLevelService {
 					if (line.isEmpty()) {
 						continue;
 					}
-					
+
 					ExpressionEvaluator evaluator = new ExpressionEvaluator();
 					evaluator.setExpressionType(Object.class);
 					try {
@@ -71,7 +71,7 @@ public class JavaConsole extends TopLevelService {
 	}
 
 	private Thread thread;
-	
+
 	@Override
 	public void start() {
 		thread = new ConsoleThread();

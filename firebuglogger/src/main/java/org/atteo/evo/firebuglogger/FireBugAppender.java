@@ -57,7 +57,7 @@ public class FireBugAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 		if (response.get() == null) {
 			return;
 		}
-		
+
 		event.prepareForDeferredProcessing();
 
 		String message = layout.doLayout(event);

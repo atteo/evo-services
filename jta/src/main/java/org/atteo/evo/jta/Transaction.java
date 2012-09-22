@@ -38,7 +38,7 @@ public class Transaction {
 	public static interface ReturningRunnable<T, E extends Throwable> {
 		T run() throws E;
 	}
-	
+
 	@Inject
 	private static Provider<UserTransaction> userTransactionProvider;
 
@@ -61,7 +61,7 @@ public class Transaction {
 			}
 		});
 	}
-	
+
 	public static <T, E extends Throwable> T require(ReturningRunnable<T, E> runnable) throws E {
 		UserTransaction userTransaction = userTransactionProvider.get();
 
@@ -72,7 +72,7 @@ public class Transaction {
 				userTransaction.begin();
 				myTransaction = true;
 			}
-			
+
 			try {
 				return runnable.run();
 			} catch (RuntimeException e) {
@@ -94,8 +94,8 @@ public class Transaction {
 			throw new RuntimeException(e);
 		} catch (HeuristicMixedException e) {
 			throw new RuntimeException(e);
-		} catch (HeuristicRollbackException e) { 
+		} catch (HeuristicRollbackException e) {
 			throw new RuntimeException(e);
 		}
-	}	
+	}
 }

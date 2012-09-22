@@ -84,27 +84,27 @@ public class DatabaseShiroRealm extends AuthenticatingRealm {
 			}
 			String principal = (String) token.getPrincipal();
 			System.out.println("result: " + principal);
-			
+
 			TypedQuery<Account> query = entityManager.createNamedQuery("Account.findByLogin",
 					Account.class);
-			
+
 			query.setParameter("login", principal);
-			
+
 			Account loginAccount;
-			
+
 			try {
 				loginAccount = query.getSingleResult();
 			} catch (NoResultException e) {
 				return null;
 			}
-			
+
 			SimplePrincipalCollection principalCollection = new SimplePrincipalCollection(
 					loginAccount.getLogin(), getName());
-			
+
 			SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(principalCollection,
 					loginAccount.getHashedPassword(), new SimpleByteSource(Hex.decode(loginAccount
 					.getSalt())));
-			
+
 			return info;
 		} finally {
 			if (entityManager != null) {

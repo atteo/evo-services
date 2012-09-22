@@ -74,7 +74,7 @@ public class ConfigDoclet extends Doclet {
 	private static void generateServicesDocumentation(RootDoc root) {
 		LinkGenerator linkGenerator = new LinkGenerator();
 		linkGenerator.map(root);
-		
+
 		for (ClassDoc klass : root.classes()) {
 			// TODO: instead check whether it is reachable from Configurable
 			if (isSubclass(klass, Configurable.class)) {
@@ -85,7 +85,7 @@ public class ConfigDoclet extends Doclet {
 				if (file.exists()) {
 					try {
 						String content = Files.toString(file, Charset.defaultCharset());
-						
+
 						int index = content.indexOf("<!-- =========== FIELD SUMMARY =========== -->");
 						if (index == -1) {
 							index = content.indexOf("<!-- ======== CONSTRUCTOR SUMMARY ======== -->");
@@ -94,7 +94,7 @@ public class ConfigDoclet extends Doclet {
 								continue;
 							}
 						}
-						
+
 						StringBuilder output = new StringBuilder();
 						output.append(content.substring(0, index));
 						output.append(result);
@@ -178,7 +178,7 @@ public class ConfigDoclet extends Doclet {
 			} else if (XmlAccessorType.class.getCanonicalName().equals(name)) {
 				FieldDoc field = getAnnotationElementValue(annotation, "value");
 				XmlAccessType accessType = XmlAccessType.valueOf(field.name());
-				
+
 				if (accessType != null) {
 					description.setAccessType(accessType);
 				}
@@ -197,7 +197,7 @@ public class ConfigDoclet extends Doclet {
 					element.setCollection(true);
 				}
 			}
-			
+
 			for (AnnotationDesc annotation : field.annotations()) {
 				String name = annotation.annotationType().qualifiedName();
 				if (XmlTransient.class.getCanonicalName().equals(name)) {
@@ -217,7 +217,7 @@ public class ConfigDoclet extends Doclet {
 				} else if (XmlElementRef.class.getCanonicalName().equals(name)) {
 					element.setType(ElementType.ELEMENT);
 					element.setName("? extends " + type.simpleTypeName());
-					// 
+					//
 				} else if (XmlDefaultValue.class.getCanonicalName().equals(name)) {
 					String defaultValue = getAnnotationElementValue(annotation, "value");
 					element.setDefaultValue(defaultValue);
@@ -267,7 +267,7 @@ public class ConfigDoclet extends Doclet {
 			description.addElement(element);
 		}
 	}
-	
+
 	private static void analyseElementAnnotation(AnnotationDesc annotation, ElementDescription element) {
 		String tagName = getAnnotationElementValue(annotation, "name");
 		if (tagName != null && !"##default".equals(tagName)) {
@@ -342,7 +342,7 @@ public class ConfigDoclet extends Doclet {
 			}
 			writer.append("--").gt().newline();
 		}
-		
+
 		String tagName = description.getTagName();
 
 		if (description.getAttributes().isEmpty()) {
@@ -356,7 +356,7 @@ public class ConfigDoclet extends Doclet {
 			}
 			writer.append("&gt;").newline();
 		}
-		
+
 		for (ElementDescription element : description.getElements()) {
 			writer.comment(element.getComment(), 1);
 			writer.indent(1);
@@ -373,10 +373,10 @@ public class ConfigDoclet extends Doclet {
 					writer.append("<a href=\"" + url + "\">");
 				}
 			}
-			
+
 			writer.lt().keyword(element.getName()).gt();
 			writer.defaultValue(element.getDefaultValue());
-			writer.lt().append("/").keyword(element.getName()).gt();	
+			writer.lt().append("/").keyword(element.getName()).gt();
 
 			if (url != null) {
 				writer.append("</a>");
@@ -392,7 +392,7 @@ public class ConfigDoclet extends Doclet {
 				writer.lt().append("/").keyword(element.getWrapperName()).gt().newline();
 			}
 		}
-		
+
 		writer.lt().append("/").keyword(tagName).gt().newline();
 
 		writer.append("</li>\n</ul>\n");
@@ -439,14 +439,14 @@ public class ConfigDoclet extends Doclet {
 				@Override
 				public boolean processLine(String line) throws IOException {
 					lineCount++;
-					
+
 					if (lineCount < position.line()) {
 						return true;
 					}
-					
+
 					int index = 0;
 					int virtualIndex = 0;
-					
+
 					if (lineCount == position.line() && position.column() > 0) {
 						while (virtualIndex < position.column() && index < line.length()) {
 							if (line.charAt(index) == '\t') {
@@ -463,7 +463,7 @@ public class ConfigDoclet extends Doclet {
 						char ch = line.charAt(index);
 						if (ch == ';') {
 							return false;
-						}	
+						}
 
 						if (afterEqualSign) {
 							if (!lastWasSpace) {
@@ -481,7 +481,7 @@ public class ConfigDoclet extends Doclet {
 					}
 					return true;
 				}
-				
+
 				@Override
 				public String getResult() {
 					if (builder.length() == 0) {
@@ -495,7 +495,7 @@ public class ConfigDoclet extends Doclet {
 			});
 		} catch (IOException e) {
 			System.out.println("Warning: cannot read file: " + file.getAbsolutePath());
-			return null;		
+			return null;
 		}
 	}
 }

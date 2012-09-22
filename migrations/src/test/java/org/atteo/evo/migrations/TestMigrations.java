@@ -21,7 +21,7 @@ import org.junit.Test;
 public class TestMigrations extends ServicesTest {
 	@Inject
 	private Migrations migrations;
-	
+
 	@Test
 	public void testMigrations() {
 		migrations.migrate("test-migration1.xml");

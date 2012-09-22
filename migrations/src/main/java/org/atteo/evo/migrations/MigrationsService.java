@@ -38,7 +38,7 @@ public class MigrationsService extends TopLevelService {
 	private DatabaseService database;
 
 	private Migrations migrations;
-	
+
 	@Override
 	public Module configure() {
 		return new AbstractModule() {

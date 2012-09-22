@@ -43,7 +43,7 @@ import com.google.inject.servlet.ServletModule;
 
 /**
  * Starts embedded Jetty web server instance.
- * 
+ *
  * <p>
  * There are two ways to register servlets and filters:
  * <ul>
@@ -69,7 +69,7 @@ public class Jetty extends TopLevelService {
 	 */
 	@XmlElement
 	private boolean registerAnnotatedServlets = true;
-			
+
 	/**
 	 * List of connectors.
 	 */

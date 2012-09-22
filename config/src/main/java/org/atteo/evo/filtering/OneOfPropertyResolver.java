@@ -28,7 +28,7 @@ public class OneOfPropertyResolver implements PrefixedPropertyResolver {
 	public String getPrefix() {
 		return prefix;
 	}
-	
+
 	@Override
 	public String resolveProperty(String name, PropertyResolver resolver) throws PropertyNotFoundException {
 		if (!name.startsWith(prefix)) {

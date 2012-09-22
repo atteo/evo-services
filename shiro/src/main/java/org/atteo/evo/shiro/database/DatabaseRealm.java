@@ -26,7 +26,7 @@ import com.google.inject.multibindings.Multibinder;
 
 @XmlRootElement(name = "database")
 public class DatabaseRealm extends ShiroRealm {
-	
+
 	@Override
 	public Module configure() {
 		return new AbstractModule() {

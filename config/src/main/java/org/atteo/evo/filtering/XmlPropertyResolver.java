@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Get property value from XML by taking text content of a node pointed by property name.
- * 
+ *
  * <p>
  * The resolver tries to search for an element with a given property name. If none is found
  * it tries to interpret dots (".") as separator between parent and children element names.

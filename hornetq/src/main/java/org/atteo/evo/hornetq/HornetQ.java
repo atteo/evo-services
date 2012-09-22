@@ -35,7 +35,7 @@ import com.google.inject.Provider;
 
 /**
  * HornetQ JMS Client service.
- * 
+ *
  * <p>
  * Currently is able to connect only to the {@link HornetQServer}
  * started in the same JVM.

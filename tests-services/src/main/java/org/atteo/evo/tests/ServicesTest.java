@@ -19,5 +19,5 @@ import org.junit.runner.RunWith;
 
 @RunWith(ServicesRunner.class)
 public class ServicesTest {
-	
+
 }

@@ -102,11 +102,11 @@ import com.sun.xml.bind.v2.runtime.JAXBContextImpl;
  * .   @Valid
  *     private List<Color> colors;
  * }
- * 
+ *
  * . @XmlRootElement(name = "red")
  * class Red extends Color {
  * }
- * 
+ *
  * }
  * </pre>
  * </p>
@@ -192,7 +192,7 @@ public class Configuration {
 
 	/**
 	 * Filter {@code #{name}} placeholders using values from given {@link PropertyResolver}.
-	 * 
+	 *
 	 * @param resolver property resolver used in filtering into configuration files
 	 * @see CompoundPropertyResolver
 	 */
@@ -225,7 +225,7 @@ public class Configuration {
 			if (root != null) {
 				binder.unmarshal(root);
 				JaxbBindings.iterate(root, binder, new CombineAssigner());
-				
+
 				// Combine with parent
 				document = XmlCombiner.combine(builder, parentDocument, document);
 			}

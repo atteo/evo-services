@@ -19,10 +19,10 @@ public class RecordingEventListener {
 
 	public ArrayList<Object> getEvents(Class<?> eventClass) {
 		ArrayList<Object> result = events.get(eventClass);
-		
+
 		if (result == null)
 			result = new ArrayList<Object>();
-		
+
 		return result;
 	}
 

@@ -50,7 +50,7 @@ public class InjectionRule implements TestRule {
 	private boolean injectMembers = true;
 
 	/**
-	 * 
+	 *
 	 * @param target object of the executed test, usually just 'this'
 	 */
 	public InjectionRule(Object target, ServicesRule servicesRule) {

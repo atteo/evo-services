@@ -67,7 +67,7 @@ public class Hibernate extends TopLevelService {
 
 	/**
 	 * Automatically initialize database schema.
-	 * 
+	 *
 	 * <p>
 	 * <ul>
 	 * <li>validate: validate the schema, makes no changes to the database.</li>

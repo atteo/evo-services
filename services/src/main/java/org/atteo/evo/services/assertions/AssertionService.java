@@ -23,12 +23,12 @@ import org.atteo.evo.services.TopLevelService;
 
 /**
  * Sample service which can be used to test for some conditions.
- * 
+ *
  * <p>
  * The purpose of this service is to help you debug your configuration
  * file.
  * </p>
- * 
+ *
  * <p>
  * Most of the {@link Assertion assertions} will fail the application
  * startup when their requirement is not satisfied. There is also

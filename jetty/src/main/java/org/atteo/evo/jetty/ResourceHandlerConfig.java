@@ -26,7 +26,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
  * Serves static content and handles If-Modified-Since headers.
  * No caching is done. Requests for resources that do not exist
  * are let pass (Eg no 404's).
- * 
+ *
  * @see ResourceHandler
  */
 @XmlRootElement(name = "resource")

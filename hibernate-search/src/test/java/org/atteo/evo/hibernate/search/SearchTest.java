@@ -44,10 +44,10 @@ public class SearchTest extends ServicesTest {
 			@Override
 			public void run() {
 				EntityManager manager = factory.createEntityManager();
-				
+
 				Author author = new Author();
 				author.setName("Juliusz Słowacki");
-				
+
 				Book book = new Book();
 				book.setTitle("Kordian");
 				try {
@@ -56,7 +56,7 @@ public class SearchTest extends ServicesTest {
 					throw new RuntimeException(e);
 				}
 				book.getAuthors().add(author);
-				
+
 				manager.persist(author);
 				manager.persist(book);
 				manager.flush();
@@ -64,11 +64,11 @@ public class SearchTest extends ServicesTest {
 			}
 		});
 	}
-	
+
 	@Test
 	public void simple() {
 		EntityManager manager = factory.createEntityManager();
-		
+
 		FullTextEntityManager index = Search.getFullTextEntityManager(manager);
 		QueryBuilder builder = index.getSearchFactory().buildQueryBuilder().forEntity(Book.class).get();
 		Query query = builder.keyword().onFields("title", "authors.name")

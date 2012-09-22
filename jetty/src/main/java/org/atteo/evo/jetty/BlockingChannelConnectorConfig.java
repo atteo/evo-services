@@ -25,7 +25,7 @@ import org.eclipse.jetty.server.nio.BlockingChannelConnector;
  * This connector uses efficient NIO buffers with a traditional blocking thread model.
  * Direct NIO buffers are used and a thread is allocated per connections.
  * This connector is best used when there are a few very active connections.
- * 
+ *
  * @see BlockingChannelConnector
  */
 @XmlRootElement(name = "blockingchannel")

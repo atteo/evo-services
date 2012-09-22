@@ -32,7 +32,7 @@ public class Account {
 	@XmlElement
 	@XmlDefaultValue("false")
 	private Boolean administrator;
-	
+
 	@XmlElementWrapper(name = "roles")
 	@XmlElement(name = "role")
 	private List<String> roles;

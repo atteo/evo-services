@@ -21,5 +21,5 @@ import org.atteo.evo.config.Configurable;
  * Configuration file entry.
  */
 public class ConfigEntry extends Configurable {
-	
+
 }

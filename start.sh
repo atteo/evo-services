@@ -14,7 +14,7 @@ ROOT=""
 #
 # 1. Execute the application
 #
-# ./start.sh 
+# ./start.sh
 #
 # 2. Recompile the given projects and then execute the application
 #

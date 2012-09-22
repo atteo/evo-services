@@ -31,7 +31,7 @@ import java.util.zip.ZipInputStream;
 
 /**
  * Starts the application from the WAR file.
- * 
+ *
  * First we need to unzip the war file. Then we need to setup the classloader
  * which will load the classes from unzipped directory. This is equivalent to
  * the functionality offered when war file is started by the (Jetty) container.
@@ -111,7 +111,7 @@ public class WarStarter {
 				entry = zip.getNextEntry();
 				continue;
 			}
-			
+
 			if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
 				throw new IOException("Cannot create directory: " + file.getParent());
 			}

@@ -74,7 +74,7 @@ public class HibernateSearch extends HibernatePlugin {
 	@XmlElement
 	@XmlDefaultValue("${dataHome}/indexes")
 	private String indexBase;
-	
+
 	@Override
 	public Map<String, Object> getProperties() {
 		Map<String, Object> map = new HashMap<String, Object>();

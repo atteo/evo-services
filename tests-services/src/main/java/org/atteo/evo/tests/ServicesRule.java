@@ -121,7 +121,7 @@ public class ServicesRule implements TestRule {
 				binder.bind(klass);
 			}
 		};
-		
+
 		Module bindingsModule = new Module() {
 			@Override
 			public void configure(Binder binder) {
@@ -136,7 +136,7 @@ public class ServicesRule implements TestRule {
 						throw new RuntimeException("Method annotated with @Bindings must have exactly"
 								+ " one argument of type com.google.inject.Binder");
 					}
-					
+
 					method.setAccessible(true);
 					try {
 						method.invoke(null, binder);

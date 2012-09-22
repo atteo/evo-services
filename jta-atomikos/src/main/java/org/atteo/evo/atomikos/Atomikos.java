@@ -176,7 +176,7 @@ public class Atomikos extends TopLevelService {
 						"log_");
 				properties.setProperty(AbstractUserTransactionServiceFactory.LOG_BASE_DIR_PROPERTY_NAME,
 						logDirectory);
-				properties.setProperty(AbstractUserTransactionServiceFactory.OUTPUT_DIR_PROPERTY_NAME, 
+				properties.setProperty(AbstractUserTransactionServiceFactory.OUTPUT_DIR_PROPERTY_NAME,
 						consoleOutputDirectory);
 				properties.setProperty(AbstractUserTransactionServiceFactory.CONSOLE_FILE_NAME_PROPERTY_NAME,
 						consoleOutputName);
@@ -196,7 +196,7 @@ public class Atomikos extends TopLevelService {
 				} catch (SysException e) {
 					throw new RuntimeException(e.getErrors().pop().toString(), e);
 				}
-				
+
 				manager = new UserTransactionManager();
 				manager.setStartupTransactionService(false);
 				try {

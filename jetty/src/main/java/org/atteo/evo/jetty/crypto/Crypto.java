@@ -52,20 +52,20 @@ public class Crypto {
 			String keystorePassword) {
 		try {
 			Provider bouncyCastleProvider = new BouncyCastleProvider();
-			
+
 			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", bouncyCastleProvider);
 			keyPairGenerator.initialize(1024, new SecureRandom());
 			KeyPair keyPair = keyPairGenerator.generateKeyPair();
-			
+
 			// Generate self-signed certificate
 			X500NameBuilder nameBuilder = new X500NameBuilder(BCStyle.INSTANCE);
 			nameBuilder.addRDN(BCStyle.CN, "test");
 			X500Name name = nameBuilder.build();
-			
+
 			Date notBefore = new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000);
 			Date notAfter = new Date(System.currentTimeMillis() + 10 * 365 * 24 * 60 * 60 * 1000);
 			BigInteger serial = BigInteger.valueOf(System.currentTimeMillis());
-			
+
 			X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(name,
 					serial, notBefore, notAfter, name, keyPair.getPublic());
 			ContentSigner sigGen = new JcaContentSignerBuilder("SHA256WithRSAEncryption")
@@ -74,7 +74,7 @@ public class Crypto {
 					.getCertificate(certGen.build(sigGen));
 			cert.checkValidity(new Date());
 			cert.verify(cert.getPublicKey());
-			
+
 			// Save to keystore
 			KeyStore store = KeyStore.getInstance("JKS");
 			if (keystore.exists()) {

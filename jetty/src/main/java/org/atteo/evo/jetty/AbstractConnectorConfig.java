@@ -24,7 +24,7 @@ public abstract class AbstractConnectorConfig extends ConnectorConfig {
 	 * The configured port for the connector or 0 if any available port may be used.
 	 */
 	@XmlElement
-	private Integer port;	
+	private Integer port;
 
 	/**
 	 * The hostname representing the interface to which this connector will bind, or null for all interfaces.

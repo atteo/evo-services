@@ -21,8 +21,8 @@ import org.atteo.evo.config.Configurable;
 import com.google.inject.Module;
 
 /**
- * Shiro realm service. 
- * 
+ * Shiro realm service.
+ *
  * <p>
  * Use the following code to register your {@link Realm} in Guice:
  * <pre>

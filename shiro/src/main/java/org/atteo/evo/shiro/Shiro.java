@@ -53,7 +53,7 @@ public class Shiro extends TopLevelService {
 
 	/**
 	 * Enable Shiro AOP functionality.
-	 * 
+	 *
 	 * <p>
 	 * Shiro AOP support enables you to use annotations for permission checking.
 	 * Supported annotations include:
@@ -67,7 +67,7 @@ public class Shiro extends TopLevelService {
 	@XmlElementWrapper(name = "realms")
 	@XmlElementRef
 	private List<ShiroRealm> realms;
-	
+
 	@Override
 	public Module configure() {
 		return new AbstractModule() {
@@ -81,7 +81,7 @@ public class Shiro extends TopLevelService {
 								this.install(realm.configure());
 							}
 						}
-						
+
 						try {
 							// Guice will initialize manager with list of realms
 							bind(WebSecurityManager.class).toConstructor(

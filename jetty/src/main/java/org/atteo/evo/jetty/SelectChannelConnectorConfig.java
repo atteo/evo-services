@@ -25,9 +25,9 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
  * Direct NIO buffers are used and threads are only allocated to connections with requests.
  * Synchronization is used to simulate blocking for the servlet API, and any unflushed content
  * at the end of request handling is written asynchronously.
- * 
+ *
  * This connector is best used when there are a many connections that have idle periods.
- * 
+ *
  * @see SelectChannelConnector
  */
 @XmlRootElement(name = "selectchannel")

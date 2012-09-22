@@ -252,7 +252,7 @@ public class XmlCombiner {
 
 	/**
 	 * Creates a map of (tagName, id) to list of elements.
-	 * 
+	 *
 	 * @param element
 	 *            root element of the tree to map
 	 * @return calculated map

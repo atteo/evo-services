@@ -20,7 +20,7 @@ package org.atteo.evo.filtering;
  */
 public class RawPropertyResolver implements PrefixedPropertyResolver {
 	private static final String prefix = "raw:";
-			
+
 	@Override
 	public String getPrefix() {
 		return prefix;

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.config.Configurable;
 
 /**
- * Plugin which extends the functionality of Hibernate. 
+ * Plugin which extends the functionality of Hibernate.
  */
 @XmlRootElement(name = "hibernateplugin")
 public abstract class HibernatePlugin extends Configurable {

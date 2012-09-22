@@ -17,7 +17,7 @@ package org.atteo.evo.config.doclet;
 
 public class HtmlWriter {
 	private StringBuilder builder = new StringBuilder();
-	
+
 	public HtmlWriter append(String str) {
 		builder.append(str);
 		return this;

@@ -37,5 +37,5 @@ public class XmlUtils {
 		} catch (TransformerException e) {
 			throw new RuntimeException(e);
 		}
-	}	
+	}
 }

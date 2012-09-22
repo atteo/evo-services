@@ -25,7 +25,7 @@ import com.google.inject.servlet.ServletModule;
 
 /**
  * Generic JTA support service.
- * 
+ *
  * <p>
  * Provides support for &#064;{@link Transactional} annotation
  * and {@link Transaction} helper.

@@ -9,7 +9,7 @@
 			<!--
 			This is the default:
 			<url>jdbc:h2:${dataHome}/database;AUTO_SERVER=TRUE</url>
-			
+
 			Start console.sh to see the same database
 			-->
 

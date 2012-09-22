@@ -65,7 +65,7 @@ public class CompoundPropertyResolver implements PropertyResolver {
 				throw new PropertyNotFoundException(name);
 			}
 		}
-			
+
 		for (PropertyResolver resolver : resolvers) {
 			String value = resolver.resolveProperty(name, recurse);
 			if (value != null) {

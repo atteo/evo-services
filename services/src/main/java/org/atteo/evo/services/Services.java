@@ -55,7 +55,7 @@ import com.google.inject.servlet.ServletModule;
 /**
  * Evo Services is a runtime service engine based on Google Guice
  * which discovers services, configures them and manages their lifecycle.
- * 
+ *
  * <p>
  * The engine performs the following actions when started:
  * <ul>
@@ -70,7 +70,7 @@ import com.google.inject.servlet.ServletModule;
  *  <li>executes {@link Service#start() start} on each service.</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>
  * The use of SLF4J is mandatory. By default Evo Services has dependency on LogBack in POM file
  * which suffices to use it as a default logging implementation. Use
@@ -78,7 +78,7 @@ import com.google.inject.servlet.ServletModule;
  * if you want to use different SLF4J implementation. If you stick with LogBack there is LogBack
  * service which offers further integration with the framework.
  * </p>
- * 
+ *
  * <p>
  * Two configuration files are searched for. First the classpath is searched for default-config.xml.
  * The idea is that this file contains default configuration prepared by the application programmer.
@@ -86,7 +86,7 @@ import com.google.inject.servlet.ServletModule;
  * prepared by the application administrator. If config.xml file does not exist it is created
  * with the reference to the XSD schema to which the file should conform.
  * </p>
- * 
+ *
  * <p>
  * Configuration files are merged and filtered with a number of predefined {@link PropertyResolver}s.
  * The value for {@code ${name}} placeholder will be searched in the following ways:
@@ -136,7 +136,7 @@ public class Services extends GuiceServletContextListener {
 	private List<File> configDirs;
 	private List<Module> modules = new ArrayList<Module>();
 	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
-	
+
 	private Configuration configuration;
 	private Injector injector;
 	private boolean externalContainer = false;
@@ -187,7 +187,7 @@ public class Services extends GuiceServletContextListener {
 		if (xdgDataHome != null) {
 			return new File(xdgDataHome + "/" + applicationName);
 		}
-		
+
 		return new File(homeDirectory, ".local/share/" + applicationName);
 	}
 
@@ -275,7 +275,7 @@ public class Services extends GuiceServletContextListener {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * Reads configuration from config.xml files found in ${configDirs} and ${configHome} directories.
 	 */
@@ -310,7 +310,7 @@ public class Services extends GuiceServletContextListener {
 				} catch (IOException e) {
 				}
 			}
-		} 
+		}
 	}
 
 	public void combineConfigurationFromStream(InputStream stream)
@@ -438,7 +438,7 @@ public class Services extends GuiceServletContextListener {
 		properties.setProperty("cacheHome", getCacheHome().getAbsolutePath());
 		properties.setProperty("dataDir", getDataDir().getAbsolutePath());
 		properties.setProperty("runtimeDirectory", getRuntimeDirectory().getAbsolutePath());
-		
+
 		Element propertiesElement = null;
 		if (configuration.getRootElement() != null) {
 			NodeList nodesList = configuration.getRootElement().getElementsByTagName("properties");
@@ -446,7 +446,7 @@ public class Services extends GuiceServletContextListener {
 				propertiesElement = (Element) nodesList.item(0);
 			}
 		}
-		
+
 		propertyResolver = new CompoundPropertyResolver(
 				new PropertiesPropertyResolver(properties),
 				new SystemPropertyResolver(),
@@ -454,7 +454,7 @@ public class Services extends GuiceServletContextListener {
 				new XmlPropertyResolver(propertiesElement, false),
 				customPropertyResolvers,
 				new XmlPropertyResolver(configuration.getRootElement(), true));
-		
+
 		configuration.filter(propertyResolver);
 	}
 
@@ -565,7 +565,7 @@ public class Services extends GuiceServletContextListener {
 			} catch (NoSuchMethodException e) {
 				klass = klass.getSuperclass();
 				continue;
-			} 
+			}
 			return true;
 		}
 		return false;

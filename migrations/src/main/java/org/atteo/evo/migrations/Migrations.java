@@ -27,7 +27,7 @@ import liquibase.resource.ResourceAccessor;
 
 public class Migrations {
 	private static final String BEFORE_LAST_UPDATE = "BEFORE_LAST_UPDATE";
-	
+
 	private DataSource dataSource;
 
 	Migrations(DataSource dataSource) {
@@ -61,15 +61,15 @@ public class Migrations {
 			}
 		}
 	}
-	
+
 	public void rollbackLastUpdate(String changelog) {
 		rollback(changelog, null, BEFORE_LAST_UPDATE);
 	}
-	
+
 	public void rollbackLastUpdate(String changelog, String contexts) {
 		rollback(changelog, contexts, BEFORE_LAST_UPDATE) ;
 	}
-	
+
 	private void rollback(String changelog, String contexts, String tag) {
 		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
@@ -92,7 +92,7 @@ public class Migrations {
 			}
 		}
 	}
-	
+
 	public void dropAll() {
 		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
