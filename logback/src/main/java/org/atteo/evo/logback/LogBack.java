@@ -14,9 +14,7 @@
 package org.atteo.evo.logback;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
 
-import javax.inject.Inject;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -31,6 +29,7 @@ import org.atteo.evo.services.TopLevelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -66,17 +65,14 @@ public class LogBack extends TopLevelService {
 	@XmlElement
 	private String configFile = null;
 
-	/**
-	 * Register JMX MBean to control LogBack.
-	 */
-	@XmlElement(defaultValue = "false")
-	private boolean jmx = false;
-
 	@XmlDefaultValue("${configHome}")
 	private File configHome;
 
 	@Inject
 	Logger logger;
+
+	@Inject(optional = true)
+	private MBeanServer mbeanServer;
 
 	@Override
 	public void start() {
@@ -101,16 +97,12 @@ public class LogBack extends TopLevelService {
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		context.addListener(new LevelChangePropagator());
 
-		if (jmx) {
-			configureJMX();
-		}
+		configureJMX();
 	}
 
 	@Override
 	public void stop() {
-		if (jmx) {
-			deconfigureJMX();
-		}
+		deconfigureJMX();
 	}
 
 	private JMXConfigurator jmxConfigurator;
@@ -132,9 +124,11 @@ public class LogBack extends TopLevelService {
 	}
 
 	private void configureJMX() throws RuntimeException {
+		if (mbeanServer == null) {
+			return;
+		}
 		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		try {
-			MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 			ObjectName name = ObjectName.getInstance(JMXConfigurator.class.getPackage().getName()
 					+ ":type=" + JMXConfigurator.class.getSimpleName());
 			jmxConfigurator = new JMXConfigurator(context, mbeanServer, name);
@@ -153,6 +147,9 @@ public class LogBack extends TopLevelService {
 	}
 
 	private void deconfigureJMX() {
+		if (mbeanServer == null) {
+			return;
+		}
 		// force JMXConfigurator to deregister itself from MBean server
 		jmxConfigurator.onStop(null);
 	}
