@@ -51,6 +51,7 @@
 		<module>janino</module>
 		<module>jersey</module>
 		<module>jetty</module>
+		<module>jminix</module>
 		<module>jmx</module>
 		<module>jpa</module>
 		<module>jta-atomikos</module>

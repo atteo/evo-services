@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.atteo</groupId>
+		<artifactId>evo-framework</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>evo-jminix</artifactId>
+	<name>Evo JMinix</name>
+	<repositories>
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>evo-services</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jminix</groupId>
+			<artifactId>jminix</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+	</dependencies>
+</project>
+
