@@ -18,6 +18,12 @@ package org.atteo.evo.jetty;
 import org.atteo.evo.config.Configurable;
 import org.eclipse.jetty.server.Handler;
 
+import com.google.inject.Module;
+
 public abstract class HandlerConfig extends Configurable {
 	public abstract Handler getHandler();
+
+	public Module configure() {
+		return null;
+	}
 }

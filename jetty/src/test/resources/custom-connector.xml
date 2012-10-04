@@ -2,18 +2,34 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
 	<jetty>
 		<connectors>
-			<selectchannel>
-				<port>33080</port>
-			</selectchannel>
-			<blockingchannel>
-				<port>33081</port>
-			</blockingchannel>
-			<selectchannel>
-				<port>33082</port>
-			</selectchannel>
+			<selectchannel/>
+			<blockingchannel/>
+			<sslselectchannel/>
+			<local/>
 		</connectors>
-		<handlers>
-			<servlets/>
-		</handlers>
+		<contextCollection>
+			<context>
+				<contextPath>/first</contextPath>
+				<!-- Collection executed every handler -->
+				<handlerCollection>
+					<hello/>
+					<!-- List stops executing when request has isHandled() to true -->
+					<handlerList>
+						<hello>
+							<message>first</message>
+						</hello>
+						<hello>
+							<message>second</message>
+						</hello>
+					</handlerList>
+				</handlerCollection>
+			</context>
+			<context>
+				<contextPath>/empty</contextPath>
+				<!-- Empty collection should not throw error -->
+				<handlerCollection>
+				</handlerCollection>
+			</context>
+		</contextCollection>
 	</jetty>
 </config>

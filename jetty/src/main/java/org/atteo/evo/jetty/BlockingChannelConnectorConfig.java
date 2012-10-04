@@ -31,9 +31,7 @@ import org.eclipse.jetty.server.nio.BlockingChannelConnector;
 @XmlRootElement(name = "blockingchannel")
 public class BlockingChannelConnectorConfig extends AbstractConnectorConfig {
 	@Override
-	public Connector getConnector() {
-		Connector connector = new BlockingChannelConnector();
-		configure(connector);
-		return connector;
+	public Connector createConnector() {
+		return new BlockingChannelConnector();
 	}
 }

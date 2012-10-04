@@ -33,9 +33,7 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 @XmlRootElement(name = "selectchannel")
 public class SelectChannelConnectorConfig extends AbstractConnectorConfig {
 	@Override
-	public Connector getConnector() {
-		Connector connector = new SelectChannelConnector();
-		configure(connector);
-		return connector;
+	public Connector createConnector() {
+		return new SelectChannelConnector();
 	}
 }

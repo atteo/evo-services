@@ -32,12 +32,17 @@ public abstract class AbstractConnectorConfig extends ConnectorConfig {
 	@XmlElement
 	private String host;
 
-	protected void configure(Connector connector) {
+	abstract protected Connector createConnector();
+
+	@Override
+	public Connector getConnector() {
+		Connector connector = createConnector();
 		if (port != null) {
 			connector.setPort(port);
 		}
 		if (host != null) {
 			connector.setHost(host);
 		}
+		return connector;
 	}
 }

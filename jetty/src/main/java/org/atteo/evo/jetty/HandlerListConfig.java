@@ -15,15 +15,23 @@
  */
 package org.atteo.evo.jetty;
 
-import org.atteo.evo.config.Configurable;
-import org.eclipse.jetty.server.Connector;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.inject.Module;
+import org.eclipse.jetty.server.handler.HandlerCollection;
+import org.eclipse.jetty.server.handler.HandlerList;
 
-public abstract class ConnectorConfig extends Configurable {
-	public abstract Connector getConnector();
-
-	public Module configure() {
-		return null;
+/**
+ * HandlerList.
+ * <p>
+ * This extension of {@link HandlerCollection} will call each contained handler
+ * in turn until either an exception is thrown, the response is committed
+ * or a positive response status is set.
+ * </p>
+ */
+@XmlRootElement(name = "handlerList")
+public class HandlerListConfig extends HandlerCollectionConfig {
+	@Override
+	protected HandlerCollection createCollection() {
+		return new HandlerList();
 	}
 }

@@ -15,13 +15,42 @@
  */
 package org.atteo.evo.jetty;
 
+import javax.inject.Inject;
+
 import org.atteo.evo.tests.ServicesConfiguration;
 import org.atteo.evo.tests.ServicesTest;
+import org.eclipse.jetty.server.LocalConnector;
+import org.eclipse.jetty.testing.HttpTester;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 @ServicesConfiguration("/custom-connector.xml")
 public class CustomConnectorTest extends ServicesTest {
 	@Test
 	public void dummy() {
+	}
+
+	@Inject
+	private LocalConnector localConnector;
+
+	/**
+	 * Tests various Jetty handlers.
+	 * <p>
+	 * See <a href="https://github.com/eclipse/jetty.project/tree/master/example-jetty-embedded/src/main/java/org/eclipse/jetty/embedded">this</a> link for some examples of handlers usage.
+	 * </p>
+	 */
+	@Test
+	public void testHandlers() throws Exception {
+		HttpTester request = new HttpTester();
+		request.setHeader("Host", "tester");
+		request.setMethod("GET");
+		request.setURI("/first/");
+
+		String responseString = localConnector.getResponses(request.generate());
+
+		HttpTester response = new HttpTester();
+		response.parse(responseString);
+
+		assertEquals("Hello World\nfirst\n", response.getContent());
 	}
 }

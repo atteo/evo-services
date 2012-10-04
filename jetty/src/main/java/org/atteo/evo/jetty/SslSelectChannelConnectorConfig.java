@@ -25,8 +25,6 @@ import org.atteo.evo.jetty.crypto.Crypto;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This connector uses efficient NIO buffers with a non blocking threading model.
@@ -64,10 +62,8 @@ public class SslSelectChannelConnectorConfig extends AbstractConnectorConfig {
 	@XmlElement
 	private boolean wantClientAuth = false;
 
-	private final Logger logger = LoggerFactory.getLogger(SslSelectChannelConnectorConfig.class);
-
 	@Override
-	public Connector getConnector() {
+	public Connector createConnector() {
 		File keyStoreFile = new File(keyStoreLocation);
 		if (!keyStoreFile.exists()) {
 			Crypto.createSelfSignedCertificate(keyStoreFile, keyAlias, keyStorePassword);
@@ -85,8 +81,6 @@ public class SslSelectChannelConnectorConfig extends AbstractConnectorConfig {
 		sslContextFactory.setNeedClientAuth(needClientAuth);
 		sslContextFactory.setWantClientAuth(wantClientAuth);
 
-		Connector connector = new SslSelectChannelConnector(sslContextFactory);
-		configure(connector);
-		return connector;
+		return new SslSelectChannelConnector(sslContextFactory);
 	}
 }

@@ -33,7 +33,6 @@ import org.atteo.evo.services.ExternalContainer;
 import org.atteo.evo.services.TopLevelService;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.util.log.Log;
 
 import com.google.inject.Inject;
@@ -80,19 +79,29 @@ public class Jetty extends TopLevelService {
 	};
 
 	/**
-	 * List of handlers.
+	 * Main handler. Usually a {@link HandlerCollectionConfig collection} or {@link HandlerListConfig list}
+	 * of handlers. By default set to {@link ServletContextHandlerConfig}.
 	 */
-	@XmlElementWrapper(name = "handlers")
 	@XmlElementRef
-	private HandlerConfig[] handlers = new HandlerConfig[] {
-		new ServletContextHandlerConfig()
-	};
+	private HandlerConfig handler = new ServletContextHandlerConfig();
 
 	@Override
 	public Module configure() {
 		return new ServletModule() {
 			@Override
 			protected void configureServlets() {
+				for (ConnectorConfig connector : connectors) {
+					Module module = connector.configure();
+					if (module != null) {
+						install(module);
+					}
+				}
+
+				Module module = handler.configure();
+				if (module != null) {
+					install(module);
+				}
+
 				if (!registerAnnotatedServlets) {
 					return;
 				}
@@ -155,11 +164,7 @@ public class Jetty extends TopLevelService {
 		}
 		server = new Server();
 
-		HandlerList handlerList = new HandlerList();
-		for (HandlerConfig config : handlers) {
-			handlerList.addHandler(config.getHandler());
-		}
-		server.setHandler(handlerList);
+		server.setHandler(handler.getHandler());
 
 		for (ConnectorConfig config : connectors) {
 			server.addConnector(config.getConnector());

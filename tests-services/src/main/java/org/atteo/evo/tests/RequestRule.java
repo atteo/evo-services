@@ -43,6 +43,12 @@ public class RequestRule implements TestRule {
 					public Object call() throws Exception {
 						try {
 							base.evaluate();
+						} catch (RuntimeException e) {
+							// don't wrap RuntimeExceptions
+							throw e;
+						} catch (Error e) {
+							// don't wrap Errors either, JUnit throws this
+							throw e;
 						} catch (Throwable e) {
 							throw new RuntimeException(e);
 						}
