@@ -26,7 +26,7 @@
 			</context>
 			<context>
 				<contextPath>/empty</contextPath>
-				<!-- Empty collection should not throw error -->
+				<!-- Check that empty collection works correctly -->
 				<handlerCollection>
 				</handlerCollection>
 			</context>

@@ -16,7 +16,6 @@
 package org.atteo.evo.jetty;
 
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.server.Handler;

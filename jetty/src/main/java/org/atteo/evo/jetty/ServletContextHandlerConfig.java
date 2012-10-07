@@ -34,7 +34,7 @@ import com.google.inject.servlet.ServletModule;
 public class ServletContextHandlerConfig extends HandlerConfig {
 	@Override
 	public Handler getHandler() {
-		ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		ServletContextHandler handler = new ServletContextHandler();
 
 		handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
 		handler.addServlet(DefaultServlet.class, "/");
