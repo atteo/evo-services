@@ -7,9 +7,6 @@
 	</parent>
 	<artifactId>evo-jta-atomikos</artifactId>
 	<name>Evo JTA Atomikos</name>
-	<properties>
-		<atomikos.version>3.7.1</atomikos.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
@@ -24,17 +21,14 @@
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jta</artifactId>
-			<version>${atomikos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jdbc</artifactId>
-			<version>${atomikos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jms</artifactId>
-			<version>${atomikos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
