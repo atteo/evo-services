@@ -31,6 +31,8 @@ import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -49,7 +51,9 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.Singleton;
 import com.google.inject.binder.ScopedBindingBuilder;
 import com.google.inject.name.Names;
 
@@ -119,6 +123,18 @@ public class Hibernate extends TopLevelService {
 					binding.asEagerSingleton();
 				}
 			}
+
+			@Provides
+			@Singleton
+			public ValidatorFactory provideValidatorFactory(Injector injector) {
+				GuiceConstraintValidatorFactory factory = new GuiceConstraintValidatorFactory(
+						injector);
+				factory.setDefaultFactory(Validation.byDefaultProvider()
+						.configure().getDefaultConstraintValidatorFactory());
+				return Validation.byDefaultProvider().configure()
+						.constraintValidatorFactory(factory)
+						.buildValidatorFactory();
+			}
 		};
 	}
 
@@ -129,11 +145,15 @@ public class Hibernate extends TopLevelService {
 		@Inject
 		private JtaPlatform jtaPlatform;
 
+		@Inject
+		private ValidatorFactory validatorFactory;
+
 		@Override
 		public EntityManagerFactory get() {
 			String id = null;
-			if (database != null)
+			if (database != null) {
 				id = database.getId();
+			}
 
 			final DataSource dataSource;
 			if (id != null) {
@@ -248,6 +268,8 @@ public class Hibernate extends TopLevelService {
 			}
 			map.put(AvailableSettings.JTA_PLATFORM, jtaPlatform);
 			map.put(AvailableSettings.HBM2DDL_AUTO, initSchema);
+			map.put("javax.persistence.validation.factory", validatorFactory);
+
 			factory = provider.createContainerEntityManagerFactory(info, map);
 			return factory;
 		}
