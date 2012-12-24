@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
+		<artifactId>parent</artifactId>
 		<groupId>org.atteo</groupId>
-		<artifactId>parent-oss</artifactId>
 		<version>1.0</version>
 	</parent>
 	<artifactId>evo-services-parent</artifactId>
@@ -39,7 +39,6 @@
 		<module>hibernate</module>
 		<module>hibernate-search</module>
 		<module>hornetq</module>
-		<module>janino</module>
 		<module>jersey</module>
 		<module>jetty</module>
 		<module>jminix</module>
@@ -57,14 +56,19 @@
 		<module>tests-shiro</module>
 	</modules>
 	<scm>
-		<connection>scm:git:https://code.google.com/p/evo-services-parent/</connection>
-		<url>https://code.google.com/p/evo-services-parent/source/browse/</url>
+		<connection>https://github.com/atteo/evo-services</connection>
+		<url>https://github.com/atteo/evo-services</url>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>evo-classindex</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>evo-config</artifactId>
 				<version>1.0</version>
 			</dependency>
 		</dependencies>
@@ -146,7 +150,7 @@
 					<plugin>
 						<groupId>org.zeroturnaround</groupId>
 						<artifactId>jrebel-maven-plugin</artifactId>
-						<version>1.1.0</version>
+						<version>1.1.3</version>
 						<executions>
 							<execution>
 								<id>generate-rebel-xml</id>

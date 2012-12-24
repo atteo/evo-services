@@ -26,9 +26,11 @@ import org.atteo.evo.injection.InjectMembers;
 import org.w3c.dom.Element;
 
 /**
- * Root element for the {@link Services} configuration file.
+ * Root class for the {@link Services} configuration file.
  *
- * Contains the list of {@link Service}s and {@link Group}s as its children.
+ * <p>
+ * Root class wraps properties, the list of {@link Service}s and the list of {@link Group}s.
+ * </p>
  */
 @XmlRootElement
 public class Config extends Group {
