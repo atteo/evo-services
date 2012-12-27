@@ -36,6 +36,7 @@ import ch.qos.logback.core.Appender;
  */
 @XmlRootElement(name = "firebuglogger")
 public class FireBugLogger extends TopLevelService {
+	public static final String FIRE_BUG_APPENDER = "FireBug Appender";
 
 	@Override
 	public Module configure() {
@@ -54,7 +55,7 @@ public class FireBugLogger extends TopLevelService {
 		final Logger rootLogger = context.getLogger(Logger.ROOT_LOGGER_NAME);
 
 		Appender<ILoggingEvent> appender = new FireBugAppender();
-		appender.setName("FireBug Appender");
+		appender.setName(FIRE_BUG_APPENDER);
 		appender.setContext(context);
 		appender.start();
 
@@ -65,7 +66,7 @@ public class FireBugLogger extends TopLevelService {
 	public void stop() {
 		final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		final Logger rootLogger = context.getLogger(Logger.ROOT_LOGGER_NAME);
-		rootLogger.detachAppender("FireBug Appender");
+		rootLogger.detachAppender(FIRE_BUG_APPENDER);
 	}
 
 }

@@ -15,29 +15,31 @@ package org.atteo.evo.services;
 
 import org.atteo.evo.config.Configurable;
 
-import com.google.inject.Binding;
 import com.google.inject.Guice;
 import com.google.inject.Module;
-import com.google.inject.Provider;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Basic configurable component which can be {@link #start() started} and {@link #stop() stopped}.
+ * Basic configurable component which can be {@link #configure() configured}, {@link #start() started}
+ * and {@link #stop() stopped}.
  *
  * <p>
- * Services are created and started by {@link Services} as specified in configuration file.
- * You should try to initialize all of the service logic in {@link Provider}s registered
- * in {@link Module} returned by {@link #configure()}. In this way the order of initialization
- * will be handled by {@link Guice} based on the dependencies between the services.
- * All of the registered {@link Binding}s should be usable even before execution
- * of {@link #start()} and {@link #stop()} methods.
+ * Services are instantiated by {@link Services} according to the provided configuration file.
+ * Most of the logic which configures the Service should be put in {@link #configure()} method,
+ * so it can be lazily initialized by {@link Guice} which knows about dependencies between services.
  * </p>
  */
 public abstract class Service extends Configurable {
 	/**
-	 * Build Guice {@link Module} with injection {@link Binding}s.
-	 * Specifically {@link ServletModule}'s bindings are also supported.
-	 * No fields will be injected in this object yet when executing this method.
+	 * Returns {@link Module} which specifies this service dependencies and what it provides
+	 * to other services.
+	 *
+	 * <p>
+	 * Additionally {@link ServletModule} implementation can also be returned
+	 * which allows to register servlets and filters (you need appropriate service enabled which uses this info,
+	 * like Jetty).
+	 * </p>
+	 *
 	 * @return Guice module
 	 */
 	public Module configure() {
@@ -45,15 +47,17 @@ public abstract class Service extends Configurable {
 	}
 
 	/**
-	 * Start this service.
+	 * Optionally starts some logic which is not started automatically by Guice.
 	 *
-	 * When executing this method all fields will already be injected.
+	 * <p>
+	 * All class fields marked with {@link Inject} will be already injected before execution of this method.
+	 * </p>
 	 */
 	public void start() {
 	}
 
 	/**
-	 * Stop this service.
+	 * Stops this service.
 	 */
 	public void stop() {
 	}

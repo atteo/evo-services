@@ -22,7 +22,7 @@ import com.google.inject.Injector;
 
 
 /**
- * Automatically inject members of the given field when performing the injection on object.
+ * Automatically inject members of the object in the annotated field when performing the injection on object.
  *
  * <p>
  * Guice will automatically call {@link Injector#injectMembers(Object)} on an annotated field

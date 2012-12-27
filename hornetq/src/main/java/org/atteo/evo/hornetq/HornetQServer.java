@@ -35,7 +35,6 @@ import org.hornetq.jms.server.config.impl.JMSConfigurationImpl;
 import org.hornetq.jms.server.config.impl.JMSQueueConfigurationImpl;
 import org.hornetq.jms.server.embedded.EmbeddedJMS;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 /**
@@ -68,11 +67,7 @@ public class HornetQServer extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		return new AbstractModule() {
-			@Override
-			protected void configure() {
-			}
-		};
+		return null;
 	}
 
 	private EmbeddedJMS jms;

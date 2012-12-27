@@ -76,14 +76,8 @@ public class DatabaseShiroRealm extends AuthenticatingRealm {
 			throws AuthenticationException {
 		EntityManager entityManager = null;
 		try {
-			try {
 			entityManager = entityManagerFactory.createEntityManager();
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
 			String principal = (String) token.getPrincipal();
-			System.out.println("result: " + principal);
 
 			TypedQuery<Account> query = entityManager.createNamedQuery("Account.findByLogin",
 					Account.class);

@@ -8,6 +8,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
+
 /**
  * Simple server-side event bus.
  */
@@ -16,20 +17,10 @@ public class EventBusService extends TopLevelService {
 	@Override
 	public Module configure() {
 		return new Module() {
-
 			@Override
 			public void configure(Binder binder) {
 					binder.bind(EventBus.class).in(Singleton.class);
 			}
 		};
 	}
-
-	@Override
-	public void start() {
-	}
-
-	@Override
-	public void stop() {
-	}
-
 }

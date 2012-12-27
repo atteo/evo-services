@@ -9,16 +9,14 @@
 	<artifactId>evo-services-parent</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Evo Services Framework</name>
-	<description>Java application development framework focusing on configurability and easy testing.
-		Promotes proven and simple solutions and specifically avoids the use of complicated and deprecated ones.
-
-		It offers modular service framework based on Google Guice, Maven-like configuration management,
-		logging with SLF4J, support for common JavaEE technologies: JDBC, JPA, JMS, JTA, JMX, Java Servlet API, JAX-RS.
-		Promotes fresh approach to JavaEE development with dependency injection, annotation processing,
-		modular design and easy unit testing.</description>
+	<name>Evo Services</name>
+	<description>Evo Services provides infrastructure commonly found in application containers.
+		But, unlike containers, it is designed to be embedded inside your application.
+		It's a modular framework build around Google Guice dependency injection
+		with uniform logging using SLF4J, easy unit testing, support for common JavaEE technologies:
+		JDBC, JPA, JMS, JTA, JMX, Java Servlet API, JAX-RS.</description>
 	<!-- Javadoc adds /apidocs to this URL when it tries to find Javadocs. Make it happy. -->
-	<url>http://atteo.org/static/evo-services-parent</url>
+	<url>http://atteo.org/static/evo-services</url>
 	<developers>
 		<developer>
 			<id>sentinel</id>
@@ -166,4 +164,3 @@
 		</profile>
 	</profiles>
 </project>
-
