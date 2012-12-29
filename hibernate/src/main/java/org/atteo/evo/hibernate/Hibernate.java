@@ -100,18 +100,6 @@ public class Hibernate extends TopLevelService {
 
 	private EntityManagerFactory factory;
 
-
-			@Provides
-			@Singleton
-			public ValidatorFactory provideValidatorFactory(Injector injector) {
-				GuiceConstraintValidatorFactory factory = new GuiceConstraintValidatorFactory(
-						injector);
-				factory.setDefaultFactory(Validation.byDefaultProvider()
-						.configure().getDefaultConstraintValidatorFactory());
-				return Validation.byDefaultProvider().configure()
-						.constraintValidatorFactory(factory)
-						.buildValidatorFactory();
-			}
 	private class EntityManagerFactoryProvider implements Provider<EntityManagerFactory> {
 		@Inject
 		private Injector injector;
@@ -252,6 +240,17 @@ public class Hibernate extends TopLevelService {
 	@Override
 	public Module configure() {
 		return new AbstractModule() {
+			@Provides
+			@Singleton
+			public ValidatorFactory provideValidatorFactory(Injector injector) {
+				GuiceConstraintValidatorFactory factory = new GuiceConstraintValidatorFactory(
+						injector);
+				factory.setDefaultFactory(Validation.byDefaultProvider()
+						.configure().getDefaultConstraintValidatorFactory());
+				return Validation.byDefaultProvider().configure()
+						.constraintValidatorFactory(factory)
+						.buildValidatorFactory();
+			}
 
 			@Override
 			protected void configure() {
