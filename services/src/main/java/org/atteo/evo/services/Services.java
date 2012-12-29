@@ -536,6 +536,9 @@ public class Services extends GuiceServletContextListener {
 			logger.info("Stopping {}...", service.getClass().getSimpleName());
 			service.stop();
 		}
+		for (Service service : config.getServices()) {
+			service.deconfigure();
+		}
 		if (logger != null) {
 			logger.info("All stopped");
 		}

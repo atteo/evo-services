@@ -213,7 +213,7 @@ public class Atomikos extends TopLevelService {
 	}
 
 	@Override
-	public void stop() {
+	public void deconfigure() {
 		manager.close();
 		service.shutdownWait();
 	}

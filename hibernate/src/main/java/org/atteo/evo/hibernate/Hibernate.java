@@ -100,29 +100,6 @@ public class Hibernate extends TopLevelService {
 
 	private EntityManagerFactory factory;
 
-	@Override
-	public Module configure() {
-		return new AbstractModule() {
-
-			@Override
-			protected void configure() {
-				bind(JtaPlatform.class).to(CustomJtaPlatform.class).in(Scopes.SINGLETON);
-
-				String id = getId();
-				ScopedBindingBuilder binding;
-				if (id == null) {
-					binding = bind(EntityManagerFactory.class).toProvider(
-							new EntityManagerFactoryProvider());
-				} else {
-					binding = bind(Key.get(EntityManagerFactory.class, Names.named(id))).toProvider(
-							new EntityManagerFactoryProvider());
-				}
-				if (lazyLoading) {
-					binding.in(Scopes.SINGLETON);
-				} else {
-					binding.asEagerSingleton();
-				}
-			}
 
 			@Provides
 			@Singleton
@@ -135,9 +112,6 @@ public class Hibernate extends TopLevelService {
 						.constraintValidatorFactory(factory)
 						.buildValidatorFactory();
 			}
-		};
-	}
-
 	private class EntityManagerFactoryProvider implements Provider<EntityManagerFactory> {
 		@Inject
 		private Injector injector;
@@ -150,14 +124,14 @@ public class Hibernate extends TopLevelService {
 
 		@Override
 		public EntityManagerFactory get() {
-			String id = null;
+			String databaseId = null;
 			if (database != null) {
-				id = database.getId();
+				databaseId = database.getId();
 			}
 
 			final DataSource dataSource;
-			if (id != null) {
-				dataSource = injector.getInstance(Key.get(DataSource.class, Names.named(id)));
+			if (databaseId != null) {
+				dataSource = injector.getInstance(Key.get(DataSource.class, Names.named(databaseId)));
 			} else {
 				dataSource = injector.getInstance(DataSource.class);
 			}
@@ -276,7 +250,33 @@ public class Hibernate extends TopLevelService {
 	}
 
 	@Override
-	public void stop() {
+	public Module configure() {
+		return new AbstractModule() {
+
+			@Override
+			protected void configure() {
+				bind(JtaPlatform.class).to(CustomJtaPlatform.class).in(Scopes.SINGLETON);
+
+				String id = getId();
+				ScopedBindingBuilder binding;
+				if (id == null) {
+					binding = bind(EntityManagerFactory.class).toProvider(
+							new EntityManagerFactoryProvider());
+				} else {
+					binding = bind(Key.get(EntityManagerFactory.class, Names.named(id))).toProvider(
+							new EntityManagerFactoryProvider());
+				}
+				if (lazyLoading) {
+					binding.in(Scopes.SINGLETON);
+				} else {
+					binding.asEagerSingleton();
+				}
+			}
+		};
+	}
+
+	@Override
+	public void deconfigure() {
 		if (factory != null && factory.isOpen()) {
 			factory.close();
 		}

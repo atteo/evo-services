@@ -28,6 +28,11 @@ import com.google.inject.servlet.ServletModule;
  * Most of the logic which configures the Service should be put in {@link #configure()} method,
  * so it can be lazily initialized by {@link Guice} which knows about dependencies between services.
  * </p>
+ * <p>
+ * {@link #configure()} is executed once before creating {@link Injector Guice injector}.
+ * {@link #deconfigure()} is executed just before destroying the injector. {@link #start()}
+ * and {@link #stop()} methods can be executed separately any time.
+ * </p>
  */
 public abstract class Service extends Configurable {
 	/**
@@ -44,6 +49,12 @@ public abstract class Service extends Configurable {
 	 */
 	public Module configure() {
 	    return null;
+	}
+
+	/**
+	 * Deconfigure this service.
+	 */
+	public void deconfigure() {
 	}
 
 	/**

@@ -88,7 +88,7 @@ public class H2 extends DatabaseService {
 	}
 
 	@Override
-	public void stop() {
+	public void deconfigure() {
 		wrapper.close(dataSource);
 	}
 }
