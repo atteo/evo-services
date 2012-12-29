@@ -6,8 +6,8 @@
 		<groupId>org.atteo</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>evo-tests-fixtures</artifactId>
-	<name>Evo Test Fixtures</name>
+	<artifactId>evo-tests-database</artifactId>
+	<name>Evo Database Test Utilities</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
