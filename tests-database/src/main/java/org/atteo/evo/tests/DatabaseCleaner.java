@@ -1,18 +1,18 @@
 package org.atteo.evo.tests;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DatabaseCleaner {
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseCleaner.class);
-
 	private final DataSource dataSource;
 
 	public DatabaseCleaner(DataSource dataSource) {
@@ -43,9 +43,7 @@ public class DatabaseCleaner {
 		try {
 			return dataSource.getConnection();
 		} catch (SQLException ex) {
-			throw new RuntimeException(
-					"An exception occured while trying to"
-							+ "connect to the database.", ex);
+			throw new RuntimeException("An exception occured while trying to" + "connect to the database.", ex);
 		}
 
 	}
@@ -57,18 +55,20 @@ public class DatabaseCleaner {
 
 			DatabaseMetaData metaData = connection.getMetaData();
 
-			result = metaData.getTables(null, null, "%",
-					new String[] { "TABLE" });
+			result = metaData.getTables(null, null, "%", new String[]{"TABLE"});
 
 			while (result.next()) {
-				tables.add(result.getString("TABLE_NAME"));
+				String tableName = result.getString("TABLE_NAME");
+				if (tableName.equals("DATABASECHANGELOG") || tableName.equals("DATABASECHANGELOGLOCK")) {
+					dropTable(connection, tableName);
+				} else {
+					tables.add(tableName);
+				}
 			}
 
 			return tables;
-		} catch (SQLException ex) {
-			throw new RuntimeException(
-					"An exception occured while trying to"
-							+ "analyse the database.", ex);
+		} catch (SQLException e) {
+			throw new RuntimeException("An exception occurred while trying to analyse the database.", e);
 		} finally {
 			if (result != null) {
 				try {
@@ -87,14 +87,23 @@ public class DatabaseCleaner {
 		}
 	}
 
-	private void clearSingleTable(Connection connection, String tableName) {
+	private void dropTable(Connection connection, String tableName) {
 		try {
-			connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_UPDATABLE).execute(
-					"DELETE FROM ".concat(tableName));
+			connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE).
+					execute("DROP TABLE ".concat(tableName));
 
 		} catch (SQLException ex) {
-			throw new RuntimeException( "Can't read table contents from table ".concat(tableName), ex);
+			throw new RuntimeException("Can't read table contents from table ".concat(tableName), ex);
+		}
+	}
+
+	private void clearSingleTable(Connection connection, String tableName) {
+		try {
+			connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE).
+					execute("DELETE FROM ".concat(tableName));
+
+		} catch (SQLException ex) {
+			throw new RuntimeException("Can't read table contents from table ".concat(tableName), ex);
 		}
 	}
 
