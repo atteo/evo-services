@@ -80,10 +80,11 @@ public class Transaction {
 				throw e;
 			} finally {
 				if (myTransaction) {
-					if (userTransaction.getStatus() == Status.STATUS_MARKED_ROLLBACK)
+					if (userTransaction.getStatus() == Status.STATUS_MARKED_ROLLBACK) {
 						userTransaction.rollback();
-					else
+					} else {
 						userTransaction.commit();
+					}
 				}
 			}
 		} catch (SystemException e) {

@@ -185,7 +185,7 @@ public class ServicesRule implements TestRule {
 			for (String config : configs) {
 				services.combineConfigurationFromResource(config, configs != DEFAULT_CONFIG);
 			}
-		services.addModule(testClassModule);
+			services.addModule(testClassModule);
 			services.addModule(bindingsModule);
 			services.addModule(mocksModule);
 			services.start();

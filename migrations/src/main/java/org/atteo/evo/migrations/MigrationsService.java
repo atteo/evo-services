@@ -65,8 +65,9 @@ public class MigrationsService extends TopLevelService {
 		@Override
 		public Migrations get() {
 			String id = null;
-			if (database != null)
+			if (database != null) {
 				id = database.getId();
+			}
 
 			DataSource dataSource;
 			if (id != null) {
