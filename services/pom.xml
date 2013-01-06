@@ -58,6 +58,11 @@
 			<artifactId>jcommander</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.atteo</groupId>
+			<artifactId>evo-urlhandlers</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>

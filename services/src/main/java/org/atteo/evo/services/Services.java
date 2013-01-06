@@ -38,6 +38,7 @@ import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
 import org.atteo.evo.filtering.XmlPropertyResolver;
 import org.atteo.evo.injection.InjectMembersModule;
+import org.atteo.evo.urlhandlers.UrlHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -155,6 +156,8 @@ public class Services extends GuiceServletContextListener {
 		configuration = new Configuration();
 
 		homeDirectory = new File(".");
+
+		UrlHandlers.registerAnnotatedHandlers();
 	}
 
 	private static void createDirectory(File directory) {
