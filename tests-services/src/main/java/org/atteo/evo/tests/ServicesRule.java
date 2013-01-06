@@ -182,6 +182,7 @@ public class ServicesRule implements TestRule {
 		try {
 			services = new Services();
 			services.setHomeDirectory(new File("target/test-home"));
+			services.setDataDir(new File("src/main"));
 			for (String config : configs) {
 				services.combineConfigurationFromResource(config, configs != DEFAULT_CONFIG);
 			}
