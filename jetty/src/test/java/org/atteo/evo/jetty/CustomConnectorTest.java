@@ -21,7 +21,10 @@ import org.atteo.evo.tests.ServicesConfiguration;
 import org.atteo.evo.tests.ServicesTest;
 import org.eclipse.jetty.server.LocalConnector;
 import org.eclipse.jetty.testing.HttpTester;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 @ServicesConfiguration("/custom-connector.xml")
@@ -32,6 +35,9 @@ public class CustomConnectorTest extends ServicesTest {
 
 	@Inject
 	private LocalConnector localConnector;
+
+	@Inject
+	private JettyConnectionDetails connectionDetails;
 
 	/**
 	 * Tests various Jetty handlers.
@@ -52,5 +58,10 @@ public class CustomConnectorTest extends ServicesTest {
 		response.parse(responseString);
 
 		assertEquals("Hello World\nfirst\n", response.getContent());
+	}
+
+	@Test
+	public void testConnectionDetails() {
+		assertThat(connectionDetails.getPort(), is(not(0)));
 	}
 }

@@ -19,6 +19,11 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.eclipse.jetty.server.Connector;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Key;
+import com.google.inject.Module;
+import com.google.inject.name.Names;
+
 public abstract class AbstractConnectorConfig extends ConnectorConfig {
 	/**
 	 * The configured port for the connector or 0 if any available port may be used.
@@ -32,11 +37,19 @@ public abstract class AbstractConnectorConfig extends ConnectorConfig {
 	@XmlElement
 	private String host;
 
+	/**
+	 * Register {@link JettyConnectionDetails} in Guice with port and hostname assigned to this connector.
+	 */
+	@XmlElement
+	private boolean provideConnectionDetails = false;
+
 	abstract protected Connector createConnector();
+
+	private Connector connector;
 
 	@Override
 	public Connector getConnector() {
-		Connector connector = createConnector();
+		connector = createConnector();
 		if (port != null) {
 			connector.setPort(port);
 		}
@@ -44,5 +57,33 @@ public abstract class AbstractConnectorConfig extends ConnectorConfig {
 			connector.setHost(host);
 		}
 		return connector;
+	}
+
+	@Override
+	public Module configure() {
+		if (!provideConnectionDetails) {
+			return null;
+		}
+		return new AbstractModule() {
+			@Override
+			protected void configure() {
+				JettyConnectionDetails connectionDetails = new JettyConnectionDetails() {
+					@Override
+					public int getPort() {
+						return connector.getLocalPort();
+					}
+
+					@Override
+					public String getHost() {
+						return connector.getHost();
+					}
+				};
+				if (getId() != null) {
+					bind(Key.get(JettyConnectionDetails.class, Names.named(getId()))).toInstance(connectionDetails);
+				} else {
+					bind(JettyConnectionDetails.class).toInstance(connectionDetails);
+				}
+			}
+		};
 	}
 }
