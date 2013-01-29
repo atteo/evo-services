@@ -155,7 +155,7 @@ public class Services extends GuiceServletContextListener {
 		SLF4JBridgeHandler.install();
 		configuration = new Configuration();
 
-		homeDirectory = new File(".");
+		homeDirectory = new File(System.getProperty("user.home"));
 
 		UrlHandlers.registerAnnotatedHandlers();
 	}
@@ -470,7 +470,6 @@ public class Services extends GuiceServletContextListener {
 			createDirectory(getConfigHome());
 			createDirectory(getDataHome());
 			createDirectory(getCacheHome());
-			createDirectory(getRuntimeDirectory());
 
 			filterConfiguration();
 
