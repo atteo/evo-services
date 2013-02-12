@@ -33,19 +33,21 @@ public class FixtureInterceptor implements MethodInterceptor {
 		String fixtureName = invocation.getMethod().getAnnotation(Fixture.class).value();
 		String databaseName = invocation.getMethod().getAnnotation(Fixture.class).database();
 
-		Migrations migrations = null;
+		Migrations migrations;
 
-		if (databaseName == null || databaseName.isEmpty())
+		if (databaseName == null || databaseName.isEmpty()) {
 			migrations = injector.getInstance(Migrations.class);
-		else
+		} else {
 			migrations = injector.getInstance(Key.get(Migrations.class, Names.named(databaseName)));
+		}
 
-		if (fixtureName.startsWith("/"))
+		if (fixtureName.startsWith("/")) {
 			fixtureName = fixtureName.substring(1);
-		else
+		} else {
 			fixtureName = invocation.getMethod().getDeclaringClass().getPackage().getName()
 					.replace('.', '/')
 					+ "/" + fixtureName;
+		}
 
 		migrations.migrate(fixtureName);
 		Object o = null;

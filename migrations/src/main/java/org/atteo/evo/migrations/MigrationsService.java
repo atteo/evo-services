@@ -37,8 +37,6 @@ public class MigrationsService extends TopLevelService {
 	@XmlIDREF
 	private DatabaseService database;
 
-	private Migrations migrations;
-
 	@Override
 	public Module configure() {
 		return new AbstractModule() {
@@ -75,7 +73,7 @@ public class MigrationsService extends TopLevelService {
 			} else {
 				dataSource = ginjector.getInstance(DataSource.class);
 			}
-			migrations = new Migrations(dataSource);
+			Migrations migrations = new Migrations(dataSource);
 			injector.injectMembers(migrations);
 			return migrations;
 
