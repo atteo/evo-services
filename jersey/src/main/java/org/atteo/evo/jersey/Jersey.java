@@ -28,6 +28,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.core.util.FeaturesAndProperties;
+import com.sun.jersey.freemarker.FreemarkerViewProcessor;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
@@ -67,7 +68,9 @@ public class Jersey extends TopLevelService {
 					params.put(FeaturesAndProperties.FEATURE_FORMATTED, "true");
 				}
 				params.put(ServletContainer.PROPERTY_FILTER_CONTEXT_PATH, prefix);
+				params.put(FreemarkerViewProcessor.FREEMARKER_TEMPLATES_BASE_PATH, "templates");
 				filter(prefix + "/*").through(GuiceContainer.class, params);
+
 
 				if (discoverResources) {
 					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {

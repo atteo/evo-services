@@ -8,6 +8,9 @@
 	</parent>
 	<artifactId>evo-jersey</artifactId>
 	<name>Evo JAX-RS Jersey</name>
+	<properties>
+		<jersey.version>1.14</jersey.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
@@ -17,10 +20,17 @@
 		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-guice</artifactId>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-json</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-freemarker</artifactId>
+			<version>${jersey.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
