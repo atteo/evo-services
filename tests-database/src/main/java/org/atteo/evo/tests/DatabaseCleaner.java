@@ -19,7 +19,7 @@ public class DatabaseCleaner {
 		this.dataSource = dataSource;
 	}
 
-	public void clear() {
+	public void clean() {
 		logger.debug("Clearing database");
 		Connection connection = null;
 		try {

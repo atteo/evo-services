@@ -17,10 +17,11 @@ import com.google.inject.MembersInjector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Names;
 
-@XmlRootElement(name = "database-cleaner")
-public class DatabaseCleanerService extends TopLevelService {
+@XmlRootElement(name = "database-tests")
+public class DatabaseTestUtilities extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
 	private DatabaseService database;
@@ -37,6 +38,11 @@ public class DatabaseCleanerService extends TopLevelService {
 					bind(Key.get(DatabaseCleaner.class, Names.named(id))).toProvider(
 							new DatabaseCleanerProvider()).in(Scopes.SINGLETON);
 				}
+
+				FixtureInterceptor interceptor = new FixtureInterceptor();
+				requestInjection(interceptor);
+				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Fixture.class),
+						interceptor);
 			}
 		};
 	}
