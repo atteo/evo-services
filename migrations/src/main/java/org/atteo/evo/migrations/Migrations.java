@@ -48,9 +48,7 @@ public class Migrations {
 			Liquibase liquibase = new Liquibase(changelog, resourceAccessor, databaseConnection);
 			liquibase.tag(BEFORE_LAST_UPDATE);
 			liquibase.update(contexts);
-		} catch (LiquibaseException e) {
-			throw new RuntimeException(e);
-		} catch (SQLException e) {
+		} catch (LiquibaseException | SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			try {
@@ -79,9 +77,7 @@ public class Migrations {
 			databaseConnection = new JdbcConnection(dataSource.getConnection());
 			Liquibase liquibase = new Liquibase(changelog, resourceAccessor, databaseConnection);
 			liquibase.rollback(tag, contexts);
-		} catch (LiquibaseException e) {
-			throw new RuntimeException(e);
-		} catch (SQLException e) {
+		} catch (LiquibaseException | SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			try {
@@ -102,9 +98,7 @@ public class Migrations {
 			databaseConnection = new JdbcConnection(dataSource.getConnection());
 			Liquibase liquibase = new Liquibase(null, resourceAccessor, databaseConnection);
 			liquibase.dropAll();
-		} catch (LiquibaseException e) {
-			throw new RuntimeException(e);
-		} catch (SQLException e) {
+		} catch (LiquibaseException | SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
 			try {

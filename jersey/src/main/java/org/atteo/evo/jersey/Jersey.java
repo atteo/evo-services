@@ -62,7 +62,7 @@ public class Jersey extends TopLevelService {
 		return new ServletModule() {
 			@Override
 			protected void configureServlets() {
-				Map<String, String> params = new HashMap<String, String>();
+				Map<String, String> params = new HashMap<>();
 				params.put(ServletContainer.FEATURE_FILTER_FORWARD_ON_404, "true");
 				if (formatOutput) {
 					params.put(FeaturesAndProperties.FEATURE_FORMATTED, "true");

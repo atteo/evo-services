@@ -65,7 +65,7 @@ public class JMX extends TopLevelService {
 	@Inject
 	private MBeanServer server;
 
-	private List<ObjectName> registeredNames = new ArrayList<ObjectName>();
+	private List<ObjectName> registeredNames = new ArrayList<>();
 
 	@Override
 	public void start() {
@@ -83,13 +83,8 @@ public class JMX extends TopLevelService {
 				ObjectInstance mbeanInstance = server.registerMBean(instance, name);
 				registeredNames.add(mbeanInstance.getObjectName());
 			}
-		} catch (MalformedObjectNameException e) {
-			throw new RuntimeException(e);
-		} catch (InstanceAlreadyExistsException e) {
-			throw new RuntimeException(e);
-		} catch (MBeanRegistrationException e) {
-			throw new RuntimeException(e);
-		} catch (NotCompliantMBeanException e) {
+		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
+				| NotCompliantMBeanException e) {
 			throw new RuntimeException(e);
 		}
 	}

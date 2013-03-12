@@ -112,7 +112,7 @@ public class Jetty extends TopLevelService {
 						urls = annotation.urlPatterns();
 					}
 
-					Map<String, String> params = new HashMap<String, String>();
+					Map<String, String> params = new HashMap<>();
 
 					for (WebInitParam param : annotation.initParams()) {
 						params.put(param.name(), param.value());
@@ -131,7 +131,7 @@ public class Jetty extends TopLevelService {
 						urls = annotation.urlPatterns();
 					}
 
-					Map<String, String> params = new HashMap<String, String>();
+					Map<String, String> params = new HashMap<>();
 
 					for (WebInitParam param : annotation.initParams()) {
 						params.put(param.name(), param.value());

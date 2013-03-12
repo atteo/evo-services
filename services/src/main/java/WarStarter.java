@@ -97,42 +97,42 @@ public class WarStarter {
 			IOException {
 		BufferedOutputStream dest;
 		InputStream fis = zipFile.openStream();
-		ZipInputStream zip = new ZipInputStream(new BufferedInputStream(fis));
-		ZipEntry entry = zip.getNextEntry();
-		while(entry != null) {
-			//System.out.println("Extracting: " +entry);
-			File file = new File(outputDirectory, entry.getName());
+		try (ZipInputStream zip = new ZipInputStream(new BufferedInputStream(fis))) {
+			ZipEntry entry = zip.getNextEntry();
+			while(entry != null) {
+				//System.out.println("Extracting: " +entry);
+				File file = new File(outputDirectory, entry.getName());
 
-			if (entry.isDirectory()) {
-				if (!file.exists() && !file.mkdirs()) {
-					throw new RuntimeException("Cannot create directory: "
-							+ file.getAbsolutePath());
+				if (entry.isDirectory()) {
+					if (!file.exists() && !file.mkdirs()) {
+						throw new RuntimeException("Cannot create directory: "
+								+ file.getAbsolutePath());
+					}
+					entry = zip.getNextEntry();
+					continue;
 				}
+
+				if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+					throw new IOException("Cannot create directory: " + file.getParent());
+				}
+
+				int count;
+				byte data[] = new byte[BUFFER_SIZE];
+				// write the files to the disk
+				FileOutputStream fos = new FileOutputStream(file);
+				dest = new BufferedOutputStream(fos, BUFFER_SIZE);
+				count = zip.read(data, 0 , BUFFER_SIZE);
+				while (count != -1 ) {
+					dest.write(data, 0, count);
+
+					count = zip.read(data, 0, BUFFER_SIZE);
+				}
+				dest.flush();
+				dest.close();
+
 				entry = zip.getNextEntry();
-				continue;
 			}
-
-			if (!file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-				throw new IOException("Cannot create directory: " + file.getParent());
-			}
-
-			int count;
-			byte data[] = new byte[BUFFER_SIZE];
-			// write the files to the disk
-			FileOutputStream fos = new FileOutputStream(file);
-			dest = new BufferedOutputStream(fos, BUFFER_SIZE);
-			count = zip.read(data, 0 , BUFFER_SIZE);
-			while (count != -1 ) {
-				dest.write(data, 0, count);
-
-				count = zip.read(data, 0, BUFFER_SIZE);
-			}
-			dest.flush();
-			dest.close();
-
-			entry = zip.getNextEntry();
 		}
-		zip.close();
 	}
 
 	/**
@@ -206,12 +206,15 @@ public class WarStarter {
 		File expanded = null;
 		int i =0;
 		for (; i < args.length; i++) {
-			if ("--root".equals(args[i])) {
-				i++;
-				rootDirectory = new File(args[i]);
-			} else if ("--expanded".equals(args[i])) {
-				i++;
-				expanded = new File(args[i]);
+			switch (args[i]) {
+				case "--root":
+					i++;
+					rootDirectory = new File(args[i]);
+					break;
+				case "--expanded":
+					i++;
+					expanded = new File(args[i]);
+					break;
 			}
 		}
 		ClassLoader loader;
@@ -228,7 +231,7 @@ public class WarStarter {
 
 			unzip(warLocation, expanded);
 
-			List<URL> urls = new ArrayList<URL>();
+			List<URL> urls = new ArrayList<>();
 			urls.add(new URL("file://" + expanded.getAbsolutePath()
 					+ "/WEB-INF/classes/"));
 

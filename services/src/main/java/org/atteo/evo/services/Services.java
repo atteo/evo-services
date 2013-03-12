@@ -135,7 +135,7 @@ public class Services extends GuiceServletContextListener {
 	private File runtimeDirectory;
 	private File dataDir;
 	private List<File> configDirs;
-	private List<Module> modules = new ArrayList<Module>();
+	private List<Module> modules = new ArrayList<>();
 	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
 
 	private Configuration configuration;
@@ -143,7 +143,7 @@ public class Services extends GuiceServletContextListener {
 	private boolean externalContainer = false;
 	private Config config;
 	private PropertyResolver propertyResolver;
-	private List<Service> startedServices = new ArrayList<Service>();
+	private List<Service> startedServices = new ArrayList<>();
 
 	public Services() {
 		this("test");
@@ -272,9 +272,7 @@ public class Services extends GuiceServletContextListener {
 	public void combineDefaultConfiguration() {
 		try {
 			combineConfigurationFromResource(DEFAULT_CONFIG_RESOURCE_NAME, false);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (IncorrectConfigurationException e) {
+		} catch (IOException | IncorrectConfigurationException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -376,13 +374,10 @@ public class Services extends GuiceServletContextListener {
 		if (configurationFile.exists()) {
 			return;
 		}
-		Writer writer = new OutputStreamWriter(new FileOutputStream(configurationFile), Charsets.UTF_8);
-		try {
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream(configurationFile), Charsets.UTF_8)) {
 			writer.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
 					+ " xsi:noNamespaceSchemaLocation=\"" + SCHEMA_FILE_NAME
 					+ "\">\n</config>\n");
-		} finally {
-			writer.close();
 		}
 	}
 
@@ -403,7 +398,7 @@ public class Services extends GuiceServletContextListener {
 		if (params.getDataDir() != null) {
 			setDataDir(new File(params.getDataDir()));
 		}
-		List<File> dirs = new ArrayList<File>();
+		List<File> dirs = new ArrayList<>();
 		for (String dir : params.getConfigDirs()) {
 			dirs.add(new File(dir));
 		}

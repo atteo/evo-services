@@ -51,7 +51,7 @@ public class DatabaseCleaner {
 	private ArrayList<String> analyseDatabase(Connection connection) {
 		ResultSet result = null;
 		try {
-			ArrayList<String> tables = new ArrayList<String>();
+			ArrayList<String> tables = new ArrayList<>();
 
 			DatabaseMetaData metaData = connection.getMetaData();
 

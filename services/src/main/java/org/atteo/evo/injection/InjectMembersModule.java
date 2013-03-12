@@ -38,7 +38,7 @@ public class InjectMembersModule implements Module, TypeListener {
 	public <I> void hear(TypeLiteral<I> type, TypeEncounter<I> encounter) {
 		Class<? super I> klass = type.getRawType();
 
-		List<Field> fields = new ArrayList<Field>();
+		List<Field> fields = new ArrayList<>();
 
 		while (klass != Object.class) {
 			for (Field field : klass.getDeclaredFields()) {

@@ -13,20 +13,22 @@
  */
 package org.atteo.evo.firebuglogger;
 
+import java.io.IOException;
+import java.io.StringWriter;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
+
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
-import java.io.IOException;
-import java.io.StringWriter;
-import javax.servlet.http.HttpServletResponse;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
 
 public class FireBugAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
-	private static ThreadLocal<HttpServletResponse> response =
-			new ThreadLocal<HttpServletResponse>();
-	private static ThreadLocal<Integer> headerNumber = new ThreadLocal<Integer>();
+	private static ThreadLocal<HttpServletResponse> response = new ThreadLocal<>();
+	private static ThreadLocal<Integer> headerNumber = new ThreadLocal<>();
 
 	private PatternLayout layout;
 

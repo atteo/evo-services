@@ -45,11 +45,7 @@ public class JtaFilter implements Filter {
 					chain.doFilter(request, response);
 				}
 			});
-		} catch (RuntimeException e) {
-			throw e;
-		} catch (ServletException e) {
-			throw e;
-		} catch (IOException e) {
+		} catch (RuntimeException | ServletException | IOException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new RuntimeException("Internal error, unexpected exception", e);

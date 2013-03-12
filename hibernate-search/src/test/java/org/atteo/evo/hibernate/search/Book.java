@@ -46,7 +46,7 @@ public class Book {
 
 	@IndexedEmbedded
 	@ManyToMany
-	private Set<Author> authors = new HashSet<Author>();
+	private Set<Author> authors = new HashSet<>();
 
 	public Set<Author> getAuthors() {
 		return authors;

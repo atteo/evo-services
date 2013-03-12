@@ -49,16 +49,13 @@ public class MBeanTest extends ServicesTest {
 
 		// attach to the target application
 		com.sun.tools.attach.VirtualMachine vm;
-		try {
-			vm = com.sun.tools.attach.VirtualMachine.attach(pid.toString());
-		} catch (AttachNotSupportedException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 
 		try {
-			// get the connector address
+			vm = com.sun.tools.attach.VirtualMachine.attach(pid.toString());
+		} catch (AttachNotSupportedException | IOException e) {
+			throw new RuntimeException(e);
+		}
+		try {
 			String connectorAddress =
 					vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
 
@@ -76,11 +73,7 @@ public class MBeanTest extends ServicesTest {
 
 			// establish connection to connector server
 			return new JMXServiceURL(connectorAddress);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (AgentLoadException e) {
-			throw new RuntimeException(e);
-		} catch (AgentInitializationException e) {
+		} catch (IOException | AgentLoadException | AgentInitializationException e) {
 			throw new RuntimeException(e);
 		} finally {
 			try {

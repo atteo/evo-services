@@ -13,8 +13,6 @@
  */
 package org.atteo.evo.tests;
 
-import static org.mockito.Mockito.mock;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -30,6 +28,7 @@ import org.atteo.evo.services.Services;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import static org.mockito.Mockito.mock;
 
 import com.google.inject.Binder;
 import com.google.inject.Inject;
@@ -140,18 +139,14 @@ public class ServicesRule implements TestRule {
 					method.setAccessible(true);
 					try {
 						method.invoke(null, binder);
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
-					} catch (IllegalArgumentException e) {
-						throw new RuntimeException(e);
-					} catch (InvocationTargetException e) {
+					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						throw new RuntimeException(e);
 					}
 				}
 			}
 		};
 
-		final Map<Class<?>, Object> mocks = new HashMap<Class<?>, Object>();
+		final Map<Class<?>, Object> mocks = new HashMap<>();
 		final Field fields[] = klass.getDeclaredFields();
 
 		for (final Field field : fields) {
@@ -190,9 +185,7 @@ public class ServicesRule implements TestRule {
 			services.addModule(bindingsModule);
 			services.addModule(mocksModule);
 			services.start();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (IncorrectConfigurationException e) {
+		} catch (IOException | IncorrectConfigurationException e) {
 			throw new RuntimeException(e);
 		}
 	}

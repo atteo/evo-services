@@ -55,9 +55,7 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 						}
 					}
 				});
-			} catch (SystemException e) {
-				throw new RuntimeException(e);
-			} catch (RollbackException e) {
+			} catch (SystemException | RollbackException e) {
 				throw new RuntimeException(e);
 			}
 		}

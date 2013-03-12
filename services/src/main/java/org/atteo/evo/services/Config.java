@@ -50,7 +50,7 @@ public class Config extends Group {
 
 	@Override
 	public List<Service> getServices() {
-		List<Service> list = new ArrayList<Service>();
+		List<Service> list = new ArrayList<>();
 		if (services != null) {
 			list.addAll(services);
 		}

@@ -76,12 +76,12 @@ public class HornetQServer extends TopLevelService {
 	public void start() {
 		jms = new EmbeddedJMS();
 
-		List<ConnectionFactoryConfiguration> connections = new ArrayList<ConnectionFactoryConfiguration>();
-		List<JMSQueueConfiguration> queueConfigs =  new ArrayList<JMSQueueConfiguration>();
+		List<ConnectionFactoryConfiguration> connections = new ArrayList<>();
+		List<JMSQueueConfiguration> queueConfigs =  new ArrayList<>();
 		for (String queue : queues) {
 			queueConfigs.add(new JMSQueueConfigurationImpl(queue, "", true, ""));
 		}
-		List<TopicConfiguration> topics = new ArrayList<TopicConfiguration>();
+		List<TopicConfiguration> topics = new ArrayList<>();
 		JMSConfiguration jmsConfig = new JMSConfigurationImpl(connections, queueConfigs, topics, null);
 
 		jms.setJmsConfiguration(jmsConfig);
@@ -95,7 +95,7 @@ public class HornetQServer extends TopLevelService {
 		config.setBindingsDirectory(bindingsDirectory);
 		config.setLargeMessagesDirectory(largeMessagesDirectory);
 
-		Set<TransportConfiguration> transports = new HashSet<TransportConfiguration>();
+		Set<TransportConfiguration> transports = new HashSet<>();
 		transports.add(new TransportConfiguration(InVMAcceptorFactory.class.getName()));
 		config.setAcceptorConfigurations(transports);
 

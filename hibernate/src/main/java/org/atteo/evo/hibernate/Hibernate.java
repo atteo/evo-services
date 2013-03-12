@@ -171,7 +171,7 @@ public class Hibernate extends TopLevelService {
 
 				@Override
 				public List<String> getManagedClassNames() {
-					List<String> names = new ArrayList<String>();
+					List<String> names = new ArrayList<>();
 					for (Class<?> klass : ClassIndex.getAnnotated(Entity.class)) {
 						names.add(klass.getCanonicalName());
 					}
@@ -222,7 +222,7 @@ public class Hibernate extends TopLevelService {
 
 			PersistenceProvider provider = new HibernatePersistence();
 
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<>();
 			if (plugins != null) {
 				for (HibernatePlugin plugin : plugins) {
 					map.putAll(plugin.getProperties());

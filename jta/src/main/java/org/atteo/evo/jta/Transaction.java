@@ -87,15 +87,8 @@ public class Transaction {
 					}
 				}
 			}
-		} catch (SystemException e) {
-			throw new RuntimeException(e);
-		} catch (NotSupportedException e) {
-			throw new RuntimeException(e);
-		} catch (RollbackException e) {
-			throw new RuntimeException(e);
-		} catch (HeuristicMixedException e) {
-			throw new RuntimeException(e);
-		} catch (HeuristicRollbackException e) {
+		} catch (SystemException | NotSupportedException | RollbackException | HeuristicMixedException
+				| HeuristicRollbackException e) {
 			throw new RuntimeException(e);
 		}
 	}

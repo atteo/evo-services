@@ -6,13 +6,13 @@ import java.util.HashMap;
 import com.google.common.eventbus.Subscribe;
 
 public class RecordingEventListener {
-	private HashMap<Class<?>, ArrayList<Object>> events = new HashMap<Class<?>, ArrayList<Object>>();
+	private HashMap<Class<?>, ArrayList<Object>> events = new HashMap<>();
 
 	@Subscribe
 	public void listen(Object event) {
 		ArrayList<Object> eventsOfClass = events.get(event.getClass());
 		if (eventsOfClass == null)
-			eventsOfClass = new ArrayList<Object>();
+			eventsOfClass = new ArrayList<>();
 		eventsOfClass.add(event);
 		events.put(event.getClass(), eventsOfClass);
 	}
@@ -21,7 +21,7 @@ public class RecordingEventListener {
 		ArrayList<Object> result = events.get(eventClass);
 
 		if (result == null)
-			result = new ArrayList<Object>();
+			result = new ArrayList<>();
 
 		return result;
 	}

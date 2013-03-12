@@ -25,6 +25,8 @@ ROOT=""
 # ./start.sh --debug
 #
 
+trap "exit 1" ERR
+
 EXTRA=""
 
 while [[ "$1" != "" ]]; do

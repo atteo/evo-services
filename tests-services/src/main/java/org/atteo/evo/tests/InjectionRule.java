@@ -87,9 +87,7 @@ public class InjectionRule implements TestRule {
 					field.setAccessible(true);
 					try {
 						field.set(target, m);
-					} catch (final IllegalArgumentException e) {
-						throw new RuntimeException(e);
-					} catch (final IllegalAccessException e) {
+					} catch (final IllegalArgumentException | IllegalAccessException e) {
 						throw new RuntimeException(e);
 					}
 				}

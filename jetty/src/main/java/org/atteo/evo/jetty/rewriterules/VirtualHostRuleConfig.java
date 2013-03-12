@@ -34,7 +34,7 @@ public class VirtualHostRuleConfig extends RuleConfig {
 
 	@XmlElementWrapper(name = "rules")
 	@XmlElementRef
-	private List<RuleConfig> rules = new ArrayList<RuleConfig>();
+	private List<RuleConfig> rules = new ArrayList<>();
 
 	@Override
 	public Rule getRule() {

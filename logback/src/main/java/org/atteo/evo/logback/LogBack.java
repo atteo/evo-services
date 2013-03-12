@@ -136,13 +136,8 @@ public class LogBack extends TopLevelService {
 			if (!mbeanServer.isRegistered(name)) {
 				mbeanServer.registerMBean(jmxConfigurator, name);
 			}
-		} catch (MalformedObjectNameException e) {
-			throw new RuntimeException(e);
-		} catch (InstanceAlreadyExistsException e) {
-			throw new RuntimeException(e);
-		} catch (MBeanRegistrationException e) {
-			throw new RuntimeException(e);
-		} catch (NotCompliantMBeanException e) {
+		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
+				| NotCompliantMBeanException e) {
 			throw new RuntimeException(e);
 		}
 	}

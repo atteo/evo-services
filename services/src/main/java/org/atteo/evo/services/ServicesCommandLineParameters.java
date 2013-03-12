@@ -45,12 +45,12 @@ public class ServicesCommandLineParameters {
 
 	@Parameter(names = "--config-dir", description = "Directory to search for configuration files"
 			+ " in addition to ${configHome}")
-	private List<String> configDirs = new ArrayList<String>();
+	private List<String> configDirs = new ArrayList<>();
 
 	@Parameter(names = "--config", description = "Services configuration file(s)."
 			+ " By default all config.xml files found in any directory from ${configHome}"
 			+ " and ${configDirs} are merged.")
-	private List<String> configurationFiles = new ArrayList<String>();
+	private List<String> configurationFiles = new ArrayList<>();
 
 	@Parameter(names = "--no-defaults", description = "Do not read default configuration")
 	private boolean noDefaults;

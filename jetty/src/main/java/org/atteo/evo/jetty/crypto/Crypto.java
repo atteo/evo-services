@@ -78,34 +78,20 @@ public class Crypto {
 			// Save to keystore
 			KeyStore store = KeyStore.getInstance("JKS");
 			if (keystore.exists()) {
-				FileInputStream fis = new FileInputStream(keystore);
-				store.load(fis, keystorePassword.toCharArray());
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(keystore)) {
+					store.load(fis, keystorePassword.toCharArray());
+				}
 			} else {
 				store.load(null);
 			}
 			store.setKeyEntry(alias, keyPair.getPrivate(), keystorePassword.toCharArray(),
 					new Certificate[] { cert });
-			FileOutputStream fos = new FileOutputStream(keystore);
-			store.store(fos, keystorePassword.toCharArray());
-			fos.close();
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		} catch (OperatorCreationException e) {
-			throw new RuntimeException(e);
-		} catch (CertificateException e) {
-			throw new RuntimeException(e);
-		} catch (InvalidKeyException e) {
-			throw new RuntimeException(e);
-		} catch (NoSuchProviderException e) {
-			throw new RuntimeException(e);
-		} catch (SignatureException e) {
-			throw new RuntimeException(e);
-		} catch (KeyStoreException e) {
-			throw new RuntimeException(e);
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
+			try (FileOutputStream fos = new FileOutputStream(keystore)) {
+				store.store(fos, keystorePassword.toCharArray());
+			}
+		} catch (NoSuchAlgorithmException | OperatorCreationException | CertificateException
+				| InvalidKeyException | NoSuchProviderException | SignatureException | KeyStoreException
+				| IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
