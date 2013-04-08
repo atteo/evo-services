@@ -9,5 +9,6 @@
 	<hibernate>
 		<initSchema>create</initSchema>
 	</hibernate>
+	<jpa/>
 	<spring-data/>
 </config>

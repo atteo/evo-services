@@ -15,6 +15,11 @@
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>evo-jta</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId>
 			<artifactId>hibernate-jpa-2.0-api</artifactId>
 		</dependency>
@@ -31,6 +36,12 @@
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>evo-jta-atomikos</artifactId>
+			<version>${project.parent.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>evo-jpa</artifactId>
 			<version>${project.parent.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -18,6 +18,10 @@ package org.atteo.evo.jpa;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.TransactionRequiredException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.metamodel.Metamodel;
 import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
@@ -36,13 +40,12 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 	@Override
 	protected EntityManager getEntityManager() {
 		if (entityManager == null) {
-			entityManager = factory.createEntityManager();
-
 			try {
 				Transaction transaction = transactionManager.getTransaction();
 				if (transaction == null) {
-					throw new RuntimeException("Not in transaction. Initiate transaction in JTA.");
+					throw new TransactionRequiredException("Not in transaction. Initiate transaction in JTA.");
 				}
+				entityManager = factory.createEntityManager();
 				transaction.registerSynchronization(new Synchronization() {
 					@Override
 					public void beforeCompletion() {
@@ -52,6 +55,7 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 					public void afterCompletion(int status) {
 						if (entityManager != null) {
 							entityManager.close();
+							entityManager = null;
 						}
 					}
 				});
@@ -61,5 +65,49 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 		}
 
 		return entityManager;
+	}
+
+	@Override
+	public boolean isOpen() {
+		try {
+			return super.isOpen();
+		} catch (TransactionRequiredException e) {
+			return false;
+		}
+	}
+
+	@Override
+	public void close() {
+		throw new IllegalStateException("Cannot close container managed entity manager");
+	}
+
+	@Override
+	public EntityTransaction getTransaction() {
+		throw new IllegalStateException("Not allowed to create transaction on shared EntityManager");
+	}
+
+	@Override
+	public void joinTransaction() {
+		throw new IllegalStateException("Not allowed to create transaction on shared EntityManager");
+	}
+
+	@Override
+	public EntityManagerFactory getEntityManagerFactory() {
+		return factory;
+	}
+
+	@Override
+	public Metamodel getMetamodel() {
+		return factory.getMetamodel();
+	}
+
+	@Override
+	public CriteriaBuilder getCriteriaBuilder() {
+		return factory.getCriteriaBuilder();
+	}
+
+	@Override
+	public String toString() {
+		return "Shared EntityManager proxy for target factory [" + factory + "]";
 	}
 }

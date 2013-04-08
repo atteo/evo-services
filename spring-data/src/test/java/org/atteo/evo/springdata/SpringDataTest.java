@@ -17,6 +17,7 @@ package org.atteo.evo.springdata;
 
 import javax.inject.Inject;
 
+import org.atteo.evo.jta.Transactional;
 import org.atteo.evo.tests.ServicesTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -29,6 +30,7 @@ public class SpringDataTest extends ServicesTest {
 	private UserRepository userRepository;
 
 	@Test
+	@Transactional
 	public void simple() {
 		User user = new User();
 		user.setName("Nicolaus Copernicus");
@@ -36,7 +38,7 @@ public class SpringDataTest extends ServicesTest {
 		Iterable<User> users = userRepository.findAll();
 		assertEquals(1, Iterables.size(users));
 
-		users = userRepository.findByName("Nicoloaus Copernicus");
+		users = userRepository.findByName("Nicolaus Copernicus");
 		assertEquals(1, Iterables.size(users));
 	}
 }

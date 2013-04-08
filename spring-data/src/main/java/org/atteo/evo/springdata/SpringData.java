@@ -23,6 +23,9 @@ import javax.persistence.EntityManager;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.evo.jta.Transaction;
+import org.atteo.evo.jta.Transaction.ReturningRunnable;
+import org.atteo.evo.jta.Transactional;
 import org.atteo.evo.services.TopLevelService;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -45,7 +48,12 @@ public class SpringData extends TopLevelService {
 
 		@Override
 		public RepositoryFactorySupport get() {
-			return new JpaRepositoryFactory(manager);
+			return Transaction.require(new ReturningRunnable<RepositoryFactorySupport, RuntimeException>() {
+				@Override
+				public RepositoryFactorySupport run() throws RuntimeException {
+					return new JpaRepositoryFactory(manager);
+				}
+			});
 		}
 	}
 
@@ -61,7 +69,12 @@ public class SpringData extends TopLevelService {
 
 		@Override
 		public T get() {
-			return factory.getRepository(klass);
+			return Transaction.require(new ReturningRunnable<T, RuntimeException>() {
+				@Override
+				public T run() throws RuntimeException {
+					return factory.getRepository(klass);
+				}
+			});
 		}
 	}
 
