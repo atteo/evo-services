@@ -86,6 +86,34 @@ public class Hibernate extends TopLevelService {
 	private String initSchema = "validate";
 
 	/**
+	 * Setting is relevant when using @GeneratedValue. It indicates whether
+	 * or not the new IdentifierGenerator implementations are used for javax.persistence.GenerationType.AUTO,
+	 * javax.persistence.GenerationType.TABLE and javax.persistence.GenerationType.SEQUENCE.
+	 * Default to false to keep backward compatibility.
+	 */
+	@XmlElement
+	private boolean useNewIdGeneratorMappings = true;
+
+	/**
+	 * If turned on, Hibernate will generate comments inside the SQL, for easier debugging.
+	 */
+	@XmlElement
+	private boolean useSqlComments = true;
+
+	/**
+	 * Pretty print the SQL in the log and console.
+	 */
+	@XmlElement
+	private boolean formatSql = false;
+
+	/**
+	 * Write all SQL statements to console. This is an alternative to setting the log category org.hibernate.SQL
+	 * to debug.
+	 */
+	@XmlElement
+	private boolean showSql= false;
+
+	/**
 	 * List of Hibernate plugins.
 	 */
 	@XmlElementRef
@@ -230,6 +258,10 @@ public class Hibernate extends TopLevelService {
 			}
 			map.put(AvailableSettings.JTA_PLATFORM, jtaPlatform);
 			map.put(AvailableSettings.HBM2DDL_AUTO, initSchema);
+			map.put(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, useNewIdGeneratorMappings);
+			map.put(AvailableSettings.USE_SQL_COMMENTS, useSqlComments);
+			map.put(AvailableSettings.FORMAT_SQL, formatSql);
+			map.put(AvailableSettings.SHOW_SQL, showSql);
 			map.put("javax.persistence.validation.factory", validatorFactory);
 
 			factory = provider.createContainerEntityManagerFactory(info, map);
