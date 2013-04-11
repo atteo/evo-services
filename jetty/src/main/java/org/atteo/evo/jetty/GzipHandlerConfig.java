@@ -18,8 +18,8 @@ package org.atteo.evo.jetty;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.eclipse.jetty.server.handler.GzipHandler;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
+import org.eclipse.jetty.servlets.gzip.GzipHandler;
 
 /**
  * GZIP Handler This handler will gzip the content of a response if:

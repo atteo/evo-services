@@ -15,10 +15,15 @@
  */
 package org.atteo.evo.jetty;
 
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.jetty.server.AbstractNetworkConnector;
+import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 
 /**
  * This connector uses efficient NIO buffers with a non blocking threading model.
@@ -28,12 +33,27 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
  *
  * This connector is best used when there are a many connections that have idle periods.
  *
- * @see SelectChannelConnector
+ * @see ServerConnector
  */
-@XmlRootElement(name = "selectchannel")
-public class SelectChannelConnectorConfig extends AbstractConnectorConfig {
+@XmlRootElement(name = "serverconnector")
+public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
+	/**
+	 * List of connection factories.
+	 */
+	@XmlElementWrapper(name = "connections")
+	@XmlElementRef
+	private ConnectionFactoryConfig[] connections = new ConnectionFactoryConfig[] {
+		new HttpConnectionFactoryConfig()
+	};
+
 	@Override
-	public Connector createConnector() {
-		return new SelectChannelConnector();
+	public AbstractNetworkConnector createConnector(Server server) {
+		ConnectionFactory[] connectionFactories = new ConnectionFactory[connections.length];
+		int i = 0;
+		for (ConnectionFactoryConfig connectionConfig : connections) {
+			connectionFactories[i] = connectionConfig.getConnectionFactory();
+			i++;
+		}
+		return new ServerConnector(server, connectionFactories);
 	}
 }

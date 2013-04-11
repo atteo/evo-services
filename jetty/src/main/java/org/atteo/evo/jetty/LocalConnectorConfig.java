@@ -20,9 +20,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.LocalConnector;
+import org.eclipse.jetty.server.Server;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 
 /**
  * Internal connector to the Jetty which sends data directly
@@ -35,7 +37,7 @@ import com.google.inject.Module;
 @XmlRootElement(name = "local")
 public class LocalConnectorConfig extends ConnectorConfig {
 	/*
-     * Set the maximum Idle time for a connection in ms.
+	 * Set the maximum Idle time for a connection in ms.
 	 */
 	@XmlElement
 	private int maxIdleTime = 200000;
@@ -47,15 +49,20 @@ public class LocalConnectorConfig extends ConnectorConfig {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				connector = new LocalConnector();
-				connector.setMaxIdleTime(maxIdleTime);
-				bind(LocalConnector.class).toInstance(connector);
+				bind(LocalConnector.class).toProvider(new Provider<LocalConnector>() {
+					@Override
+					public LocalConnector get() {
+						return connector;
+					}
+				});
 			}
 		};
 	}
 
 	@Override
-	public Connector getConnector() {
+	public Connector getConnector(Server server) {
+		connector = new LocalConnector(server);
+		connector.setIdleTimeout(maxIdleTime);
 		return connector;
 	}
 }

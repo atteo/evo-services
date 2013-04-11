@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,8 @@
 package org.atteo.evo.jetty;
 
 import org.atteo.evo.config.Configurable;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ConnectionFactory;
 
-import com.google.inject.Module;
-
-public abstract class ConnectorConfig extends Configurable {
-	public abstract Connector getConnector(Server server);
-
-	public Module configure() {
-		return null;
-	}
+public abstract class ConnectionFactoryConfig extends Configurable {
+	public abstract ConnectionFactory getConnectionFactory();
 }

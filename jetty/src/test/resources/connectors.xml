@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
 	<jetty>
+		<sslcontextfactories>
+			<sslcontextfactory id="sslcontextfactory">
+			</sslcontextfactory>
+		</sslcontextfactories>
 		<connectors>
-			<selectchannel>
+			<serverconnector>
 				<provideConnectionDetails>true</provideConnectionDetails>
-			</selectchannel>
-			<blockingchannel/>
-			<sslselectchannel/>
+			</serverconnector>
+			<serverconnector id="ssl">
+				<connections>
+					<ssl>
+						<sslcontextfactory>sslcontextfactory</sslcontextfactory>
+					</ssl>
+					<http/>
+				</connections>
+				<provideConnectionDetails>true</provideConnectionDetails>
+			</serverconnector>
 			<local/>
 		</connectors>
 		<contextCollection>

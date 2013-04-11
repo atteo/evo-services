@@ -69,13 +69,18 @@ public class Jetty extends TopLevelService {
 	@XmlElement
 	private boolean registerAnnotatedServlets = true;
 
+	@XmlElementWrapper(name = "sslcontextfactories")
+	@XmlElementRef
+	private SslContextFactoryConfig[] sslContextFactories;
+
+
 	/**
 	 * List of connectors.
 	 */
 	@XmlElementWrapper(name = "connectors")
 	@XmlElementRef
 	private ConnectorConfig[] connectors = new ConnectorConfig[] {
-		new BlockingChannelConnectorConfig()
+		new ServerConnectorConfig()
 	};
 
 	/**
@@ -167,14 +172,13 @@ public class Jetty extends TopLevelService {
 		server.setHandler(handler.getHandler());
 
 		for (ConnectorConfig config : connectors) {
-			server.addConnector(config.getConnector());
+			server.addConnector(config.getConnector(server));
 		}
 
 		if (mbeanServer != null) {
 			MBeanContainer mbContainer = new MBeanContainer(mbeanServer);
-			server.getContainer().addEventListener(mbContainer);
 			server.addBean(mbContainer);
-			mbContainer.addBean(Log.getLog());
+			server.addBean(Log.getLog());
 		}
 
 		try {

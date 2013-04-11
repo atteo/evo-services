@@ -15,13 +15,18 @@
  */
 package org.atteo.evo.jetty;
 
+import java.nio.ByteBuffer;
+
 import javax.inject.Inject;
 
 import org.atteo.evo.tests.ServicesConfiguration;
 import org.atteo.evo.tests.ServicesTest;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.http.HttpTester;
+import org.eclipse.jetty.http.HttpTester.Request;
+import org.eclipse.jetty.http.HttpTester.Response;
 import org.eclipse.jetty.server.LocalConnector;
-import org.eclipse.jetty.testing.HttpTester;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -36,46 +41,46 @@ public class RewriteHandlerTest extends ServicesTest {
 
 	@Test
 	public void testRewrites() throws Exception {
-		HttpTester request = new HttpTester();
+		Request request = HttpTester.newRequest();
 		request.setHeader("Host", "tester");
 		request.setMethod("GET");
-		HttpTester response = new HttpTester();
-		String responseString;
 
 		// test rewritePattern
 		request.setURI("/alias/");
-		responseString = localConnector.getResponses(request.generate());
-		response.parse(responseString);
+		ByteBuffer responseString = localConnector.getResponses(request.generate());
+		Response response = HttpTester.parseResponse(responseString);
 		assertEquals("hello\n", response.getContent());
 
 		// test rewriteRegex
 		request.setURI("/alias2/");
 		responseString = localConnector.getResponses(request.generate());
-		response.parse(responseString);
+		response = HttpTester.parseResponse(responseString);
 		assertEquals("hello2\n", response.getContent());
 
 		// test redirectPattern
 		request.setURI("/redirection/");
 		responseString = localConnector.getResponses(request.generate());
-		response.parse(responseString);
+		response = HttpTester.parseResponse(responseString);
 		assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
 
 		// test redirectRegex
 		request.setURI("/redirection2/");
 		responseString = localConnector.getResponses(request.generate());
-		response.parse(responseString);
+		response = HttpTester.parseResponse(responseString);
 		assertEquals(HttpStatus.MOVED_TEMPORARILY_302, response.getStatus());
-		assertEquals("http://tester/otherurl2/", response.getHeader("Location"));
+		assertEquals("http://tester/otherurl2/", response.get(HttpHeader.LOCATION));
 
 		// test virtualHost
+		request = HttpTester.newRequest();
+		request.setMethod("GET");
 		request.setURI("http://virtual/virtual/");
 		responseString = localConnector.getResponses(request.generate());
-		response.parse(responseString);
+		response = HttpTester.parseResponse(responseString);
 		assertEquals("hello\n", response.getContent());
 
 		request.setURI("http://other/virtual/");
 		responseString = localConnector.getResponses(request.generate());
-		response.parse(responseString);
+		response = HttpTester.parseResponse(responseString);
 		assertEquals(HttpStatus.NOT_FOUND_404, response.getStatus());
 	}
 }

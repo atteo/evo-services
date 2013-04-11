@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,20 @@ package org.atteo.evo.jetty;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.nio.BlockingChannelConnector;
+import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 
 /**
- * Blocking NIO connector.
- * This connector uses efficient NIO buffers with a traditional blocking thread model.
- * Direct NIO buffers are used and a thread is allocated per connections.
- * This connector is best used when there are a few very active connections.
- *
- * @see BlockingChannelConnector
+ * A Connection Factory for HTTP Connections.
+ * <p>
+ * Accepts connections either directly or via SSL and/or NPN chained connection factories.
+ * </p>
  */
-@XmlRootElement(name = "blockingchannel")
-public class BlockingChannelConnectorConfig extends AbstractConnectorConfig {
+@XmlRootElement(name = "http")
+public class HttpConnectionFactoryConfig extends ConnectionFactoryConfig {
 	@Override
-	public Connector createConnector() {
-		return new BlockingChannelConnector();
+	public ConnectionFactory getConnectionFactory() {
+		HttpConnectionFactory factory = new HttpConnectionFactory();
+		return factory;
 	}
 }

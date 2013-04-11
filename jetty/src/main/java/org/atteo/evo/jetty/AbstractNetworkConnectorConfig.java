@@ -17,14 +17,16 @@ package org.atteo.evo.jetty;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
 
-public abstract class AbstractConnectorConfig extends ConnectorConfig {
+public abstract class AbstractNetworkConnectorConfig extends ConnectorConfig {
 	/**
 	 * The configured port for the connector or 0 if any available port may be used.
 	 */
@@ -43,13 +45,13 @@ public abstract class AbstractConnectorConfig extends ConnectorConfig {
 	@XmlElement
 	private boolean provideConnectionDetails = false;
 
-	abstract protected Connector createConnector();
+	abstract protected AbstractNetworkConnector createConnector(Server server);
 
-	private Connector connector;
+	private AbstractNetworkConnector connector;
 
 	@Override
-	public Connector getConnector() {
-		connector = createConnector();
+	public Connector getConnector(Server server) {
+		connector = createConnector(server);
 		if (port != null) {
 			connector.setPort(port);
 		}

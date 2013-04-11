@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,16 @@ import java.io.File;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.evo.config.Configurable;
 import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.evo.jetty.crypto.Crypto;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-/**
- * This connector uses efficient NIO buffers with a non blocking threading model.
- * Direct NIO buffers are used and threads are only allocated to connections with requests.
- * Synchronization is used to simulate blocking for the servlet API, and any unflushed content
- * at the end of request handling is written asynchronously.
- *
- * This connector is best used when there are a many connections that have idle periods.
- *
- * @see SslSelectChannelConnector
- */
-@XmlRootElement(name = "sslselectchannel")
-public class SslSelectChannelConnectorConfig extends AbstractConnectorConfig {
+@XmlRootElement(name = "sslcontextfactory")
+public class SslContextFactoryConfig extends Configurable {
 	@XmlElement
 	@XmlDefaultValue("${configHome}/keystore.jks")
-	private String keyStoreLocation;
+	private String keyStorePath;
 
 	@XmlElement
 	private String keyStorePassword = "secret";
@@ -62,25 +51,26 @@ public class SslSelectChannelConnectorConfig extends AbstractConnectorConfig {
 	@XmlElement
 	private boolean wantClientAuth = false;
 
-	@Override
-	public Connector createConnector() {
-		File keyStoreFile = new File(keyStoreLocation);
+	public SslContextFactory getSslContextFactory() {
+		SslContextFactory factory = new SslContextFactory(true);
+
+		File keyStoreFile = new File(keyStorePath);
 		if (!keyStoreFile.exists()) {
 			Crypto.createSelfSignedCertificate(keyStoreFile, keyAlias, keyStorePassword);
 		}
-		SslContextFactory sslContextFactory = new SslContextFactory(true);
-		sslContextFactory.setKeyStorePath(keyStoreLocation);
-		sslContextFactory.setKeyStorePassword(keyStorePassword);
-		sslContextFactory.setCertAlias(keyAlias);
+		factory.setKeyStorePath(keyStorePath);
+		factory.setKeyStorePassword(keyStorePassword);
+		factory.setCertAlias(keyAlias);
 
 		File trustStoreFile = new File(trustStoreLocation);
 		if (trustStoreFile.exists()) {
-			sslContextFactory.setTrustStore(trustStoreLocation);
+			factory.setTrustStorePath(trustStoreLocation);
 		}
-		sslContextFactory.setTrustStorePassword(trustStorePassword);
-		sslContextFactory.setNeedClientAuth(needClientAuth);
-		sslContextFactory.setWantClientAuth(wantClientAuth);
+		factory.setTrustStorePassword(trustStorePassword);
+		factory.setNeedClientAuth(needClientAuth);
+		factory.setWantClientAuth(wantClientAuth);
 
-		return new SslSelectChannelConnector(sslContextFactory);
+		return factory;
 	}
+
 }
