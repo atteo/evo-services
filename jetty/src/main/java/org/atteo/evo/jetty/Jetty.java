@@ -123,7 +123,7 @@ public class Jetty extends TopLevelService {
 						params.put(param.name(), param.value());
 					}
 
-					String[] restOfUrls = Arrays.copyOfRange(urls, 1, urls.length - 1);
+					String[] restOfUrls = Arrays.copyOfRange(urls, 1, urls.length);
 					@SuppressWarnings("unchecked")
 					Class<? extends HttpServlet> servletClass = (Class<? extends HttpServlet>) klass;
 					serve(urls[0], restOfUrls).with(servletClass, params);
@@ -161,7 +161,6 @@ public class Jetty extends TopLevelService {
 
 	private Server server;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void start() {
 		if (externalContainer) {
