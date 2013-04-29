@@ -54,6 +54,8 @@ public class Jta extends TopLevelService {
 		return new ServletModule() {
 			@Override
 			protected void configureServlets() {
+				bind(JtaFilter.class);
+
 				requestStaticInjection(Transaction.class);
 				TransactionalInterceptor interceptor = new TransactionalInterceptor();
 				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Transactional.class), interceptor);

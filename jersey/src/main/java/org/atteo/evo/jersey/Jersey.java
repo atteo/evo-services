@@ -69,6 +69,8 @@ public class Jersey extends TopLevelService {
 				}
 				params.put(ServletContainer.PROPERTY_FILTER_CONTEXT_PATH, prefix);
 				params.put(FreemarkerViewProcessor.FREEMARKER_TEMPLATES_BASE_PATH, "templates");
+
+				bind(GuiceContainer.class);
 				filter(prefix + "/*").through(GuiceContainer.class, params);
 
 

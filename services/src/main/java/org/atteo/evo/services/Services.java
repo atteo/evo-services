@@ -46,12 +46,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Charsets;
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
-import com.google.inject.servlet.ServletModule;
 
 /**
  * Evo Services is a runtime service engine based on Google Guice
@@ -104,8 +104,8 @@ import com.google.inject.servlet.ServletModule;
  *   <li>you can add your own custom {@link PropertyResolver}s using
  * {@link #addCustomPropertyResolver(PropertyResolver)}.</li>
  * </ul>
- * Read the description of the {@link Configuration} engine to learn more about merging, filgering
- * and validating configuration file.
+ * Read the description of the {@link Configuration} engine to learn more about merging, filtering
+ * and validating the configuration file.
  * </p>
  *
  * <p>
@@ -482,15 +482,16 @@ public class Services extends GuiceServletContextListener {
 				}
 			}
 
-			// Use ServletModule specifically so @RequestScoped annotation will be bound
-			modules.add(new ServletModule() {
+			modules.add(new Module() {
 				@Override
-				public void configureServlets() {
-					bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
+				public void configure(Binder binder) {
+					binder.bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
 							.toInstance(propertyResolver);
-					bind(Key.get(Boolean.class, ExternalContainer.class))
+					binder.bind(Key.get(Boolean.class, ExternalContainer.class))
 							.toInstance(externalContainer);
-					bind(Services.class).toInstance(Services.this);
+					binder.bind(Services.class).toInstance(Services.this);
+
+					binder.requireExplicitBindings();
 				}
 			});
 			modules.add(new InjectMembersModule());
