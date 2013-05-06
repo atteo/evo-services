@@ -41,21 +41,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.database.DatabaseService;
+import org.atteo.evo.services.ImportBindings;
 import org.atteo.evo.services.TopLevelService;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.ejb.HibernatePersistence;
 import org.hibernate.service.jta.platform.spi.JtaPlatform;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.PrivateModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.binder.ScopedBindingBuilder;
-import com.google.inject.name.Names;
 
 @XmlRootElement(name = "hibernate")
 public class Hibernate extends TopLevelService {
@@ -67,6 +66,7 @@ public class Hibernate extends TopLevelService {
 	 */
 	@XmlElement
 	@XmlIDREF
+	@ImportBindings
 	private DatabaseService database;
 
 	/**
@@ -130,7 +130,7 @@ public class Hibernate extends TopLevelService {
 
 	private class EntityManagerFactoryProvider implements Provider<EntityManagerFactory> {
 		@Inject
-		private Injector injector;
+		private DataSource dataSource;
 
 		@Inject
 		private JtaPlatform jtaPlatform;
@@ -140,18 +140,6 @@ public class Hibernate extends TopLevelService {
 
 		@Override
 		public EntityManagerFactory get() {
-			String databaseId = null;
-			if (database != null) {
-				databaseId = database.getId();
-			}
-
-			final DataSource dataSource;
-			if (databaseId != null) {
-				dataSource = injector.getInstance(Key.get(DataSource.class, Names.named(databaseId)));
-			} else {
-				dataSource = injector.getInstance(DataSource.class);
-			}
-
 			PersistenceUnitInfo info = new PersistenceUnitInfo() {
 				@Override
 				public String getPersistenceUnitName() {
@@ -271,7 +259,7 @@ public class Hibernate extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		return new AbstractModule() {
+		return new PrivateModule() {
 			@Provides
 			@Singleton
 			public ValidatorFactory provideValidatorFactory(Injector injector) {
@@ -288,20 +276,14 @@ public class Hibernate extends TopLevelService {
 			protected void configure() {
 				bind(JtaPlatform.class).to(CustomJtaPlatform.class).in(Scopes.SINGLETON);
 
-				String id = getId();
 				ScopedBindingBuilder binding;
-				if (id == null) {
-					binding = bind(EntityManagerFactory.class).toProvider(
-							new EntityManagerFactoryProvider());
-				} else {
-					binding = bind(Key.get(EntityManagerFactory.class, Names.named(id))).toProvider(
-							new EntityManagerFactoryProvider());
-				}
+				binding = bind(EntityManagerFactory.class).toProvider(new EntityManagerFactoryProvider());
 				if (lazyLoading) {
 					binding.in(Scopes.SINGLETON);
 				} else {
 					binding.asEagerSingleton();
 				}
+				expose(EntityManagerFactory.class);
 			}
 		};
 	}

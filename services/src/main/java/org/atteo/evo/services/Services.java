@@ -23,9 +23,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.Configuration;
@@ -38,6 +43,9 @@ import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
 import org.atteo.evo.filtering.XmlPropertyResolver;
 import org.atteo.evo.injection.InjectMembersModule;
+import org.atteo.evo.services.internal.DuplicateDetectionWrapper;
+import org.atteo.evo.services.internal.GuiceBindingsHelper;
+import org.atteo.evo.services.internal.ServiceModuleRewriter;
 import org.atteo.evo.urlhandlers.UrlHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,12 +54,14 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.google.common.base.Charsets;
-import com.google.inject.Binder;
+import com.google.common.base.Strings;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.inject.servlet.ServletModule;
+import com.google.inject.spi.Elements;
 
 /**
  * Evo Services is a runtime service engine based on Google Guice
@@ -135,12 +145,13 @@ public class Services extends GuiceServletContextListener {
 	private File runtimeDirectory;
 	private File dataDir;
 	private List<File> configDirs;
-	private List<Module> modules = new ArrayList<>();
+	private List<Module> extraModules = new ArrayList<>();
 	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
 
 	private Configuration configuration;
 	private Injector injector;
 	private boolean externalContainer = false;
+	private boolean printGuiceBindings = false;
 	private Config config;
 	private PropertyResolver propertyResolver;
 	private List<Service> startedServices = new ArrayList<>();
@@ -361,7 +372,7 @@ public class Services extends GuiceServletContextListener {
 	 * @param module module to be added
 	 */
 	public void addModule(Module module) {
-		modules.add(module);
+		extraModules.add(module);
 	}
 
 	public void addCustomPropertyResolver(PropertyResolver resolver) {
@@ -379,6 +390,13 @@ public class Services extends GuiceServletContextListener {
 					+ " xsi:noNamespaceSchemaLocation=\"" + SCHEMA_FILE_NAME
 					+ "\">\n</config>\n");
 		}
+	}
+
+	/**
+	 * Enables printing of all registered Guice bindings during startup.
+	 */
+	public void enableGuiceBindingPrinting() {
+		printGuiceBindings = true;
 	}
 
 	public void setup(ServicesCommandLineParameters params)
@@ -427,6 +445,10 @@ public class Services extends GuiceServletContextListener {
 			System.out.println(printCombinedXml());
 			System.exit(0);
 		}
+
+		if (params.isPrintGuiceBindings()) {
+			enableGuiceBindingPrinting();
+		}
 	}
 
 	private void filterConfiguration() throws IncorrectConfigurationException {
@@ -456,6 +478,86 @@ public class Services extends GuiceServletContextListener {
 		configuration.filter(propertyResolver);
 	}
 
+	public static boolean isSingleton(Class<?> klass) {
+		return klass.isAnnotationPresent(Singleton.class)
+				|| klass.isAnnotationPresent(com.google.inject.Singleton.class);
+	}
+
+	private void verifySingletonServicesAreUnique(List<Service> services) {
+		Set<Class<?>> set = new HashSet<>();
+		for (Service service : services) {
+			Class<?> klass = service.getClass();
+			if (isSingleton(klass)) {
+				if (set.contains(klass)) {
+					throw new RuntimeException("Service '" + klass.getCanonicalName() + "' is marked"
+							+ " as singleton, but is declared more than once in configuration file");
+				}
+				set.add(klass);
+
+				if (!Strings.isNullOrEmpty(service.getId())) {
+					throw new RuntimeException("Service '" + klass.getCanonicalName() + "' is marked"
+							+ " as singleton, but has an id specified");
+				}
+			}
+		}
+	}
+
+	private Injector buildInjector() {
+		Map<Service, List<com.google.inject.spi.Element>> serviceElements = new LinkedHashMap<>();
+		List<Module> modules = new ArrayList<>();
+		DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();
+
+		// Use ServletModule specifically so @RequestScoped annotation will be always bound
+		modules.add(duplicateDetection.wrap(new ServletModule() {
+			@Override
+			public void configureServlets() {
+				bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
+						.toInstance(propertyResolver);
+				bind(Key.get(Boolean.class, ExternalContainer.class))
+						.toInstance(externalContainer);
+				bind(Services.class).toInstance(Services.this);
+				binder().requireExplicitBindings();
+			}
+		}));
+
+		for (Module module : extraModules) {
+			modules.add(duplicateDetection.wrap(module));
+		}
+
+		for (Service service : config.getServices()) {
+			logger.info("Configuring {}...", service.getClass().getSimpleName());
+			Module module = service.configure();
+			if (module != null) {
+				serviceElements.put(service, Elements.getElements(duplicateDetection.wrap(module)));
+			}
+		}
+
+		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
+			Service service = entry.getKey();
+			List<com.google.inject.spi.Element> elements = entry.getValue();
+
+			serviceElements.put(service, ServiceModuleRewriter.annotateExposedWithId(elements, service));
+		}
+
+		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
+			Service service = entry.getKey();
+			List<com.google.inject.spi.Element> elements = entry.getValue();
+
+			Module module = ServiceModuleRewriter.importBindings(elements, service, serviceElements);
+			modules.add(module);
+		}
+
+		modules.add(new InjectMembersModule());
+
+		if (printGuiceBindings) {
+			System.out.println("#############################");
+			System.out.println("# Registered Guice bindings #");
+			System.out.println("#############################");
+			GuiceBindingsHelper.printServiceElements(serviceElements);
+		}
+		return Guice.createInjector(modules);
+	}
+
 	/**
 	 * Reads configuration file and starts all services.
 	 */
@@ -474,29 +576,9 @@ public class Services extends GuiceServletContextListener {
 				config = new Config();
 			}
 
-			for (Service service : config.getServices()) {
-				logger.info("Configuring {}...", service.getClass().getSimpleName());
-				Module module = service.configure();
-				if (module != null) {
-					modules.add(module);
-				}
-			}
+			verifySingletonServicesAreUnique(config.getServices());
+			injector = buildInjector();
 
-			modules.add(new Module() {
-				@Override
-				public void configure(Binder binder) {
-					binder.bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
-							.toInstance(propertyResolver);
-					binder.bind(Key.get(Boolean.class, ExternalContainer.class))
-							.toInstance(externalContainer);
-					binder.bind(Services.class).toInstance(Services.this);
-
-					binder.requireExplicitBindings();
-				}
-			});
-			modules.add(new InjectMembersModule());
-
-			injector = Guice.createInjector(modules);
 			injector.injectMembers(config);
 
 			for (Service service : config.getServices()) {
@@ -509,10 +591,7 @@ public class Services extends GuiceServletContextListener {
 				service.start();
 			}
 			logger.info("Done");
-		} catch (Exception e) {
-			// TODO: try to always throw exception
-			logger.error("Stopping due to the fatal error", e);
-
+		} catch (RuntimeException | IncorrectConfigurationException e) {
 			try {
 				stop();
 			} catch (Exception f) {

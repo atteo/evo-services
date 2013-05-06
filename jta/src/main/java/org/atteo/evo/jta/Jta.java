@@ -13,6 +13,7 @@
  */
 package org.atteo.evo.jta;
 
+import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -35,6 +36,7 @@ import com.google.inject.servlet.ServletModule;
  * </p>
  */
 @XmlRootElement(name = "jta")
+@Singleton
 public class Jta extends TopLevelService {
 	/**
 	 * Register {@link JtaFilter} which wraps web requests handling inside JTA transaction.

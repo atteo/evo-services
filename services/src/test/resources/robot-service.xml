@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
+	<leg id="left"/>
+	<leg id="right"/>
+
+	<hand id="left"/>
+	<hand id="right"/>
+
+	<head/>
+
+	<robot>
+		<leftLeg>left</leftLeg>
+		<rightLeg>right</rightLeg>
+		<leftHand>left</leftHand>
+		<rightHand>right</rightHand>
+	</robot>
+</config>

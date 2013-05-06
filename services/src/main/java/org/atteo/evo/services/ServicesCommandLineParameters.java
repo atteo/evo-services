@@ -62,6 +62,9 @@ public class ServicesCommandLineParameters {
 			+ " to standard output")
 	private boolean printFilteredConfig;
 
+	@Parameter(names = "--print-guice-bindings", description = "Print all bindings registered in Guice")
+	private boolean printGuiceBindings;
+
 	@Parameter(names = "--verbose", description = "Enable debug logging level")
 	private boolean verbose;
 
@@ -107,6 +110,10 @@ public class ServicesCommandLineParameters {
 
 	public boolean isPrintFilteredConfig() {
 		return printFilteredConfig;
+	}
+
+	public boolean isPrintGuiceBindings() {
+		return printGuiceBindings;
 	}
 
 	public boolean isVerbose() {

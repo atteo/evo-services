@@ -31,9 +31,30 @@ public class ServicesTest {
 	public void simple() throws IncorrectConfigurationException, IOException {
 		Services services = new Services();
 		services.setHomeDirectory(new File("target/test-home/"));
-		services.combineConfigurationFromResource("/test-config.xml", true);
+		services.combineConfigurationFromResource("/simple.xml", true);
 
 		services.start();
+		services.stop();
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void singletonWithId() throws IncorrectConfigurationException, IOException {
+		Services services = new Services();
+		services.setHomeDirectory(new File("target/test-home/"));
+		services.combineConfigurationFromResource("/singleton-with-id.xml", true);
+
+		services.start();
+		services.stop();
+	}
+
+	@Test
+	public void twoLegRobot() throws IncorrectConfigurationException, IOException {
+		Services services = new Services();
+		services.setHomeDirectory(new File("target/test-home/"));
+		services.combineConfigurationFromResource("/robot-service.xml", true);
+
+		services.start();
+		services.injector().getInstance(Robot.class);
 		services.stop();
 	}
 }

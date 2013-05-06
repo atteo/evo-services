@@ -58,7 +58,7 @@ public class TestHibernate extends ServicesTest {
 			@Override
 			public void run() {
 				EntityManager manager = factory.createEntityManager();
-				User loaded = (User) manager.find(User.class, id);
+				User loaded = manager.find(User.class, id);
 
 				assertNotNull(loaded);
 				assertEquals(u.getName(), loaded.getName());
@@ -85,7 +85,7 @@ public class TestHibernate extends ServicesTest {
 
 		transaction.begin();
 		manager = factory.createEntityManager();
-		User loaded = (User) manager.find(User.class, id);
+		User loaded = manager.find(User.class, id);
 
 		assertNotNull(loaded);
 		assertEquals(u.getName(), loaded.getName());

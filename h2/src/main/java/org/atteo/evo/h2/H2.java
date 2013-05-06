@@ -25,11 +25,9 @@ import org.atteo.evo.jta.PoolOptions;
 import org.h2.jdbcx.JdbcDataSource;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
-import com.google.inject.name.Names;
 
 @XmlRootElement(name = "h2")
 public class H2 extends DatabaseService {
@@ -75,20 +73,15 @@ public class H2 extends DatabaseService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				String id = getId();
-				if (id == null) {
-					bind(DataSource.class).toProvider(new DataSourceProvider())
-							.in(Scopes.SINGLETON);
-				} else {
-					bind(Key.get(DataSource.class, Names.named(id))).toProvider(
-							new DataSourceProvider()).in(Scopes.SINGLETON);
-				}
+				bind(DataSource.class).toProvider(new DataSourceProvider()).in(Scopes.SINGLETON);
 			}
 		};
 	}
 
 	@Override
 	public void deconfigure() {
-		wrapper.close(dataSource);
+		if (wrapper != null) {
+			wrapper.close(dataSource);
+		}
 	}
 }
