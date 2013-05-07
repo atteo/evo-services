@@ -306,21 +306,12 @@ public class Services extends GuiceServletContextListener {
 	 */
 	public void combineConfigurationFromResource(String resourcePath, boolean throwIfNotFound)
 			throws IncorrectConfigurationException, IOException {
-		InputStream stream = null;
-		try {
-			// TODO: what if more than one resource with given name?
-			stream = getClass().getResourceAsStream(resourcePath);
+		// TODO: what if more than one resource with given name?
+		try(InputStream stream = getClass().getResourceAsStream(resourcePath)) {
 			if (stream != null) {
 				configuration.combine(stream);
 			} else if (throwIfNotFound) {
 				throw new RuntimeException("Configuration resource not found: " + resourcePath);
-			}
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
 			}
 		}
 	}
@@ -345,17 +336,8 @@ public class Services extends GuiceServletContextListener {
 				return;
 			}
 		}
-		InputStream stream = null;
-		try {
-			stream = new FileInputStream(file);
+		try(InputStream stream = new FileInputStream(file)) {
 			configuration.combine(stream);
-		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 	}
 
@@ -540,6 +522,8 @@ public class Services extends GuiceServletContextListener {
 			Module module = service.configure();
 			if (module != null) {
 				serviceElements.put(service, Elements.getElements(duplicateDetection.wrap(module)));
+			} else {
+				serviceElements.put(service, Collections.<com.google.inject.spi.Element>emptyList());
 			}
 		}
 
@@ -554,8 +538,12 @@ public class Services extends GuiceServletContextListener {
 			Service service = entry.getKey();
 			List<com.google.inject.spi.Element> elements = entry.getValue();
 
-			Module module = ServiceModuleRewriter.importBindings(elements, service, serviceElements);
-			modules.add(module);
+			serviceElements.put(service, ServiceModuleRewriter.importBindings(elements, service, serviceElements));
+		}
+
+		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
+			List<com.google.inject.spi.Element> elements = entry.getValue();
+			modules.add(Elements.getModule(elements));
 		}
 
 		modules.add(new InjectMembersModule());
@@ -589,8 +577,6 @@ public class Services extends GuiceServletContextListener {
 
 			verifySingletonServicesAreUnique(config.getServices());
 			injector = buildInjector();
-
-			injector.injectMembers(config);
 
 			for (Service service : config.getServices()) {
 				if (logger.isInfoEnabled()) {

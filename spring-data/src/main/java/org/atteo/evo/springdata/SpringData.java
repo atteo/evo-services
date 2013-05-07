@@ -20,12 +20,14 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.evo.hibernate.Hibernate;
 import org.atteo.evo.jta.Transaction;
 import org.atteo.evo.jta.Transaction.ReturningRunnable;
-import org.atteo.evo.jta.Transactional;
+import org.atteo.evo.services.ImportBindings;
 import org.atteo.evo.services.TopLevelService;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -40,8 +42,12 @@ import com.google.inject.Provider;
 /**
  * Sprint Data integration.
  */
-@XmlRootElement(name = "spring-data")
+@XmlRootElement
 public class SpringData extends TopLevelService {
+	@XmlIDREF
+	@ImportBindings
+	private Hibernate hibernate;
+
 	private static class RepositoryFactoryProvider implements Provider<RepositoryFactorySupport> {
 		@Inject
 		private EntityManager manager;
@@ -97,11 +103,11 @@ public class SpringData extends TopLevelService {
 				}
 			}
 
-			private void configureProvider(Class<?> klass) {
+			private <T> void configureProvider(Class<T> klass) {
 				if (klass.getAnnotation(NoRepositoryBean.class) != null) {
 					return;
 				}
-				bind(klass).toProvider(new RepositoryProvider(klass));
+				bind(klass).toProvider(new RepositoryProvider<>(klass));
 			}
 		};
 	}

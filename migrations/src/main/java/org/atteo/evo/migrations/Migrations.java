@@ -15,6 +15,7 @@ package org.atteo.evo.migrations;
 
 import java.sql.SQLException;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import liquibase.Liquibase;
@@ -30,6 +31,7 @@ public class Migrations {
 
 	private DataSource dataSource;
 
+	@Inject
 	Migrations(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}

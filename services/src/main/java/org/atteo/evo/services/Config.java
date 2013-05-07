@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.injection.InjectMembers;
 import org.w3c.dom.Element;
 
 /**
@@ -38,12 +37,10 @@ public class Config extends Group {
 	@XmlAnyElement(lax = false)
 	private List<Element> properties;
 
-	@InjectMembers
 	@XmlElementRef
 	@Valid
 	private List<TopLevelService> services;
 
-	@InjectMembers
 	@XmlElementRef
 	@Valid
 	private List<TopLevelGroup> groups;

@@ -19,6 +19,7 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.atteo.evo.migrations.Migrations;
 
+import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -35,7 +36,7 @@ public class FixtureInterceptor implements MethodInterceptor {
 
 		Migrations migrations;
 
-		if (databaseName == null || databaseName.isEmpty()) {
+		if (Strings.isNullOrEmpty(databaseName)) {
 			migrations = injector.getInstance(Migrations.class);
 		} else {
 			migrations = injector.getInstance(Key.get(Migrations.class, Names.named(databaseName)));

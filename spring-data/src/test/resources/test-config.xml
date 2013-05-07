@@ -10,5 +10,5 @@
 		<initSchema>create</initSchema>
 	</hibernate>
 	<jpa/>
-	<spring-data/>
+	<springData/>
 </config>

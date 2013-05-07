@@ -13,6 +13,7 @@
  */
 package org.atteo.evo.firebuglogger;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.services.TopLevelService;
@@ -34,9 +35,15 @@ import ch.qos.logback.core.Appender;
  * https://addons.mozilla.org/en-US/firefox/addon/firephp/
  * </p>
  */
-@XmlRootElement(name = "firebuglogger")
+@XmlRootElement(name = "firebugLogger")
 public class FireBugLogger extends TopLevelService {
 	public static final String FIRE_BUG_APPENDER = "FireBug Appender";
+
+	/**
+	 * URL pattern specifying to which responses the headers will be added.
+	 */
+	@XmlElement
+	private String urlPattern = "/*";
 
 	@Override
 	public Module configure() {
@@ -44,7 +51,7 @@ public class FireBugLogger extends TopLevelService {
 			@Override
 			protected void configureServlets() {
 				bind(FireBugFilter.class);
-				filter("/*").through(FireBugFilter.class);
+				filter(urlPattern).through(FireBugFilter.class);
 			}
 		};
 	}

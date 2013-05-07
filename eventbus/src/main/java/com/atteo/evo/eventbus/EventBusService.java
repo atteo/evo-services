@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.services.TopLevelService;
 
 import com.google.common.eventbus.EventBus;
-import com.google.inject.Binder;
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
 
@@ -16,10 +16,10 @@ import com.google.inject.Singleton;
 public class EventBusService extends TopLevelService {
 	@Override
 	public Module configure() {
-		return new Module() {
+		return new AbstractModule() {
 			@Override
-			public void configure(Binder binder) {
-					binder.bind(EventBus.class).in(Singleton.class);
+			public void configure() {
+				bind(EventBus.class).in(Singleton.class);
 			}
 		};
 	}

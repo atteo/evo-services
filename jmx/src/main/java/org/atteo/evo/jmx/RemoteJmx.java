@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.evo.services.ImportBindings;
 import org.atteo.evo.services.TopLevelService;
 
 import com.google.inject.Injector;
@@ -47,20 +48,14 @@ public class RemoteJmx extends TopLevelService {
 	 */
 	@XmlElement
 	@XmlIDREF
+	@ImportBindings
 	private RmiRegistry rmiRegistry;
 
 	@Inject
-	private Injector injector;
+	private RmiRegistryPort portProvider;
 
 	@Override
 	public void start() {
-		RmiRegistryPort portProvider;
-		if (rmiRegistry != null && rmiRegistry.getId() != null) {
-			portProvider = injector.getInstance(Key.get(RmiRegistryPort.class, Names.named(rmiRegistry.getId())));
-		} else {
-			portProvider = injector.getInstance(RmiRegistryPort.class);
-		}
-
 		JMXServiceURL url;
 		try {
 			url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://:" + portProvider.getPort() + "/jmxrmi");

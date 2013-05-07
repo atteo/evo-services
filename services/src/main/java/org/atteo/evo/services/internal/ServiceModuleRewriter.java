@@ -22,6 +22,10 @@ import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.Map;
 
+import org.atteo.evo.services.ImportBindings;
+import org.atteo.evo.services.Service;
+import org.atteo.evo.services.Services;
+
 import com.google.common.base.Strings;
 import com.google.inject.Binder;
 import com.google.inject.Binding;
@@ -35,10 +39,6 @@ import com.google.inject.spi.Element;
 import com.google.inject.spi.Elements;
 import com.google.inject.spi.PrivateElements;
 
-import org.atteo.evo.services.ImportBindings;
-import org.atteo.evo.services.Service;
-import org.atteo.evo.services.Services;
-
 public class ServiceModuleRewriter {
 	public static List<Element> annotateExposedWithId(final List<Element> elements, final Service service) {
 		final boolean singleton = Services.isSingleton(service.getClass());
@@ -46,6 +46,7 @@ public class ServiceModuleRewriter {
 			@Override
 			public void configure(final Binder binder) {
 				final PrivateBinder privateBinder = binder.newPrivateBinder();
+				privateBinder.requestInjection(service);
 
 				for (Element element : elements) {
 					element.acceptVisitor(new DefaultElementVisitor<Void>() {
@@ -105,15 +106,6 @@ public class ServiceModuleRewriter {
 				binder.expose(oldKey);
 			}
 		}
-
-		// add exposed binding for the service class itself
-		binder.bind(service.getClass());
-		if (Strings.isNullOrEmpty(service.getId())) {
-			binder.expose(service.getClass());
-		} else {
-			bindKey(binder, Key.get(service.getClass()), Names.named(service.getId()));
-			binder.expose(Key.get(service.getClass(), Names.named(service.getId())));
-		}
 	}
 
 	/**
@@ -124,9 +116,9 @@ public class ServiceModuleRewriter {
 	 * @param serviceElements map with elements for all services
 	 * @return
 	 */
-	public static Module importBindings(final List<Element> elements, final Service service,
+	public static List<Element> importBindings(final List<Element> elements, final Service service,
 			final Map<Service, List<Element>> serviceElements) {
-		return new Module() {
+		return Elements.getElements(new Module() {
 			@Override
 			public void configure(final Binder binder) {
 				for (Element element : elements) {
@@ -149,7 +141,7 @@ public class ServiceModuleRewriter {
 					});
 				}
 			}
-		};
+		});
 	}
 
 	/**
