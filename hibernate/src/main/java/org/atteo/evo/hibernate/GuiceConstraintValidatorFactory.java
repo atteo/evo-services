@@ -28,4 +28,7 @@ public class GuiceConstraintValidatorFactory implements
 		return validator;
 	}
 
+	@Override
+	public void releaseInstance(ConstraintValidator<?, ?> cv) {
+	}
 }
