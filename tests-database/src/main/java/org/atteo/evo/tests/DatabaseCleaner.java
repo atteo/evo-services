@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,9 +67,8 @@ public class DatabaseCleaner {
 	}
 
 	private void dropTable(Connection connection, String tableName) {
-		try (PreparedStatement statement = connection.prepareStatement("DROP TABLE ?")) {
-			statement.setString(1, tableName);
-			statement.executeUpdate();
+		try (Statement statement = connection.createStatement()) {
+			statement.executeUpdate("DROP TABLE " + tableName);
 		} catch (SQLException ex) {
 			throw new RuntimeException("Can't read table contents from table ".concat(tableName), ex);
 		}

@@ -10,14 +10,32 @@
 	<name>Evo Database Test Utilities</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-services</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-migrations</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>evo-h2</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>evo-tests-services</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>evo-jta-atomikos</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
