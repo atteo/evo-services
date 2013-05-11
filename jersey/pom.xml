@@ -32,6 +32,18 @@
 			<artifactId>jersey-freemarker</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.atteo</groupId>
+			<artifactId>evo-tests-services</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo</groupId>
+			<artifactId>evo-jetty</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

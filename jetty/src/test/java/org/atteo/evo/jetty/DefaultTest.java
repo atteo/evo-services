@@ -13,11 +13,35 @@
  */
 package org.atteo.evo.jetty;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.inject.Inject;
+
 import org.atteo.evo.tests.ServicesTest;
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+
 public class DefaultTest extends ServicesTest {
+	@Inject
+	JettyConnectionDetails connectionDetails;
+
 	@Test
 	public void dummy() {
+	}
+
+	@Test
+	public void testServlet() throws MalformedURLException, IOException {
+		URL url = new URL("http", "localhost", connectionDetails.getPort(), "/servlet");
+		try (InputStream stream = url.openStream()) {
+			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
+			assertEquals("hello", result);
+		}
 	}
 }

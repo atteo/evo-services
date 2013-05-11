@@ -2,9 +2,10 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
 	<jetty>
 		<connectors>
-			<serverconnector>
-				<provideConnectionDetails>true</provideConnectionDetails>
-			</serverconnector>
+			<local/>
 		</connectors>
 	</jetty>
+	<jersey>
+		<prefix>/rest</prefix>
+	</jersey>
 </config>

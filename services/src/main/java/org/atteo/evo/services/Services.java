@@ -508,7 +508,7 @@ public class Services extends GuiceServletContextListener {
 		DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();
 
 		// Use ServletModule specifically so @RequestScoped annotation will be always bound
-		modules.add(duplicateDetection.wrap(new ServletModule() {
+		Module servletsModule = duplicateDetection.wrap(new ServletModule() {
 			@Override
 			public void configureServlets() {
 				bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
@@ -518,7 +518,18 @@ public class Services extends GuiceServletContextListener {
 				bind(Services.class).toInstance(Services.this);
 				binder().requireExplicitBindings();
 			}
-		}));
+		});
+
+		// important magic below:
+		// Every ServletModule instance tries to install InternalServletModule. The trick is used, because Guice
+		// installs modules only the first time and ignores any subsequent execution of install method
+		// with the same module (by comparing them using equals() method).
+		// We need to make sure InternalServletModule is installed in the top level module,
+		// because when it is installed from some private module it doesn't have an access to all
+		// registered servlets and filters.
+		//
+		// The line below makes sure first instance of ServletModule is rewritten in global scope
+		modules.add(Elements.getModule(Elements.getElements(servletsModule)));
 
 		for (Module module : extraModules) {
 			modules.add(duplicateDetection.wrap(module));
