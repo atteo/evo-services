@@ -16,6 +16,7 @@
 package org.atteo.evo.jetty;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -38,6 +39,10 @@ public class ResourceHandlerConfig extends HandlerConfig {
 	@XmlElement(name = "welcomeFile")
 	private String[] welcomeFiles = {"index.html"};
 
+	@XmlElementWrapper(name = "mimeTypes")
+	@XmlElementRef
+	private ResourceHandlerMimeTypeConfig[] mimeTypes = {};
+
 	@XmlElement
 	private String resourceBase;
 
@@ -46,6 +51,11 @@ public class ResourceHandlerConfig extends HandlerConfig {
 		ResourceHandler handler = new ResourceHandler();
 		handler.setDirectoriesListed(directoriesListed);
 		handler.setWelcomeFiles(welcomeFiles);
+
+		for (ResourceHandlerMimeTypeConfig mimeType : mimeTypes) {
+			handler.getMimeTypes().addMimeMapping(mimeType.getExtension(), mimeType.getName());
+		}
+
 		if (resourceBase != null) {
 			handler.setResourceBase(resourceBase);
 		}
