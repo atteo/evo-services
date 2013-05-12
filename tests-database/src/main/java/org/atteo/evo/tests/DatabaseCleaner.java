@@ -2,7 +2,6 @@ package org.atteo.evo.tests;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -75,9 +74,8 @@ public class DatabaseCleaner {
 	}
 
 	private void clearSingleTable(Connection connection, String tableName) {
-		try (PreparedStatement statement = connection.prepareStatement("DELETE FROM ?")) {
-			statement.setString(1, tableName);
-			statement.executeUpdate();
+		try (Statement statement = connection.createStatement()) {
+			statement.executeUpdate("DELETE FROM " + tableName);
 		} catch (SQLException ex) {
 			throw new RuntimeException("Can't read table contents from table ".concat(tableName), ex);
 		}
