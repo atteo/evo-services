@@ -295,7 +295,7 @@ public class Services extends GuiceServletContextListener {
 		for (File configDir : getConfigDirs()) {
 			combineConfigurationFromFile(new File(configDir, CONFIG_FILE_NAME), false);
 		}
-		combineConfigurationFromFile(new File(configHome, CONFIG_FILE_NAME), false);
+		combineConfigurationFromFile(new File(getConfigHome(), CONFIG_FILE_NAME), false);
 	}
 
 	/**
