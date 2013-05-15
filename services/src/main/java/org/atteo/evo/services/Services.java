@@ -345,6 +345,36 @@ public class Services extends GuiceServletContextListener {
 		return XmlUtils.prettyPrint(configuration.getRootElement());
 	}
 
+	public String printDirectories() {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		stringBuilder.append("HOME DIRECTORY: ").append(getHomeDirectory().getAbsolutePath());
+		stringBuilder.append("\n");
+		stringBuilder.append("DATA HOME: ").append(getDataHome().getAbsolutePath());
+		stringBuilder.append("\n");
+		stringBuilder.append("DATA DIRECTORY: ").append(getDataDir().getAbsolutePath());
+		stringBuilder.append("\n");
+		stringBuilder.append("CACHE HOME: ").append(getCacheHome().getAbsolutePath());
+		stringBuilder.append("\n");
+		stringBuilder.append("RUNTIME DIRECTORY: ").append(getRuntimeDirectory().getAbsolutePath());
+		stringBuilder.append("\n");
+		stringBuilder.append("CONFIG HOME: ").append(getConfigHome().getAbsolutePath());
+		stringBuilder.append("\n");
+		stringBuilder.append("CONFIG DIRECTORIES: ");
+
+		if (configDirs.isEmpty()) {
+			stringBuilder.append("NONE");
+		} else {
+			stringBuilder.append("\n");
+		}
+
+		for (File dir : configDirs) {
+			stringBuilder.append("  ").append(dir.getAbsolutePath()).append("\n");
+		}
+
+		return stringBuilder.toString();
+	}
+
 	/**
 	 * Adds external module to the Services injector.
 	 *
@@ -425,6 +455,11 @@ public class Services extends GuiceServletContextListener {
 		if (params.isPrintFilteredConfig()) {
 			filterConfiguration();
 			System.out.println(printCombinedXml());
+			System.exit(0);
+		}
+
+		if (params.isPrintDirectories()) {
+			System.out.println(printDirectories());
 			System.exit(0);
 		}
 

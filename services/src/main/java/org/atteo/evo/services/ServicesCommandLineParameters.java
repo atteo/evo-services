@@ -58,6 +58,9 @@ public class ServicesCommandLineParameters {
 	@Parameter(names = "--print-config", description = "Print combined configuration to standard output")
 	private boolean printConfig;
 
+	@Parameter(names = "--print-dirs", description = "Print directories used by the app (data home, config home etc)")
+	private boolean printDirectories;
+
 	@Parameter(names = "--print-filtered-config", description = "Print combined and filtered configuration"
 			+ " to standard output")
 	private boolean printFilteredConfig;
@@ -106,6 +109,10 @@ public class ServicesCommandLineParameters {
 
 	public boolean isPrintConfig() {
 		return printConfig;
+	}
+
+	public boolean isPrintDirectories() {
+		return printDirectories;
 	}
 
 	public boolean isPrintFilteredConfig() {
