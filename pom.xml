@@ -31,7 +31,6 @@
 	</developers>
 	<modules>
 		<module>database</module>
-		<module>eventbus</module>
 		<module>firebuglogger</module>
 		<module>h2</module>
 		<module>hibernate</module>
