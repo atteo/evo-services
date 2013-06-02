@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 

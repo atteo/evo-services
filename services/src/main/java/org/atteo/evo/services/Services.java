@@ -38,6 +38,7 @@ import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.config.XmlUtils;
 import org.atteo.evo.filtering.CompoundPropertyResolver;
 import org.atteo.evo.filtering.EnvironmentPropertyResolver;
+import org.atteo.evo.filtering.OneOfPropertyResolver;
 import org.atteo.evo.filtering.PropertiesPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
@@ -485,6 +486,7 @@ public class Services extends GuiceServletContextListener {
 		}
 
 		propertyResolver = new CompoundPropertyResolver(
+				new OneOfPropertyResolver(),
 				new PropertiesPropertyResolver(properties),
 				new SystemPropertyResolver(),
 				new EnvironmentPropertyResolver(),

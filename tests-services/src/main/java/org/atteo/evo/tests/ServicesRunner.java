@@ -30,22 +30,17 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected Object createTest() throws Exception {
-		return servicesRule.getServices().injector()
-				.getInstance(getTestClass().getJavaClass());
+		return servicesRule.getServices().injector().getInstance(getTestClass().getJavaClass());
 	}
 
 	@Override
 	protected List<TestRule> classRules() {
-		if (getTestClass().getJavaClass().isAnnotationPresent(
-				ServicesConfiguration.class)) {
-			String[] configs = getTestClass().getJavaClass()
-					.getAnnotation(ServicesConfiguration.class).value();
+		if (getTestClass().getJavaClass().isAnnotationPresent( ServicesConfiguration.class)) {
+			String[] configs = getTestClass().getJavaClass().getAnnotation(ServicesConfiguration.class).value();
 
 			for (int i = 0; i < configs.length; i++) {
 				if (!configs[i].startsWith("/")) {
-					configs[i] = "/"
-							+ getTestClass().getJavaClass().getPackage()
-									.getName().replace(".", "/") + "/"
+					configs[i] = "/" + getTestClass().getJavaClass().getPackage() .getName().replace(".", "/") + "/"
 							+ configs[i];
 				}
 			}
