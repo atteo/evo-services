@@ -42,13 +42,13 @@ public class WebDriverHelperService extends TopLevelService {
 	 * The timeout in seconds when an expectation is called.
 	 */
 	@XmlElement
-	private int timeoutInSeconds;
+	private int timeoutInSeconds = 2;
 
 	/**
 	 * The duration in milliseconds to sleep between polls.
 	 */
 	@XmlElement
-	private int sleepInMillis;
+	private int sleepInMillis = 10;
 
 	@Override
 	public Module configure() {
