@@ -48,7 +48,6 @@
 		<module>services</module>
 		<module>shiro</module>
 		<module>spring-data</module>
-		<module>tests-eventbus</module>
 		<module>tests-database</module>
 		<module>tests-services</module>
 		<module>tests-shiro</module>
