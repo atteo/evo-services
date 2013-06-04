@@ -10,9 +10,9 @@
 	<name>Evo EventBus testing utilities</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-eventbus</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.Configurable;
 import org.atteo.evo.config.XmlDefaultValue;
-import org.atteo.evo.jetty.crypto.Crypto;
+import org.atteo.evo.webserver.crypto.Crypto;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 @XmlRootElement(name = "sslcontextfactory")

@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.evo.jetty;
+package org.atteo.evo.webserver;
+
+import org.atteo.evo.services.TopLevelService;
 
 /**
- * Interface which can be injected to retrieve Jetty connection details.
- *
- * @see AbstractConnectorConfig#provideConnectionDetails
+ * WebServer service.
+ * <p>
+ * This service will usually bind {@link WebServerAddress}.
+ * </p>
  */
-public interface JettyConnectionDetails {
-	/**
-	 * Returns port opened by connector.
-	 * @return opened port or -1, if not yet opened
-	 */
-	int getPort();
+public abstract class WebServerService extends TopLevelService {
 
-	String getHost();
 }

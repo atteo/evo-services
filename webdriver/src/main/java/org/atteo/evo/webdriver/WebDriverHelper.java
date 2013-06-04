@@ -17,7 +17,7 @@ package org.atteo.evo.webdriver;
 
 import javax.inject.Inject;
 
-import org.atteo.evo.jetty.JettyConnectionDetails;
+import org.atteo.evo.webserver.WebServerAddress;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,7 +29,7 @@ import com.google.common.base.Function;
  */
 public class WebDriverHelper {
 	@Inject
-	private JettyConnectionDetails connectionDetails;
+	private WebServerAddress webServerAddress;
 
 	@Inject
 	private RemoteWebDriver driver;
@@ -41,8 +41,8 @@ public class WebDriverHelper {
 	 * Loads the specified path from websever;
 	 */
 	public void go(String path) {
-		String host = (connectionDetails.getHost() == null) ? "localhost" : connectionDetails.getHost();
-		String address = "http://" + host + ":" + connectionDetails.getPort() + path;
+		String host = (webServerAddress.getHost() == null) ? "localhost" : webServerAddress.getHost();
+		String address = "http://" + host + ":" + webServerAddress.getPort() + path;
 		driver.get(address);
 	}
 

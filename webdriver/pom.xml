@@ -10,9 +10,9 @@
 	<name>Evo WebDriver</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>evo-jetty</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>evo-webserver</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -25,9 +25,15 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-tests-services</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>evo-jetty</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

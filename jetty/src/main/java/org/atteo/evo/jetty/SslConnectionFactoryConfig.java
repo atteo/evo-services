@@ -43,4 +43,10 @@ public class SslConnectionFactoryConfig extends ConnectionFactoryConfig {
 		}
 		return new SslConnectionFactory(factory, nextProtocol);
 	}
+
+	@Override
+	public String getProtocolString() {
+		// TODO: this is correct assuming nextProtocol is HTTP
+		return "https";
+	}
 }

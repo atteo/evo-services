@@ -20,4 +20,5 @@ import org.eclipse.jetty.server.ConnectionFactory;
 
 public abstract class ConnectionFactoryConfig extends Configurable {
 	public abstract ConnectionFactory getConnectionFactory();
+	public abstract String getProtocolString();
 }

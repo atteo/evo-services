@@ -21,11 +21,6 @@ import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.name.Names;
-
 public abstract class AbstractNetworkConnectorConfig extends ConnectorConfig {
 	/**
 	 * The configured port for the connector or 0 if any available port may be used.
@@ -38,12 +33,6 @@ public abstract class AbstractNetworkConnectorConfig extends ConnectorConfig {
 	 */
 	@XmlElement
 	private String host;
-
-	/**
-	 * Register {@link JettyConnectionDetails} in Guice with port and hostname assigned to this connector.
-	 */
-	@XmlElement
-	private boolean provideConnectionDetails = false;
 
 	abstract protected AbstractNetworkConnector createConnector(Server server);
 
@@ -61,31 +50,18 @@ public abstract class AbstractNetworkConnectorConfig extends ConnectorConfig {
 		return connector;
 	}
 
-	@Override
-	public Module configure() {
-		if (!provideConnectionDetails) {
-			return null;
-		}
-		return new AbstractModule() {
-			@Override
-			protected void configure() {
-				JettyConnectionDetails connectionDetails = new JettyConnectionDetails() {
-					@Override
-					public int getPort() {
-						return connector.getLocalPort();
-					}
+	/**
+	 * Returns the port on which the connector listens.
+	 */
+	public int getPort() {
+		return connector.getLocalPort();
+	}
 
-					@Override
-					public String getHost() {
-						return connector.getHost();
-					}
-				};
-				if (getId() != null) {
-					bind(Key.get(JettyConnectionDetails.class, Names.named(getId()))).toInstance(connectionDetails);
-				} else {
-					bind(JettyConnectionDetails.class).toInstance(connectionDetails);
-				}
-			}
-		};
+	/**
+	 * Returns the host on which the connector listens.
+	 * @return host name, address, or null, if connector listens on all interfaces
+	 */
+	public String getHost() {
+		return connector.getHost();
 	}
 }

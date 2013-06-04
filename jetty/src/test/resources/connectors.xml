@@ -2,21 +2,21 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
 	<jetty>
 		<sslcontextfactories>
-			<sslcontextfactory id="sslcontextfactory">
+			<sslcontextfactory id="defaultssl">
 			</sslcontextfactory>
 		</sslcontextfactories>
 		<connectors>
 			<serverconnector>
-				<provideConnectionDetails>true</provideConnectionDetails>
+				<provideAddress>true</provideAddress>
 			</serverconnector>
 			<serverconnector id="ssl">
 				<connections>
 					<ssl>
-						<sslcontextfactory>sslcontextfactory</sslcontextfactory>
+						<sslcontextfactory>defaultssl</sslcontextfactory>
 					</ssl>
 					<http/>
 				</connections>
-				<provideConnectionDetails>true</provideConnectionDetails>
+				<provideAddress>true</provideAddress>
 			</serverconnector>
 			<local/>
 		</connectors>

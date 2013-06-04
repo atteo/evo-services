@@ -15,14 +15,20 @@
  */
 package org.atteo.evo.jetty;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.evo.webserver.WebServerAddress;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.name.Names;
 
 /**
  * This connector uses efficient NIO buffers with a non blocking threading model.
@@ -45,6 +51,12 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 		new HttpConnectionFactoryConfig()
 	};
 
+	/**
+	 * Register {@link WebServerAddress} in Guice with port and hostname assigned to this connector.
+	 */
+	@XmlElement
+	private boolean provideAddress = false;
+
 	@Override
 	public AbstractNetworkConnector createConnector(Server server) {
 		ConnectionFactory[] connectionFactories = new ConnectionFactory[connections.length];
@@ -54,5 +66,45 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 			i++;
 		}
 		return new ServerConnector(server, connectionFactories);
+	}
+
+	@Override
+	public Module configure() {
+		return new AbstractModule() {
+			@Override
+			protected void configure() {
+				if (provideAddress) {
+					if (getId() == null) {
+						bind(WebServerAddress.class).toInstance(getWebServerAddress());
+					} else {
+						bind(WebServerAddress.class).annotatedWith(Names.named(getId()))
+								.toInstance(getWebServerAddress());
+					}
+				}
+			}
+		};
+	}
+
+	private WebServerAddress getWebServerAddress() {
+		return new WebServerAddress() {
+			@Override
+			public int getPort() {
+				return ServerConnectorConfig.this.getPort();
+			}
+
+			@Override
+			public String getHost() {
+				return ServerConnectorConfig.this.getHost();
+			}
+
+			@Override
+			public String getUrl() {
+				String host = ServerConnectorConfig.this.getHost();
+				if (host == null) {
+					host = "localhost";
+				}
+				return connections[0].getProtocolString() + "://" + host + ":" + ServerConnectorConfig.this.getPort();
+			}
+		};
 	}
 }

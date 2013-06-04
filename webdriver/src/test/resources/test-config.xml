@@ -4,7 +4,7 @@
 	<jetty>
 		<connectors>
 			<serverconnector>
-				<provideConnectionDetails>true</provideConnectionDetails>
+				<provideAddress>true</provideAddress>
 			</serverconnector>
 		</connectors>
 		<contextCollection>

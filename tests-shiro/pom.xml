@@ -10,9 +10,9 @@
 	<name>Evo Shiro Test Utilities</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-services</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.shiro</groupId>

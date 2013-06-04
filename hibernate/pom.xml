@@ -10,9 +10,9 @@
 	<name>Evo Hibernate</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-database</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<!-- Currently there is no javax.persistence API jar file for JPA2
 			<groupId>javax.persistence</groupId>
@@ -41,21 +41,21 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-h2</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-jta-atomikos</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-tests-services</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

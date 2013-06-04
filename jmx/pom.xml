@@ -10,9 +10,9 @@
 	<name>Evo JMX</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-services</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun</groupId>
@@ -22,9 +22,9 @@
 			<systemPath>${java.home}/../lib/tools.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-tests-services</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

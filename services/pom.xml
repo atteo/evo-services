@@ -10,7 +10,7 @@
 	<name>Evo Services</name>
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>evo-config</artifactId>
 		</dependency>
 		<dependency>

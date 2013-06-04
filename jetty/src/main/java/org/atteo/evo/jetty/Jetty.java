@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.services.ExternalContainer;
-import org.atteo.evo.services.TopLevelService;
+import org.atteo.evo.webserver.WebServerService;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
@@ -55,13 +55,13 @@ import com.google.inject.servlet.ServletModule;
  * Please note that when using annotations the {@link ClassIndex} facility
  * is used to get the list of annotated classes as opposed to otherwise more common
  * classpath scanning. The implication of that is that the class will be "visible"
- * to this Jetty service only when it was compiled with evo-classindex.jar in the classpath
+ * to this Jetty service only when it was compiled with evo-webserver.jar in the classpath
  * which contains annotation processor generating the needed class index.
  * Use {@link ServletModule} when that is not the case.
  * </p>
  */
 @XmlRootElement(name = "jetty")
-public class Jetty extends TopLevelService {
+public class Jetty extends WebServerService {
 	/**
 	 * Support {@link WebServlet}, {@link WebFilter} and {@link WebInitParam} annotations
 	 * by automatically registering annotated classes using {@link ServletModule}.

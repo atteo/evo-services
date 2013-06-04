@@ -22,6 +22,7 @@ import java.net.URL;
 import javax.inject.Inject;
 
 import org.atteo.evo.tests.ServicesTest;
+import org.atteo.evo.webserver.WebServerAddress;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ import com.google.common.io.CharStreams;
 
 public class DefaultTest extends ServicesTest {
 	@Inject
-	JettyConnectionDetails connectionDetails;
+	private WebServerAddress webServerAddress;
 
 	@Test
 	public void dummy() {
@@ -38,7 +39,7 @@ public class DefaultTest extends ServicesTest {
 
 	@Test
 	public void testServlet() throws MalformedURLException, IOException {
-		URL url = new URL("http", "localhost", connectionDetails.getPort(), "/servlet");
+		URL url = new URL(webServerAddress.getUrl() + "/servlet");
 		try (InputStream stream = url.openStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
 			assertEquals("hello", result);

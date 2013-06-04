@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.evo.webserver.crypto;
+package org.atteo.evo.webserver;
 
-import java.io.File;
+/**
+ * Interface which can be injected to retrieve webserver address.
+ */
+public interface WebServerAddress {
+	/**
+	 * Returns the port web server listens on.
+	 * @return opened port or -1, if not yet opened
+	 */
+	int getPort();
 
-import org.junit.Test;
+	/**
+	 * Returns the host name the web server listens on.
+	 *
+	 * @return host, or null if web server listens on all interfaces
+	 */
+	String getHost();
 
-public class CryptoTest {
-	@Test
-	public void createSelfSignedCertificate() {
-		Crypto.createSelfSignedCertificate(new File("target/test.jks"), "default", "secret");
-	}
+	/**
+	 * Returns the URL web server listens on.
+	 */
+	String getUrl();
 }

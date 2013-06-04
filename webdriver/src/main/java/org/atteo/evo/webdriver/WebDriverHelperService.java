@@ -19,9 +19,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.jetty.Jetty;
 import org.atteo.evo.services.ImportBindings;
 import org.atteo.evo.services.TopLevelService;
+import org.atteo.evo.webserver.WebServerService;
 
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
@@ -36,7 +36,7 @@ public class WebDriverHelperService extends TopLevelService {
 	@ImportBindings
 	@XmlElement
 	@XmlIDREF
-	private Jetty jettyService;
+	private WebServerService webServer;
 
 	/**
 	 * The timeout in seconds when an expectation is called.

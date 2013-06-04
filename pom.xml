@@ -53,6 +53,7 @@
 		<module>tests-services</module>
 		<module>tests-shiro</module>
 		<module>webdriver</module>
+		<module>webserver</module>
 	</modules>
 	<scm>
 		<connection>https://github.com/atteo/evo-services</connection>

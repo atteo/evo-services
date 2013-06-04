@@ -28,9 +28,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.net.ssl.HttpsURLConnection;
 
-import org.atteo.evo.jetty.crypto.Crypto;
 import org.atteo.evo.tests.ServicesConfiguration;
 import org.atteo.evo.tests.ServicesTest;
+import org.atteo.evo.webserver.WebServerAddress;
+import org.atteo.evo.webserver.crypto.Crypto;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpTester.Request;
 import org.eclipse.jetty.http.HttpTester.Response;
@@ -50,11 +51,11 @@ public class ConnectorsTest extends ServicesTest {
 	private LocalConnector localConnector;
 
 	@Inject
-	private JettyConnectionDetails connectionDetails;
+	private WebServerAddress webServerAddress;
 
 	@Inject
 	@Named("ssl")
-	private JettyConnectionDetails sslConnectionDetails;
+	private WebServerAddress sslServerAddress;
 
 	@Test
 	public void dummy() {
@@ -82,13 +83,13 @@ public class ConnectorsTest extends ServicesTest {
 
 	@Test
 	public void testConnectionDetails() {
-		assertThat(connectionDetails.getPort(), is(not(0)));
-		assertThat(sslConnectionDetails.getPort(), is(not(0)));
+		assertThat(webServerAddress.getPort(), is(not(0)));
+		assertThat(sslServerAddress.getPort(), is(not(0)));
 	}
 
 	@Test
 	public void testHttpConnection() throws IOException {
-		URL url = new URL("http", "localhost", connectionDetails.getPort(), "/first/");
+		URL url = new URL(webServerAddress.getUrl() + "/first/");
 		try (InputStream stream = url.openStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
 			assertEquals("Hello World\nfirst\n", result);
@@ -97,7 +98,7 @@ public class ConnectorsTest extends ServicesTest {
 
 	@Test
 	public void testSslConnection() throws IOException, NoSuchAlgorithmException, KeyManagementException {
-		URL url = new URL("https", "localhost", sslConnectionDetails.getPort(), "/first/");
+		URL url = new URL(sslServerAddress.getUrl() + "/first/");
 		URLConnection connection = url.openConnection();
 		HttpsURLConnection sslConnection = (HttpsURLConnection) connection;
 

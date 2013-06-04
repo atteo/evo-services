@@ -33,4 +33,9 @@ public class HttpConnectionFactoryConfig extends ConnectionFactoryConfig {
 		HttpConnectionFactory factory = new HttpConnectionFactory();
 		return factory;
 	}
+
+	@Override
+	public String getProtocolString() {
+		return "http";
+	}
 }
