@@ -17,11 +17,27 @@ package org.atteo.evo.tests;
 
 import java.util.List;
 
+import org.atteo.evo.services.Services;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
+/**
+ * Runs the tests with {@link Services} framework initialized.
+ *
+ * <p>
+ * Any method marked with {@link Bindings} annotation will executed with {@link Binder}
+ * as a sole parameter to allow you to register additional Guice bindings.
+ * </p>
+ * <p>
+ * The {@link Services} engine will be initialized with the specified configuration
+ * file. All {@link Service services} will be started.
+ * </p>
+ * <p>
+ * The test class will be instantiated using created Guice injector.
+ * </p>
+ */
 public class ServicesRunner extends BlockJUnit4ClassRunner {
 	private ServicesRule servicesRule;
 
@@ -66,6 +82,7 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 	@Override
 	protected List<MethodRule> rules(Object target) {
 		List<MethodRule> rules = super.rules(target);
+		rules.add(new InjectionRule(servicesRule));
 		rules.add(new MockitoRule());
 		return rules;
 	}

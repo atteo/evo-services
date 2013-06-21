@@ -17,6 +17,9 @@ package org.atteo.evo.tests;
 
 import org.junit.runner.RunWith;
 
+/**
+ * Executes the test class with {@link ServicesRunner}.
+ */
 @RunWith(ServicesRunner.class)
 public class ServicesTest {
 

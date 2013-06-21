@@ -38,16 +38,23 @@ import com.google.inject.servlet.GuiceFilter;
 /**
  * JUnit {@link TestRule rule} which initializes {@link Services} environment.
  *
+ * <p>
+ * It is better for your test class to extend {@link ServicesTest} or have it annotated with
+ * &#064;{@link RunWith}({@link ServicesRunner ServicesRunner.class}). With those solutions
+ * the test class is created using Guice injector.
+ * </p>
+ *
+ * <p>
+ * Usage:
  * <pre>
- * {@code
  * class Test {
- *     @ClassRule
+ *     &#064;ClassRule
  *     private static ServicesRule services = new ServicesRule();
- *     @Rule
+ *     &#064;Rule
  *     private InjectionRule injections = new InjectionRule(this, services);
  * }
- * }
  * </pre>
+ * </p>
  * <p>
  * The {@link Services} engine will be initialized with the specified configuration
  * file. All {@link Service services} will be started.
@@ -61,6 +68,12 @@ public class ServicesRule implements TestRule {
 	public final static String[] DEFAULT_CONFIG = { "/test-config.xml" };
 	private String[] configs;
 	private Services services;
+
+	private final Map<Class<?>, Object> mocks = new HashMap<>();
+
+	Map<Class<?>, Object> getMocks() {
+		return mocks;
+	}
 
 	/**
 	 * Initializes {@link Services} environment from "/test-config.xml" configuration file.
@@ -145,7 +158,6 @@ public class ServicesRule implements TestRule {
 			}
 		};
 
-		final Map<Class<?>, Object> mocks = new HashMap<>();
 		final Field fields[] = klass.getDeclaredFields();
 
 		for (final Field field : fields) {
