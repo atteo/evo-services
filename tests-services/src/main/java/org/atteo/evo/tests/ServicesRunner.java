@@ -17,6 +17,7 @@ package org.atteo.evo.tests;
 
 import java.util.List;
 
+import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
@@ -35,7 +36,7 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected List<TestRule> classRules() {
-		if (getTestClass().getJavaClass().isAnnotationPresent( ServicesConfiguration.class)) {
+		if (getTestClass().getJavaClass().isAnnotationPresent(ServicesConfiguration.class)) {
 			String[] configs = getTestClass().getJavaClass().getAnnotation(ServicesConfiguration.class).value();
 
 			for (int i = 0; i < configs.length; i++) {
@@ -58,8 +59,14 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 	@Override
 	protected List<TestRule> getTestRules(Object target) {
 		List<TestRule> rules = super.getTestRules(target);
-		rules.add(new InjectionRule(target));
 		rules.add(new RequestRule());
+		return rules;
+	}
+
+	@Override
+	protected List<MethodRule> rules(Object target) {
+		List<MethodRule> rules = super.rules(target);
+		rules.add(new MockitoRule());
 		return rules;
 	}
 }

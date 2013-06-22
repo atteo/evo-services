@@ -31,7 +31,6 @@ import org.junit.runners.model.Statement;
 import static org.mockito.Mockito.mock;
 
 import com.google.inject.Binder;
-import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceFilter;
@@ -85,7 +84,7 @@ public class ServicesRule implements TestRule {
 	 *
 	 * @param configs resource path to the configuration files
 	 */
-	public ServicesRule(String[] configs) {
+	public ServicesRule(String... configs) {
 		this.configs = configs;
 	}
 
@@ -150,9 +149,7 @@ public class ServicesRule implements TestRule {
 		final Field fields[] = klass.getDeclaredFields();
 
 		for (final Field field : fields) {
-			if (field.isAnnotationPresent(Mock.class)
-					&& (field.isAnnotationPresent(javax.inject.Inject.class)
-					|| field.isAnnotationPresent(Inject.class))) {
+			if (field.isAnnotationPresent(MockAndBind.class)) {
 				Object object = mock(field.getType());
 				mocks.put(field.getType(), object);
 			}
