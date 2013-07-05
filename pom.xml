@@ -38,6 +38,7 @@
 		<module>hibernate</module>
 		<module>hibernate-search</module>
 		<module>hornetq</module>
+		<module>import</module>
 		<module>jersey</module>
 		<module>jetty</module>
 		<module>jminix</module>
