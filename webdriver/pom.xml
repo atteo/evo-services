@@ -2,16 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>evo-services-parent</artifactId>
-		<groupId>org.atteo</groupId>
+		<artifactId>parent</artifactId>
+		<groupId>org.atteo.moonshine</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>evo-webdriver</artifactId>
-	<name>Evo WebDriver</name>
+	<artifactId>webdriver</artifactId>
+	<name>WebDriver</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>evo-webserver</artifactId>
+			<artifactId>webserver</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -26,13 +26,13 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>evo-tests-services</artifactId>
+			<artifactId>tests-services</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>evo-jetty</artifactId>
+			<artifactId>jetty</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
