@@ -24,6 +24,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.config.Configuration;
 import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.config.XmlUtils;
@@ -156,6 +158,8 @@ public class Services extends GuiceServletContextListener {
 	private Config config;
 	private PropertyResolver propertyResolver;
 	private List<Service> startedServices = new ArrayList<>();
+	private Map<Service, String> serviceNameMap = new IdentityHashMap<>();
+
 
 	public Services() {
 		this("test");
@@ -555,7 +559,7 @@ public class Services extends GuiceServletContextListener {
 		}
 
 		for (Service service : config.getServices()) {
-			logger.info("Configuring {}...", service.getClass().getSimpleName());
+			logger.info("Configuring: {}", serviceNameMap.get(service));
 			Module module = service.configure();
 			if (module != null) {
 				serviceElements.put(service, Elements.getElements(duplicateDetection.wrap(module)));
@@ -612,13 +616,14 @@ public class Services extends GuiceServletContextListener {
 				config = new Config();
 			}
 
+			buildServiceNameMap(config.getServices());
 			verifySingletonServicesAreUnique(config.getServices());
 			injector = buildInjector();
 
 			for (Service service : config.getServices()) {
 				if (logger.isInfoEnabled()) {
 					if (isStartMethodOverriden(service.getClass())) {
-						logger.info("Starting {}...", service.getClass().getSimpleName());
+						logger.info("Starting: {}", serviceNameMap.get(service));
 					}
 				}
 				startedServices.add(service);
@@ -644,7 +649,11 @@ public class Services extends GuiceServletContextListener {
 		}
 
 		for (Service service : startedServices) {
-			logger.info("Stopping {}...", service.getClass().getSimpleName());
+			String name = serviceNameMap.get(service);
+			if (name == null) {
+				name = service.getClass().getSimpleName();
+			}
+			logger.info("Stopping: {}", name);
 			service.stop();
 		}
 		for (Service service : config.getServices()) {
@@ -683,6 +692,27 @@ public class Services extends GuiceServletContextListener {
 			return true;
 		}
 		return false;
+	}
+
+	private void buildServiceNameMap(List<Service> services) {
+		for (Service service : services) {
+			StringBuilder builder = new StringBuilder();
+
+			if (service.getId() != null) {
+				builder.append("\"");
+				builder.append(service.getId());
+				builder.append("\" ");
+			}
+
+			String summary = ClassIndex.getClassSummary(service.getClass());
+			builder.append(service.getClass().getSimpleName());
+			if (summary != null) {
+				builder.append(" (");
+				builder.append(summary);
+				builder.append(")");
+			}
+			serviceNameMap.put(service, builder.toString());
+		}
 	}
 }
 

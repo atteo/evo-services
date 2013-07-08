@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
+/**
+ * Robot service.
+ */
 @XmlRootElement(name = "robot")
 public class RobotService extends TopLevelService {
 	@XmlIDREF

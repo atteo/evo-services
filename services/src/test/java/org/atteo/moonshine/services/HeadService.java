@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
+/**
+ * Robot head service.
+ */
 @XmlRootElement(name = "head")
 public class HeadService extends TopLevelService {
 	@Override

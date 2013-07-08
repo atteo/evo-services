@@ -21,6 +21,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
 
+/**
+ * Robot hand service.
+ */
 @XmlRootElement(name = "hand")
 public class HandService extends TopLevelService {
 	private static Module staticModule = new AbstractModule() {

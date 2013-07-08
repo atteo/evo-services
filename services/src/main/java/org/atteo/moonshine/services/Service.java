@@ -13,6 +13,7 @@
  */
 package org.atteo.moonshine.services;
 
+import org.atteo.evo.classindex.IndexSubclasses;
 import org.atteo.evo.config.Configurable;
 
 import com.google.inject.Guice;
@@ -34,6 +35,7 @@ import com.google.inject.servlet.ServletModule;
  * and {@link #stop()} methods can be executed separately any time.
  * </p>
  */
+@IndexSubclasses(storeJavadoc = true)
 public abstract class Service extends Configurable {
 	/**
 	 * Returns {@link Module} which specifies this service dependencies and what it provides

@@ -20,6 +20,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
 
+/**
+ * Robot leg service.
+ */
 @XmlRootElement(name = "leg")
 public class LegService extends TopLevelService {
 	@Override
