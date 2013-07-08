@@ -67,22 +67,6 @@ public class Atomikos extends TopLevelService {
 	private String consoleOutputDirectory;
 
 	@XmlElement
-	@XmlDefaultValue("tm.log")
-	private String consoleOutputName;
-
-	@XmlElement
-	@XmlDefaultValue("WARN")
-	private String consoleLogLevel;
-
-	@XmlElement
-	@XmlDefaultValue("1")
-	private Integer consoleFileCount;
-
-	@XmlElement
-	@XmlDefaultValue("10485760") // 10MB
-	private Integer consoleFileSizeLimit;
-
-	@XmlElement
 	@XmlDefaultValue("60")
 	private Integer transactionTimeout;
 
@@ -178,14 +162,6 @@ public class Atomikos extends TopLevelService {
 						logDirectory);
 				properties.setProperty(AbstractUserTransactionServiceFactory.OUTPUT_DIR_PROPERTY_NAME,
 						consoleOutputDirectory);
-				properties.setProperty(AbstractUserTransactionServiceFactory.CONSOLE_FILE_NAME_PROPERTY_NAME,
-						consoleOutputName);
-				properties.setProperty(AbstractUserTransactionServiceFactory.CONSOLE_LOG_LEVEL_PROPERTY_NAME,
-						consoleLogLevel);
-				properties.setProperty(AbstractUserTransactionServiceFactory.CONSOLE_FILE_COUNT_PROPERTY_NAME,
-						Integer.toString(consoleFileCount));
-				properties.setProperty(AbstractUserTransactionServiceFactory.CONSOLE_FILE_LIMIT_PROPERTY_NAME,
-						Integer.toString(consoleFileSizeLimit));
 				properties.setProperty(AbstractUserTransactionServiceFactory.THREADED_2PC_PROPERTY_NAME,
 						"false");
 				properties.setProperty(AbstractUserTransactionServiceFactory.DEFAULT_JTA_TIMEOUT_PROPERTY_NAME,

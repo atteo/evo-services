@@ -24,7 +24,10 @@ import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Simple JMX console based on <a href="http://code.google.com/p/jminix/">JMiniX</a>.
+ * JMX web console.
+ * <p>
+ * The console is based on <a href="http://code.google.com/p/jminix/">JMiniX</a>.
+ * </p>
  * <p>
  * Due to the limitation of JMiniX you need to append trailing '/' in the URL
  * to access it.

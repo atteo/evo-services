@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -167,10 +169,9 @@ public class Services extends GuiceServletContextListener {
 
 	public Services(String applicationName) {
 		this.applicationName = applicationName;
-		// Redirect messages from JUL through SLF4J
-		SLF4JBridgeHandler.install();
-		configuration = new Configuration();
+		configureLogging();
 
+		configuration = new Configuration();
 		homeDirectory = new File(System.getProperty("user.home"));
 
 		UrlHandlers.registerAnnotatedHandlers();
@@ -713,6 +714,19 @@ public class Services extends GuiceServletContextListener {
 			}
 			serviceNameMap.put(service, builder.toString());
 		}
+	}
+
+	/**
+	 * Disable JUL logging and redirect all logs though SLF4J.
+	 * @see <a href="http://stackoverflow.com/questions/2533227/how-can-i-disable-the-default-console-handler-while-using-the-java-logging-api>How can I disable the default console handler</a>
+	 * @throws SecurityException
+	 */
+	private void configureLogging() {
+		java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+		for (Handler handler : rootLogger.getHandlers()) {
+			rootLogger.removeHandler(handler);
+		}
+		SLF4JBridgeHandler.install();
 	}
 }
 
