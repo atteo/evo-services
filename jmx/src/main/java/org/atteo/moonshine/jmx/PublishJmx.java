@@ -33,14 +33,22 @@ import org.atteo.moonshine.services.ImportBindings;
 import org.atteo.moonshine.services.TopLevelService;
 
 /**
- * Enables remote JMX monitoring.
+ * Publishes JMX MBeanServer through RMI.
  *
  * @see <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html">Monitoring and Management Using JMX Technology</a>
  */
-@XmlRootElement(name = "remoteJmx")
-public class RemoteJmx extends TopLevelService {
+@XmlRootElement(name = "publishJmx")
+public class PublishJmx extends TopLevelService {
 	/**
-	 * ID of selected {@link RmiRegistry RMI registry}.
+	 * JMX MBeanServer to publish.
+	 */
+	@XmlElement
+	@XmlIDREF
+	@ImportBindings
+	private JMX jmx;
+
+	/**
+	 * {@link RmiRegistry RMI registry} on publish MBeanServer onto.
 	 */
 	@XmlElement
 	@XmlIDREF
@@ -49,6 +57,9 @@ public class RemoteJmx extends TopLevelService {
 
 	@Inject
 	private RmiRegistryPort portProvider;
+
+	@Inject
+	private MBeanServer mbeanServer;
 
 	@Override
 	public void start() {
@@ -60,7 +71,6 @@ public class RemoteJmx extends TopLevelService {
 		}
 
 		HashMap<String,Object> environment = new HashMap<>();
-		MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 		JMXConnectorServer connectorServer;
 		try {
 			connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, environment, mbeanServer);

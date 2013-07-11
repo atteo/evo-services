@@ -3,5 +3,5 @@
 	xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
 	<jmx/>
 	<rmiRegistry/>
-	<remoteJmx/>
+	<publishJmx/>
 </config>

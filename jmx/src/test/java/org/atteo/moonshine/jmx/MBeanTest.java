@@ -44,8 +44,7 @@ public class MBeanTest extends ServicesTest {
 	}
 
 	private JMXServiceURL getServiceUrl(Long pid) {
-		String CONNECTOR_ADDRESS =
-				"com.sun.management.jmxremote.localConnectorAddress";
+		String CONNECTOR_ADDRESS = "com.sun.management.jmxremote.localConnectorAddress";
 
 		// attach to the target application
 		com.sun.tools.attach.VirtualMachine vm;
@@ -56,19 +55,16 @@ public class MBeanTest extends ServicesTest {
 			throw new RuntimeException(e);
 		}
 		try {
-			String connectorAddress =
-					vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
+			String connectorAddress = vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
 
 			// no connector address, so we start the JMX agent
 			if (connectorAddress == null) {
 				String agent = vm.getSystemProperties().getProperty("java.home") +
-						File.separator + "lib" + File.separator +
-						"management-agent.jar";
+						File.separator + "lib" + File.separator + "management-agent.jar";
 				vm.loadAgent(agent);
 
 				// agent is started, get the connector address
-				connectorAddress =
-						vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
+				connectorAddress = vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
 			}
 
 			// establish connection to connector server

@@ -32,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 
-@ServicesConfiguration("/test-remotejmx.xml")
-public class RemoteJmxTest extends ServicesTest {
+@ServicesConfiguration("/test-publishjmx.xml")
+public class PublishJmxTest extends ServicesTest {
 	@Inject
 	private RmiRegistryPort portProvider;
 
