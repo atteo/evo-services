@@ -33,13 +33,21 @@ import com.google.inject.Key;
 /**
  * MBean which lists all registered Guice bindings.
  */
+// TODO: also show private injectors content
 @MBean
 public class GuiceBindings implements DynamicMBean {
-	@Inject
 	private Injector injector;
 
+	@Inject
+	private void setInjector(Injector injector) {
+		// Services injects this service private injector, we want to show the keys from the global
+		this.injector = injector.getParent();
+	}
+
 	@Override
-	public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException, ReflectionException {
+	public Object getAttribute(String attribute) throws AttributeNotFoundException, MBeanException,
+			ReflectionException {
+
 		for (Entry<Key<?>, Binding<?>> entry : injector.getAllBindings().entrySet()) {
 			Key<?> key = entry.getKey();
 			Binding<?> binding = entry.getValue();
