@@ -22,7 +22,7 @@ import org.atteo.moonshine.injection.InjectMembers;
 import org.atteo.moonshine.services.TopLevelService;
 
 /**
- * Sample service which can be used to test for some conditions.
+ * Service which can be used to test for some conditions.
  *
  * <p>
  * The purpose of this service is to help you debug your configuration

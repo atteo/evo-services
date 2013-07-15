@@ -15,8 +15,11 @@
  */
 package org.atteo.moonshine.tests;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.services.Services;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
@@ -38,22 +41,24 @@ import org.junit.runners.model.InitializationError;
  * The test class will be instantiated using created Guice injector.
  * </p>
  */
-public class ServicesRunner extends BlockJUnit4ClassRunner {
-	private ServicesRule servicesRule;
+public class MoonshineRunner extends BlockJUnit4ClassRunner {
+	private MoonshineRule moonshineRule;
 
-	public ServicesRunner(Class<?> klass) throws InitializationError {
+	public MoonshineRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
 
 	@Override
 	protected Object createTest() throws Exception {
-		return servicesRule.getServices().injector().getInstance(getTestClass().getJavaClass());
+		return moonshineRule.getGlobalInjector().getInstance(getTestClass().getJavaClass());
 	}
 
 	@Override
 	protected List<TestRule> classRules() {
-		if (getTestClass().getJavaClass().isAnnotationPresent(ServicesConfiguration.class)) {
-			String[] configs = getTestClass().getJavaClass().getAnnotation(ServicesConfiguration.class).value();
+		if (getTestClass().getJavaClass().isAnnotationPresent(MoonshineConfiguration.class)) {
+			final MoonshineConfiguration annotation = getTestClass().getJavaClass()
+					.getAnnotation(MoonshineConfiguration.class);
+			String[] configs = annotation.value();
 
 			for (int i = 0; i < configs.length; i++) {
 				if (!configs[i].startsWith("/")) {
@@ -61,14 +66,35 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 							+ configs[i];
 				}
 			}
+			List<MoonshineConfigurator> configurators = new ArrayList<>();
 
-			servicesRule = new ServicesRule(configs);
+			Class<? extends MoonshineConfigurator> configuratorKlass = annotation.configurator();
+			if (configuratorKlass != null && configuratorKlass != MoonshineConfigurator.class) {
+				try {
+					MoonshineConfigurator configurator = configuratorKlass.getConstructor().newInstance();
+					configurators.add(configurator);
+				} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+						| IllegalArgumentException | InvocationTargetException e) {
+					throw new RuntimeException(e);
+				}
+			}
+			if (!annotation.fromString().isEmpty()) {
+				MoonshineConfigurator configurator = new MoonshineConfigurator() {
+					@Override
+					public void configureMoonshine(Moonshine.Builder builder) {
+						builder.addConfigurationFromString(annotation.fromString());
+					}
+				};
+				configurators.add(configurator);
+			}
+
+			moonshineRule = new MoonshineRule(configurators, configs);
 		} else {
-			servicesRule = new ServicesRule();
+			moonshineRule = new MoonshineRule();
 		}
 
 		List<TestRule> rules = super.classRules();
-		rules.add(servicesRule);
+		rules.add(moonshineRule);
 		return rules;
 	}
 
@@ -82,7 +108,7 @@ public class ServicesRunner extends BlockJUnit4ClassRunner {
 	@Override
 	protected List<MethodRule> rules(Object target) {
 		List<MethodRule> rules = super.rules(target);
-		rules.add(new InjectionRule(servicesRule));
+		rules.add(moonshineRule.injectMembers(target));
 		rules.add(new MockitoRule());
 		return rules;
 	}

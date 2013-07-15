@@ -1,0 +1,16 @@
+<!--
+	This file is loaded by Moonshine to configure final logging.
+	This is the default file. But you will probably want to create 'logback-moonshine.xml' file
+	within your application to override the defaults found here.
+-->
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<root level="warn">
+		<appender-ref ref="STDOUT" />
+	</root>
+	<logger name="Moonshine" level="info"/>
+</configuration>

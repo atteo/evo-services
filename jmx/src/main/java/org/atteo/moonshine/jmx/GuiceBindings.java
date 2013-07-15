@@ -40,7 +40,7 @@ public class GuiceBindings implements DynamicMBean {
 
 	@Inject
 	private void setInjector(Injector injector) {
-		// Services injects this service private injector, we want to show the keys from the global
+		// Moonshine injects this service's private injector, we want to show the keys from the global
 		this.injector = injector.getParent();
 	}
 

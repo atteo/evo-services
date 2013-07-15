@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.tests;
+package org.atteo.moonshine.directories;
 
-import org.junit.runner.RunWith;
+import java.nio.file.Path;
 
-/**
- * Executes the test class with {@link ServicesRunner}.
- */
-@RunWith(ServicesRunner.class)
-public class ServicesTest {
-
+public interface WriteableDirectoryLayout extends ReadOnlyDirectoryLayout {
+	Path getConfigHome();
+	Path getDataHome();
+	Path getCacheHome();
+	Path getLogHome();
 }

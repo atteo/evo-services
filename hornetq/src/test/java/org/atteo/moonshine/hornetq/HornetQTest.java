@@ -27,11 +27,11 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class HornetQTest extends ServicesTest {
+public class HornetQTest extends MoonshineTest {
 	@Inject
 	private ConnectionFactory connectionFactory;
 

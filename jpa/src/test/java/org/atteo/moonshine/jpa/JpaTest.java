@@ -19,12 +19,12 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.atteo.moonshine.jta.Transaction;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-public class JpaTest extends ServicesTest {
+public class JpaTest extends MoonshineTest {
 	@Inject
 	private EntityManager entityManager;
 

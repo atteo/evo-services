@@ -26,14 +26,14 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.atteo.moonshine.tests.ServicesConfiguration;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 
-@ServicesConfiguration("/test-publishjmx.xml")
-public class PublishJmxTest extends ServicesTest {
+@MoonshineConfiguration("/test-publishjmx.xml")
+public class PublishJmxTest extends MoonshineTest {
 	@Inject
 	private RmiRegistryPort portProvider;
 

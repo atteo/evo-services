@@ -18,8 +18,14 @@ package org.atteo.moonshine.services;
 import javax.inject.Inject;
 
 public class Robot {
+	private Leg leftLeg;
+
 	@Inject
 	public Robot(@Left Leg leftLeg, @Right Leg rightLeg, @Left Hand leftHand, @Right Hand rightHand, Head head) {
+		this.leftLeg = leftLeg;
+	}
 
+	public Leg getLeftLeg() {
+		return leftLeg;
 	}
 }

@@ -13,14 +13,16 @@
  */
 package org.atteo.moonshine.services;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
 
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -48,13 +48,13 @@ import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
 import org.atteo.evo.filtering.XmlPropertyResolver;
 import org.atteo.evo.urlhandlers.UrlHandlers;
+import org.atteo.moonshine.directories.FileAccessor;
 import org.atteo.moonshine.injection.InjectMembersModule;
 import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;
 import org.atteo.moonshine.services.internal.GuiceBindingsHelper;
 import org.atteo.moonshine.services.internal.ServiceModuleRewriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -64,7 +64,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 import com.google.inject.spi.Elements;
 
@@ -137,21 +136,14 @@ import com.google.inject.spi.Elements;
  * in the configuration file using {@literal @}{@link XmlRootElement} annotation.
  * </p>
  */
-public class Services extends GuiceServletContextListener {
+public class Services {
 	public final String SCHEMA_FILE_NAME = "schema.xsd";
 	public final String CONFIG_FILE_NAME = "config.xml";
 	public final String DEFAULT_CONFIG_RESOURCE_NAME = "/default-config.xml";
 	private Logger logger = LoggerFactory.getLogger("Moonshine");
-	private final String applicationName;
-	private File homeDirectory;
-	private File dataHome;
-	private File configHome;
-	private File cacheHome;
-	private File runtimeDirectory;
-	private File dataDir;
-	private List<File> configDirs;
 	private List<Module> extraModules = new ArrayList<>();
 	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
+	private FileAccessor fileAccessor;
 
 	private Configuration configuration;
 	private Injector injector;
@@ -163,124 +155,12 @@ public class Services extends GuiceServletContextListener {
 	private Map<Service, String> serviceNameMap = new IdentityHashMap<>();
 
 
-	public Services() {
-		this("test");
-	}
-
-	public Services(String applicationName) {
-		this.applicationName = applicationName;
-		configureLogging();
+	public Services(String applicationName, FileAccessor fileAccessor) {
+		this.fileAccessor = fileAccessor;
 
 		configuration = new Configuration();
-		homeDirectory = new File(System.getProperty("user.home"));
 
 		UrlHandlers.registerAnnotatedHandlers();
-	}
-
-	private static void createDirectory(File directory) {
-		if (directory == null) {
-			return;
-		}
-		directory = directory.getAbsoluteFile(); // exists() fails for "" (current dir)
-		if (!directory.exists() && !directory.mkdirs()) {
-			throw new RuntimeException("Cannot create directory: "
-					+ directory.getAbsolutePath());
-		}
-	}
-
-	public void setHomeDirectory(File homeDirectory) {
-		this.homeDirectory = homeDirectory;
-	}
-
-	public File getHomeDirectory() {
-		if (homeDirectory != null) {
-			return homeDirectory;
-		}
-		return new File(System.getProperty("user.home"));
-	}
-
-	public File getDataHome() {
-		if (dataHome != null) {
-			return dataHome;
-		}
-		String xdgDataHome = System.getenv("XDG_DATA_HOME");
-		if (xdgDataHome != null) {
-			return new File(xdgDataHome + "/" + applicationName);
-		}
-
-		return new File(homeDirectory, ".local/share/" + applicationName);
-	}
-
-	public File getConfigHome() {
-		if (configHome != null) {
-			return configHome;
-		}
-		String xdgConfigHome = System.getenv("XDG_CONFIG_HOME");
-		if (xdgConfigHome != null) {
-			return new File(xdgConfigHome + "/" + applicationName);
-		}
-		return new File(homeDirectory, ".config/" + applicationName);
-	}
-
-	public File getDataDir() {
-		if (dataDir != null) {
-			return dataDir;
-		}
-		return new File("./");
-	}
-
-	public List<File> getConfigDirs() {
-		if (configDirs != null) {
-			return configDirs;
-		}
-		// TODO: XDG_CONFIG_DIRS
-		return Collections.emptyList();
-	}
-
-	public File getCacheHome() {
-		if (cacheHome != null) {
-			return cacheHome;
-		}
-		String xdgCacheHome = System.getenv("XDG_CACHE_HOME");
-		if (xdgCacheHome != null) {
-			return new File(xdgCacheHome + "/" + applicationName);
-		}
-		return new File(homeDirectory, ".cache/" + applicationName);
-	}
-
-	public File getRuntimeDirectory() {
-		if (runtimeDirectory != null) {
-			return runtimeDirectory;
-		}
-		String xdgRuntimeDir = System.getenv("XDG_RUNTIME_DIR");
-		if (xdgRuntimeDir != null) {
-			return new File(xdgRuntimeDir);
-		}
-		return new File(homeDirectory, ".run");
-	}
-
-	public void setDataHome(File dataHome) {
-		this.dataHome = dataHome;
-	}
-
-	public void setConfigHome(File configHome) {
-		this.configHome = configHome;
-	}
-
-	public void setCacheHome(File cacheHome) {
-		this.cacheHome = cacheHome;
-	}
-
-	public void setDataDir(File dataDir) {
-		this.dataDir = dataDir;
-	}
-
-	public void setConfigDirs(List<File> configDirs) {
-		this.configDirs = configDirs;
-	}
-
-	public void setRuntimeDirectory(File runtimeDirectory) {
-		this.runtimeDirectory = runtimeDirectory;
 	}
 
 	/**
@@ -298,10 +178,11 @@ public class Services extends GuiceServletContextListener {
 	 * Reads configuration from config.xml files found in ${configDirs} and ${configHome} directories.
 	 */
 	public void combineConfigDirConfiguration() throws IncorrectConfigurationException, IOException {
-		for (File configDir : getConfigDirs()) {
-			combineConfigurationFromFile(new File(configDir, CONFIG_FILE_NAME), false);
+		for (Path path : fileAccessor.getConfigFiles(CONFIG_FILE_NAME)) {
+			try (InputStream stream = Files.newInputStream(path, StandardOpenOption.READ)) {
+				combineConfigurationFromStream(stream);
+			}
 		}
-		combineConfigurationFromFile(new File(getConfigHome(), CONFIG_FILE_NAME), false);
 	}
 
 	/**
@@ -347,38 +228,21 @@ public class Services extends GuiceServletContextListener {
 		}
 	}
 
-	public String printCombinedXml() {
-		return XmlUtils.prettyPrint(configuration.getRootElement());
+	/**
+	 * Reads configuration from given string.
+	 * @param string string with configuration
+	 * @throws IncorrectConfigurationException when configuration is incorrect
+	 */
+	public void combineConfigurationFromString(String string) throws IncorrectConfigurationException {
+		try (InputStream stream = new ByteArrayInputStream(string.getBytes(Charsets.UTF_8))) {
+			configuration.combine(stream);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public String printDirectories() {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		stringBuilder.append("HOME DIRECTORY: ").append(getHomeDirectory().getAbsolutePath());
-		stringBuilder.append("\n");
-		stringBuilder.append("DATA HOME: ").append(getDataHome().getAbsolutePath());
-		stringBuilder.append("\n");
-		stringBuilder.append("DATA DIRECTORY: ").append(getDataDir().getAbsolutePath());
-		stringBuilder.append("\n");
-		stringBuilder.append("CACHE HOME: ").append(getCacheHome().getAbsolutePath());
-		stringBuilder.append("\n");
-		stringBuilder.append("RUNTIME DIRECTORY: ").append(getRuntimeDirectory().getAbsolutePath());
-		stringBuilder.append("\n");
-		stringBuilder.append("CONFIG HOME: ").append(getConfigHome().getAbsolutePath());
-		stringBuilder.append("\n");
-		stringBuilder.append("CONFIG DIRECTORIES: ");
-
-		if (configDirs.isEmpty()) {
-			stringBuilder.append("NONE");
-		} else {
-			stringBuilder.append("\n");
-		}
-
-		for (File dir : configDirs) {
-			stringBuilder.append("  ").append(dir.getAbsolutePath()).append("\n");
-		}
-
-		return stringBuilder.toString();
+	public String printCombinedXml() {
+		return XmlUtils.prettyPrint(configuration.getRootElement());
 	}
 
 	/**
@@ -398,12 +262,14 @@ public class Services extends GuiceServletContextListener {
 	}
 
 	public void generateTemplateConfigurationFile() throws FileNotFoundException, IOException {
-		configuration.generateSchema(new File(getConfigHome(), SCHEMA_FILE_NAME));
-		File configurationFile = new File(getConfigHome(), CONFIG_FILE_NAME);
-		if (configurationFile.exists()) {
+		Path schemaPath = fileAccessor.getWritebleConfigFile(SCHEMA_FILE_NAME);
+		configuration.generateSchema(schemaPath.toFile());
+
+		Path configPath = fileAccessor.getWritebleConfigFile(CONFIG_FILE_NAME);
+		if (Files.exists(configPath)) {
 			return;
 		}
-		try (Writer writer = new OutputStreamWriter(new FileOutputStream(configurationFile), Charsets.UTF_8)) {
+		try (Writer writer = Files.newBufferedWriter(configPath, Charsets.UTF_8)) {
 			writer.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
 					+ " xsi:noNamespaceSchemaLocation=\"" + SCHEMA_FILE_NAME
 					+ "\">\n</config>\n");
@@ -419,29 +285,6 @@ public class Services extends GuiceServletContextListener {
 
 	public void setup(ServicesCommandLineParameters params)
 			throws IncorrectConfigurationException, IOException {
-		if (params.getHomeDirectory() != null) {
-			setHomeDirectory(new File(params.getHomeDirectory()));
-		}
-		if (params.getDataHome() != null) {
-			setDataHome(new File(params.getDataHome()));
-		}
-		if (params.getConfigHome() != null) {
-			setConfigHome(new File(params.getConfigHome()));
-		}
-		if (params.getCacheHome() != null) {
-			setCacheHome(new File(params.getCacheHome()));
-		}
-		if (params.getDataDir() != null) {
-			setDataDir(new File(params.getDataDir()));
-		}
-		List<File> dirs = new ArrayList<>();
-		for (String dir : params.getConfigDirs()) {
-			dirs.add(new File(dir));
-		}
-		setConfigDirs(dirs);
-		if (params.getRuntimeDirectory() != null) {
-			setRuntimeDirectory(new File(params.getRuntimeDirectory()));
-		}
 		if (!params.isNoDefaults()) {
 			combineDefaultConfiguration();
 		}
@@ -464,24 +307,12 @@ public class Services extends GuiceServletContextListener {
 			System.exit(0);
 		}
 
-		if (params.isPrintDirectories()) {
-			System.out.println(printDirectories());
-			System.exit(0);
-		}
-
 		if (params.isPrintGuiceBindings()) {
 			enableGuiceBindingPrinting();
 		}
 	}
 
 	private void filterConfiguration() throws IncorrectConfigurationException {
-		Properties properties = new Properties();
-		properties.setProperty("configHome", getConfigHome().getAbsolutePath());
-		properties.setProperty("dataHome", getDataHome().getAbsolutePath());
-		properties.setProperty("cacheHome", getCacheHome().getAbsolutePath());
-		properties.setProperty("dataDir", getDataDir().getAbsolutePath());
-		properties.setProperty("runtimeDirectory", getRuntimeDirectory().getAbsolutePath());
-
 		Element propertiesElement = null;
 		if (configuration.getRootElement() != null) {
 			NodeList nodesList = configuration.getRootElement().getElementsByTagName("properties");
@@ -492,7 +323,6 @@ public class Services extends GuiceServletContextListener {
 
 		propertyResolver = new CompoundPropertyResolver(
 				new OneOfPropertyResolver(),
-				new PropertiesPropertyResolver(properties),
 				new SystemPropertyResolver(),
 				new EnvironmentPropertyResolver(),
 				new XmlPropertyResolver(propertiesElement, false),
@@ -507,19 +337,19 @@ public class Services extends GuiceServletContextListener {
 				|| klass.isAnnotationPresent(com.google.inject.Singleton.class);
 	}
 
-	private void verifySingletonServicesAreUnique(List<Service> services) {
+	private void verifySingletonServicesAreUnique(List<Service> services) throws IncorrectConfigurationException {
 		Set<Class<?>> set = new HashSet<>();
 		for (Service service : services) {
 			Class<?> klass = service.getClass();
 			if (isSingleton(klass)) {
 				if (set.contains(klass)) {
-					throw new RuntimeException("Service '" + klass.getCanonicalName() + "' is marked"
+					throw new IncorrectConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
 							+ " as singleton, but is declared more than once in configuration file");
 				}
 				set.add(klass);
 
 				if (!Strings.isNullOrEmpty(service.getId())) {
-					throw new RuntimeException("Service '" + klass.getCanonicalName() + "' is marked"
+					throw new IncorrectConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
 							+ " as singleton, but has an id specified");
 				}
 			}
@@ -596,49 +426,37 @@ public class Services extends GuiceServletContextListener {
 			System.out.println("#############################");
 			GuiceBindingsHelper.printServiceElements(serviceElements);
 		}
+		logger.info("Building Guice injector");
 		return Guice.createInjector(modules);
 	}
 
 	/**
 	 * Reads configuration file and starts all services.
 	 */
-	public void start() {
-		try {
-			createDirectory(getHomeDirectory());
-			createDirectory(getConfigHome());
-			createDirectory(getDataHome());
-			createDirectory(getCacheHome());
+	public void start() throws IncorrectConfigurationException {
+		logger.info("Initializing services");
+		filterConfiguration();
 
-			filterConfiguration();
+		config = configuration.read(Config.class);
 
-			config = configuration.read(Config.class);
-
-			if (config == null) {
-				config = new Config();
-			}
-
-			buildServiceNameMap(config.getServices());
-			verifySingletonServicesAreUnique(config.getServices());
-			injector = buildInjector();
-
-			for (Service service : config.getServices()) {
-				if (logger.isInfoEnabled()) {
-					if (isStartMethodOverriden(service.getClass())) {
-						logger.info("Starting: {}", serviceNameMap.get(service));
-					}
-				}
-				startedServices.add(service);
-				service.start();
-			}
-			logger.info("Done");
-		} catch (RuntimeException | IncorrectConfigurationException e) {
-			try {
-				stop();
-			} catch (Exception f) {
-				logger.error("Cannot properly stop services after previous fatal error", f);
-			}
-			throw new RuntimeException(e);
+		if (config == null) {
+			config = new Config();
 		}
+
+		buildServiceNameMap(config.getServices());
+		verifySingletonServicesAreUnique(config.getServices());
+		injector = buildInjector();
+
+		for (Service service : config.getServices()) {
+			if (logger.isInfoEnabled()) {
+				if (isStartMethodOverriden(service.getClass())) {
+					logger.info("Starting: {}", serviceNameMap.get(service));
+				}
+			}
+			startedServices.add(service);
+			service.start();
+		}
+		logger.info("All services started");
 	}
 
 	/**
@@ -661,24 +479,15 @@ public class Services extends GuiceServletContextListener {
 			service.deconfigure();
 		}
 		if (logger != null) {
-			logger.info("All stopped");
+			logger.info("All services stopped");
 		}
 		injector = null;
 	}
 
 	/**
-	 * Returns internal Services injector.
-	 * @return injector
+	 * Returns the global injector.
 	 */
-	public Injector injector() {
-		return injector;
-	}
-
-	@Override
-	protected Injector getInjector() {
-		externalContainer = true;
-		configHome = new File(".config");
-		start();
+	public Injector getGlobalInjector() {
 		return injector;
 	}
 
@@ -714,19 +523,6 @@ public class Services extends GuiceServletContextListener {
 			}
 			serviceNameMap.put(service, builder.toString());
 		}
-	}
-
-	/**
-	 * Disable JUL logging and redirect all logs though SLF4J.
-	 * @see <a href="http://stackoverflow.com/questions/2533227/how-can-i-disable-the-default-console-handler-while-using-the-java-logging-api>How can I disable the default console handler</a>
-	 * @throws SecurityException
-	 */
-	private void configureLogging() {
-		java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
-		for (Handler handler : rootLogger.getHandlers()) {
-			rootLogger.removeHandler(handler);
-		}
-		SLF4JBridgeHandler.install();
 	}
 }
 

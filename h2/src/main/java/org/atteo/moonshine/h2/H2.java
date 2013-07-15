@@ -29,6 +29,9 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Scopes;
 
+/**
+ * Starts H2 database
+ */
 @XmlRootElement(name = "h2")
 public class H2 extends DatabaseService {
 	@XmlElement

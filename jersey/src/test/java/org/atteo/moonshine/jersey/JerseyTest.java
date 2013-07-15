@@ -19,14 +19,14 @@ import java.nio.ByteBuffer;
 
 import javax.inject.Inject;
 
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpTester.Response;
 import org.eclipse.jetty.server.LocalConnector;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-public class JerseyTest extends ServicesTest {
+public class JerseyTest extends MoonshineTest {
 	@Inject
 	private LocalConnector localConnector;
 

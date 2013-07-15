@@ -23,7 +23,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.atteo.moonshine.jta.Transactional;
 import org.atteo.moonshine.migrations.Migrations;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.atteo.moonshine.tests.ShiroRule;
 import org.junit.After;
 import static org.junit.Assert.assertFalse;
@@ -34,7 +34,7 @@ import org.junit.Test;
 
 import com.google.inject.Inject;
 
-public class DatabaseRealmTest extends ServicesTest {
+public class DatabaseRealmTest extends MoonshineTest {
 	@Rule
 	public ShiroRule shiro = new ShiroRule();
 

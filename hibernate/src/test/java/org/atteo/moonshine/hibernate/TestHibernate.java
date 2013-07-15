@@ -24,12 +24,12 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.atteo.moonshine.jta.Transaction;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
-public class TestHibernate extends ServicesTest {
+public class TestHibernate extends MoonshineTest {
 	@Inject
 	private UserTransaction transaction;
 

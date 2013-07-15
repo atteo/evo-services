@@ -28,8 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.net.ssl.HttpsURLConnection;
 
-import org.atteo.moonshine.tests.ServicesConfiguration;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.atteo.moonshine.webserver.crypto.Crypto;
 import org.eclipse.jetty.http.HttpTester;
@@ -45,8 +45,8 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 
-@ServicesConfiguration("/connectors.xml")
-public class ConnectorsTest extends ServicesTest {
+@MoonshineConfiguration("/connectors.xml")
+public class ConnectorsTest extends MoonshineTest {
 	@Inject
 	private LocalConnector localConnector;
 

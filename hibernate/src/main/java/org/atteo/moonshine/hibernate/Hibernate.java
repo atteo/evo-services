@@ -56,6 +56,9 @@ import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.binder.ScopedBindingBuilder;
 
+/**
+ * Starts Hibernate.
+ */
 @XmlRootElement(name = "hibernate")
 public class Hibernate extends TopLevelService {
 	/**

@@ -93,10 +93,6 @@ public class LogBack extends TopLevelService {
 			}
 		}
 
-		// Propagate logging levels to JUL for performance reasons, for details see:
-		// http://logback.qos.ch/manual/configuration.html#LevelChangePropagator
-		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-		context.addListener(new LevelChangePropagator());
 
 		configureJMX();
 	}

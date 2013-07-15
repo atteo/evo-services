@@ -33,7 +33,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 /**
- * Start Jersey JAX-RS implementation.
+ * Starts Jersey JAX-RS implementation.
  */
 @XmlRootElement(name = "jersey")
 public class Jersey extends TopLevelService {

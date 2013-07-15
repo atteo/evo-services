@@ -24,7 +24,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.lucene.search.Query;
 import org.atteo.moonshine.jta.Transaction;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -34,7 +34,7 @@ import org.junit.Test;
 
 import com.google.inject.Inject;
 
-public class SearchTest extends ServicesTest {
+public class SearchTest extends MoonshineTest {
 	@Inject
 	private EntityManagerFactory factory;
 

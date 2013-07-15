@@ -19,8 +19,8 @@ import java.nio.ByteBuffer;
 
 import javax.inject.Inject;
 
-import org.atteo.moonshine.tests.ServicesConfiguration;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.http.HttpTester;
@@ -30,8 +30,8 @@ import org.eclipse.jetty.server.LocalConnector;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-@ServicesConfiguration("/rewrites.xml")
-public class RewriteHandlerTest extends ServicesTest {
+@MoonshineConfiguration("/rewrites.xml")
+public class RewriteHandlerTest extends MoonshineTest {
 	@Test
 	public void dummy() {
 	}

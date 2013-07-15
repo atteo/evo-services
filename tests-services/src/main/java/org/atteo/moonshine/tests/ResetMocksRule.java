@@ -25,17 +25,17 @@ import org.mockito.Mockito;
  * {@code
  * class Test {
  *     @ClassRule
- *     public ServicesRule services = new ServicesRule();
+ *     public static final MoonshineRule moonshine = new Moonshine();
  *
  *     @Rule
- *     public ResetMocksRule resetMocks = new ResetMocksRule(services);
+ *     public ResetMocksRule resetMocks = new ResetMocksRule(moonshine);
  *
  * }
  */
 public class ResetMocksRule implements MethodRule {
-	private ServicesRule servicesRule;
+	private MoonshineRule servicesRule;
 
-	public ResetMocksRule(ServicesRule servicesRule) {
+	public ResetMocksRule(MoonshineRule servicesRule) {
 		this.servicesRule = servicesRule;
 	}
 

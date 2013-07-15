@@ -13,10 +13,10 @@
  */
 package org.atteo.moonshine.atomikos;
 
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
-public class AtomikosTest extends ServicesTest {
+public class AtomikosTest extends MoonshineTest {
 	@Test
 	public void trivial() {
 	}

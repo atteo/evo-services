@@ -17,14 +17,14 @@ package org.atteo.moonshine.webdriver;
 
 import javax.inject.Inject;
 
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-public class WebDriverTest extends ServicesTest {
+public class WebDriverTest extends MoonshineTest {
 	@Inject
 	private RemoteWebDriver driver;
 

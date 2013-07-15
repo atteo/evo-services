@@ -1,7 +1,10 @@
+<!--
+	This file is automatically discovered by Logback. Here we configures default logging
+	rules to use during Moonshine framework bootstrap. Later when access to the filesystem
+	will be provided logback-moonshine.xml file will be loaded which replaces rules specified here.
+-->
 <configuration>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<!-- encoders are  by default assigned the type
-		ch.qos.logback.classic.encoder.PatternLayoutEncoder -->
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
 		</encoder>

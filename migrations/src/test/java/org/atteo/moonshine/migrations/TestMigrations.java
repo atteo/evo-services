@@ -15,10 +15,10 @@ package org.atteo.moonshine.migrations;
 
 import javax.inject.Inject;
 
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
-public class TestMigrations extends ServicesTest {
+public class TestMigrations extends MoonshineTest {
 	@Inject
 	private Migrations migrations;
 

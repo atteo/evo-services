@@ -22,7 +22,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 
-public class MBeanTest extends ServicesTest {
+public class MBeanTest extends MoonshineTest {
 	@Test
 	public void getData() throws IOException, MalformedObjectNameException {
 		JMXConnector connector = JMXConnectorFactory.connect(getServiceUrl(getVirtualMachinePid()));

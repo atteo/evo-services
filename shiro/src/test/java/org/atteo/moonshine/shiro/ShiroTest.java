@@ -18,13 +18,13 @@ package org.atteo.moonshine.shiro;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import org.atteo.moonshine.tests.ShiroRule;
 import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ShiroTest extends ServicesTest {
+public class ShiroTest extends MoonshineTest {
 	@Rule
 	public ShiroRule shiro = new ShiroRule();
 

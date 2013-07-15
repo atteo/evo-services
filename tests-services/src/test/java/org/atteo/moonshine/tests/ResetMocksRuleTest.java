@@ -20,17 +20,18 @@ import javax.inject.Inject;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.MethodRule;
 import org.mockito.Mockito;
 
 public class ResetMocksRuleTest {
 	@ClassRule
-	public static ServicesRule services = new ServicesRule();
+	public static MoonshineRule moonshine = new MoonshineRule();
 
 	@Rule
-	public InjectionRule injectionRule = new InjectionRule(services);
+	public MethodRule injectionRule = moonshine.injectMembers(this);
 
 	@Rule
-	public ResetMocksRule resetMocks = new ResetMocksRule(services);
+	public ResetMocksRule resetMocks = new ResetMocksRule(moonshine);
 
 	@MockAndBind
 	@Inject

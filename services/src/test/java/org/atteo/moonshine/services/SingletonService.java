@@ -18,8 +18,19 @@ package org.atteo.moonshine.services;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+
 @XmlRootElement
 @Singleton
 public class SingletonService extends TopLevelService {
-
+	@Override
+	public Module configure() {
+		return new AbstractModule() {
+			@Override
+			protected void configure() {
+				bind(Robot.class);
+			}
+		};
+	}
 }

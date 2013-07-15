@@ -18,13 +18,13 @@ package org.atteo.moonshine.springdata;
 import javax.inject.Inject;
 
 import org.atteo.moonshine.jta.Transactional;
-import org.atteo.moonshine.tests.ServicesTest;
+import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.google.common.collect.Iterables;
 
-public class SpringDataTest extends ServicesTest {
+public class SpringDataTest extends MoonshineTest {
 
 	@Inject
 	private UserRepository userRepository;

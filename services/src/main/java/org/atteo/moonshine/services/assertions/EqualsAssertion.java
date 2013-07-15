@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Test two values for equality.
+ * Assertion which tests two values for equality.
  */
 @XmlRootElement(name = "equals")
 public class EqualsAssertion extends Assertion {
