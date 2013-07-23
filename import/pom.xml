@@ -22,6 +22,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>database-test-utils</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>firebuglogger</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -97,7 +102,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>services</artifactId>
+				<artifactId>core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>core-test-utils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -107,27 +117,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>shiro-test-utils</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>spring-data</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>start.sh</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>tests-database</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>tests-services</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>tests-shiro</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

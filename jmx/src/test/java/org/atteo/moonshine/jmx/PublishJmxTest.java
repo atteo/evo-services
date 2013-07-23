@@ -32,7 +32,12 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 
-@MoonshineConfiguration("/test-publishjmx.xml")
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <jmx/>"
+		+ "    <rmiRegistry/>"
+		+ "    <publishJmx/>"
+		+ "</config>")
 public class PublishJmxTest extends MoonshineTest {
 	@Inject
 	private RmiRegistryPort portProvider;

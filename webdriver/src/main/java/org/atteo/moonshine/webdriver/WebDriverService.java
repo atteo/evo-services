@@ -31,7 +31,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 /**
- * Starts the browser and binds the {@linke RemoteWebDriver} which can be used to drive it.
+ * Starts the browser and binds the {@link RemoteWebDriver} which can be used to drive it.
  */
 @XmlRootElement(name = "webdriver")
 public class WebDriverService extends TopLevelService {

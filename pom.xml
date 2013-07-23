@@ -32,7 +32,10 @@
 		</developer>
 	</developers>
 	<modules>
+		<module>core</module>
+		<module>core-test-utils</module>
 		<module>database</module>
+		<module>database-test-utils</module>
 		<module>firebuglogger</module>
 		<module>h2</module>
 		<module>hibernate</module>
@@ -48,12 +51,9 @@
 		<module>jta</module>
 		<module>logback</module>
 		<module>migrations</module>
-		<module>services</module>
 		<module>shiro</module>
+		<module>shiro-test-utils</module>
 		<module>spring-data</module>
-		<module>tests-database</module>
-		<module>tests-services</module>
-		<module>tests-shiro</module>
 		<module>webdriver</module>
 		<module>webserver</module>
 	</modules>
