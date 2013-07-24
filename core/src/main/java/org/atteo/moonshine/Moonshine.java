@@ -104,7 +104,7 @@ public interface Moonshine extends AutoCloseable {
 		/**
 		 * Add property resolver.
 		 */
-		Builder addPropertyResolved(PropertyResolver propertyResolver);
+		Builder addPropertyResolver(PropertyResolver propertyResolver);
 
 		/**
 		 * Add read-only config directory.

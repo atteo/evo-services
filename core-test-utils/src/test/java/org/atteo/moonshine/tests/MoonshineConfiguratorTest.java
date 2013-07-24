@@ -33,7 +33,7 @@ public class MoonshineConfiguratorTest extends MoonshineTest {
 					+ "<config>"
 					+ "    <simple message = '${message}'/>"
 					+ "</config>");
-			builder.addPropertyResolved(new PropertyResolver() {
+			builder.addPropertyResolver(new PropertyResolver() {
 				@Override
 				public String resolveProperty(String property, PropertyResolver pr) throws PropertyNotFoundException {
 					if ("message".equals(property)) {

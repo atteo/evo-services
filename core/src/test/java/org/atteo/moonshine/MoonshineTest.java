@@ -155,7 +155,7 @@ public class MoonshineTest {
 				+ "        </equals>"
 				+ "    </assertions>"
 				+ "</config>")
-				.addPropertyResolved(new PropertyResolver() {
+				.addPropertyResolver(new PropertyResolver() {
 					@Override
 					public String resolveProperty(String property, PropertyResolver pr)
 							throws PropertyNotFoundException {

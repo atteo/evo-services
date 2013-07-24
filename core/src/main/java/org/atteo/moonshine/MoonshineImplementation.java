@@ -186,7 +186,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	}
 
 	@Override
-	public Builder addPropertyResolved(PropertyResolver propertyResolver) {
+	public Builder addPropertyResolver(PropertyResolver propertyResolver) {
 		propertyResolvers.add(propertyResolver);
 		return this;
 	}
