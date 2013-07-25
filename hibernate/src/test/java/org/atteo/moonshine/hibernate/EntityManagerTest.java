@@ -13,28 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jpa;
+package org.atteo.moonshine.hibernate;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
 import org.atteo.moonshine.jta.Transaction;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-public class JpaTest extends MoonshineTest {
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <atomikos/>"
+		+ "    <transactional/>"
+		+ "    <h2/>"
+		+ "    <hibernate>"
+		+ "        <initSchema>create</initSchema>"
+		+ "    </hibernate>"
+		+ "</config>")
+public class EntityManagerTest extends MoonshineTest {
 	@Inject
 	private EntityManager entityManager;
 
 	@Test
-	public void trivial() {
+	public void shouldInjectEntityManager() {
 		Transaction.require(new Transaction.Runnable() {
 			@Override
 			public void run() {
 				assertTrue(entityManager.isOpen());
-				SampleEntity entity = new SampleEntity();
+				User entity = new User();
 				entity.setId(0);
 				entityManager.persist(entity);
 			}

@@ -27,10 +27,23 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <atomikos/>"
+		+ "    <hornetq-server>"
+		+ "        <queues>"
+		+ "            <queue>testQueue</queue>"
+		+ "        </queues>"
+		+ "    </hornetq-server>"
+		+ "    <hornetq/>"
+		+ "</config>")
 public class HornetQTest extends MoonshineTest {
 	@Inject
 	private ConnectionFactory connectionFactory;

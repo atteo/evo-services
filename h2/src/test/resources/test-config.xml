@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://evo.atteo.com/1.0 config.xsd">
-	<jta/>
 	<atomikos>
 		<transactionTimeout>5</transactionTimeout>
 	</atomikos>
-	<databases>
-		<h2>
-			<!--
+	<transactional/>
+	<h2>
+		<!--
 			This is the default:
 			<url>jdbc:h2:${dataHome}/database;AUTO_SERVER=TRUE</url>
 
 			Start console.sh to see the same database
-			-->
+		-->
 
-			<!-- To use in-memory database uncomment the line below -->
-			<!--
+		<!-- To use in-memory database uncomment the line below -->
+		<!--
 			<url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</url>
-			-->
-		</h2>
-	</databases>
+		-->
+	</h2>
 </config>

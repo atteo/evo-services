@@ -13,7 +13,15 @@
  */
 package org.atteo.moonshine.database;
 
-import org.atteo.moonshine.services.Service;
+import javax.sql.DataSource;
 
-public abstract class DatabaseService extends Service {
+import org.atteo.moonshine.services.TopLevelService;
+
+/**
+ * Marks database service.
+ * <p>
+ * Database services should bind {@link DataSource}.
+ * </p>
+ */
+public abstract class DatabaseService extends TopLevelService {
 }

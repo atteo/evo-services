@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jpa;
+package org.atteo.moonshine.jta;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
-@Entity
-public class SampleEntity {
-	@Id
-	private int id;
+import org.atteo.moonshine.services.TopLevelService;
 
-	public int getId() {
-		return id;
-	}
+/**
+ * Marks services which implements JTA.
+ *
+ * <p>
+ * JTA service should bind {@link UserTransaction}, {@link TransactionManager}, {@link JtaDataSourceWrapper}
+ * and {@link JtaConnectionFactoryWrapper}.
+ * </p>
+ */
+public abstract class JtaService extends TopLevelService{
 
-	public void setId(int id) {
-		this.id = id;
-	}
 }

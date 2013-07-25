@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.w3c.dom.Element;
 
+import com.google.common.collect.Iterables;
+
 /**
  * Root class for the {@link Services} configuration file.
  *
@@ -32,7 +34,7 @@ import org.w3c.dom.Element;
  * </p>
  */
 @XmlRootElement
-public class Config extends Group {
+public class Config extends Service {
 	@XmlElementWrapper(name = "properties")
 	@XmlAnyElement(lax = false)
 	private List<Element> properties;
@@ -41,22 +43,16 @@ public class Config extends Group {
 	@Valid
 	private List<TopLevelService> services;
 
-	@XmlElementRef
-	@Valid
-	private List<TopLevelGroup> groups;
-
 	@Override
-	public List<Service> getServices() {
+	public List<Service> getSubServices() {
 		List<Service> list = new ArrayList<>();
 		if (services != null) {
 			list.addAll(services);
-		}
-
-		if (groups != null) {
-			for (Group group : groups) {
-				list.addAll(group.getServices());
+			for (Service service : services) {
+				Iterables.addAll(list, service.getSubServices());
 			}
 		}
+
 		return list;
 	}
 }

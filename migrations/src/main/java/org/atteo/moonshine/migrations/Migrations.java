@@ -83,8 +83,9 @@ public class Migrations {
 			throw new RuntimeException(e);
 		} finally {
 			try {
-				if (databaseConnection != null && !databaseConnection.isClosed())
+				if (databaseConnection != null && !databaseConnection.isClosed()) {
 					databaseConnection.close();
+				}
 			} catch (DatabaseException e) {
 				throw new RuntimeException(e);
 			}

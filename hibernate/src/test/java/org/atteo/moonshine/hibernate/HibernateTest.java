@@ -24,12 +24,22 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.atteo.moonshine.jta.Transaction;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
-public class TestHibernate extends MoonshineTest {
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <atomikos/>"
+		+ "    <transactional/>"
+		+ "    <h2/>"
+		+ "    <hibernate>"
+		+ "        <initSchema>create</initSchema>"
+		+ "    </hibernate>"
+		+ "</config>")
+public class HibernateTest extends MoonshineTest {
 	@Inject
 	private UserTransaction transaction;
 
@@ -37,7 +47,7 @@ public class TestHibernate extends MoonshineTest {
 	private EntityManagerFactory factory;
 
 	@Test
-	public void testSaves() {
+	public void shouldSaveUser() {
 		final User u = new User();
 		Transaction.require(new Transaction.Runnable() {
 			@Override
@@ -69,7 +79,7 @@ public class TestHibernate extends MoonshineTest {
 
 	// Based on http://en.wikibooks.org/wiki/Java_Persistence/Transactions
 	@Test
-	public void testJoinTransaction() throws NotSupportedException, SystemException, RollbackException,
+	public void shouldJoinTransaction() throws NotSupportedException, SystemException, RollbackException,
 			HeuristicMixedException, HeuristicRollbackException {
 		EntityManager manager = factory.createEntityManager();
 		User u = new User();

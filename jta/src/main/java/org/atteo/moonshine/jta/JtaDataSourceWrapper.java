@@ -26,9 +26,10 @@ public interface JtaDataSourceWrapper {
 	 * @param name unique name for the returned {@link DataSource}
 	 * @param xaDataSource {@link XADataSource} to wrap
 	 * @param poolOptions options for the connection pool
+	 * @param testQuery SQL query or statement used to validate a connection before returning it
 	 * @return wrapped {@link DataSource}
 	 */
-	DataSource wrap(String name, XADataSource xaDataSource, @Nullable PoolOptions poolOptions);
+	DataSource wrap(String name, XADataSource xaDataSource, @Nullable PoolOptions poolOptions, String testQuery);
 
 	/**
 	 * Close previously wrapped data source.

@@ -13,6 +13,8 @@
  */
 package org.atteo.moonshine.services;
 
+import java.util.Collections;
+
 import org.atteo.evo.classindex.IndexSubclasses;
 import org.atteo.evo.config.Configurable;
 
@@ -73,5 +75,16 @@ public abstract class Service extends Configurable {
 	 * Stops this service.
 	 */
 	public void stop() {
+	}
+
+	/**
+	 * Returns a list of sub-services this service contains.
+	 *
+	 * Although usually the list will come from unmarshalling the XML file,
+	 * there is nothing which forbids the service from generating the list on the fly.
+	 * @return list of services
+	 */
+	public Iterable<? extends Service> getSubServices() {
+		return Collections.emptyList();
 	}
 }

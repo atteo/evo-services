@@ -15,9 +15,11 @@ package org.atteo.moonshine.jta;
 
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.moonshine.services.ImportBindings;
 import org.atteo.moonshine.services.TopLevelService;
 
 import com.google.inject.Module;
@@ -25,19 +27,20 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Generic JTA support service.
- *
+ * Adds support for {@link Transactional} annotation.
  * <p>
- * Provides support for &#064;{@link Transactional} annotation
- * and {@link Transaction} helper.
- * </p>
- * <p>
- * Requires JTA implementation to be present.
+ * Provides support for &#064;{@link Transactional} annotation,
+ * {@link Transaction} helper and optionally registers web filter which wraps servlet request
+ * in separate transaction.
  * </p>
  */
-@XmlRootElement(name = "jta")
+@XmlRootElement(name = "transactional")
 @Singleton
-public class Jta extends TopLevelService {
+public class TransactionalService extends TopLevelService {
+	@XmlIDREF
+	@ImportBindings
+	private JtaService jtaService;
+
 	/**
 	 * Register {@link JtaFilter} which wraps web requests handling inside JTA transaction.
 	 */

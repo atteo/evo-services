@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -114,10 +115,11 @@ public class ServiceModuleRewriter {
 	 * @param elements elements to include in the module
 	 * @param service service to scan for {@link ImportBindings} annotation
 	 * @param serviceElements map with elements for all services
+	 * @param hints list where hints will be stored
 	 * @return
 	 */
 	public static List<Element> importBindings(final List<Element> elements, final Service service,
-			final Map<Service, List<Element>> serviceElements) {
+			final Map<Service, List<Element>> serviceElements, final List<String> hints) {
 		return Elements.getElements(new Module() {
 			@Override
 			public void configure(final Binder binder) {
@@ -128,7 +130,7 @@ public class ServiceModuleRewriter {
 							PrivateBinder privateBinder = binder.newPrivateBinder().withSource(
 									privateElements.getSource());
 
-							importBindings(privateBinder, privateElements, service, serviceElements);
+							importBindings(privateBinder, privateElements, service, serviceElements, hints);
 							return null;
 						}
 
@@ -164,7 +166,7 @@ public class ServiceModuleRewriter {
 	}
 
 	private static void importBindings(final PrivateBinder binder, PrivateElements elements, Service service,
-			Map<Service, List<Element>> serviceElements) {
+			Map<Service, List<Element>> serviceElements, List<String> hints) {
 
 		// copy all elements
 		for (Element element : elements.getElements()) {
@@ -207,6 +209,11 @@ public class ServiceModuleRewriter {
 				}
 			} else {
 				importedElements = findDefaultServiceElements(serviceElements, field.getType());
+				if (importedElements == null) {
+					hints.add("Service '" + service.toString() + "' depends on '" + field.getType().getSimpleName()
+							+ "' which is not available");
+					importedElements = Collections.emptyList();
+				}
 			}
 
 			for (Element element : importedElements) {

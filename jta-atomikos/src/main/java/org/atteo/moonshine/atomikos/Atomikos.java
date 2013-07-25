@@ -28,8 +28,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.moonshine.jta.JtaConnectionFactoryWrapper;
 import org.atteo.moonshine.jta.JtaDataSourceWrapper;
+import org.atteo.moonshine.jta.JtaService;
 import org.atteo.moonshine.jta.PoolOptions;
-import org.atteo.moonshine.services.TopLevelService;
 
 import com.atomikos.icatch.SysException;
 import com.atomikos.icatch.config.UserTransactionServiceImp;
@@ -45,7 +45,7 @@ import com.google.inject.Module;
  * Atomikos JTA implementation.
  */
 @XmlRootElement(name = "atomikos")
-public class Atomikos extends TopLevelService {
+public class Atomikos extends JtaService {
 	/**
 	 * Specifies the maximum number of active transactions.
 	 * <p>
@@ -76,10 +76,11 @@ public class Atomikos extends TopLevelService {
 	@Singleton
 	private static class AtomikosDataSourceWrapper implements JtaDataSourceWrapper {
 		@Override
-		public DataSource wrap(String name, XADataSource xaDataSource, PoolOptions poolOptions) {
+		public DataSource wrap(String name, XADataSource xaDataSource, PoolOptions poolOptions, String testQuery) {
 			AtomikosDataSourceBean wrapped = new AtomikosDataSourceBean();
 			wrapped.setXaDataSource(xaDataSource);
 			wrapped.setUniqueResourceName(name);
+			wrapped.setTestQuery(testQuery);
 			if (poolOptions == null) {
 				return wrapped;
 			}

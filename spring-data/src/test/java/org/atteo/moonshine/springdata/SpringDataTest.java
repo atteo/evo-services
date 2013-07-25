@@ -18,12 +18,23 @@ package org.atteo.moonshine.springdata;
 import javax.inject.Inject;
 
 import org.atteo.moonshine.jta.Transactional;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.google.common.collect.Iterables;
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <atomikos/>"
+		+ "    <transactional/>"
+		+ "    <h2/>"
+		+ "    <hibernate>"
+		+ "        <initSchema>create</initSchema>"
+		+ "    </hibernate>"
+		+ "    <springData/>"
+		+ "</config>")
 public class SpringDataTest extends MoonshineTest {
 
 	@Inject

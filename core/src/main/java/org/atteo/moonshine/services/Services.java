@@ -58,6 +58,7 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -387,7 +388,7 @@ public class Services {
 			modules.add(duplicateDetection.wrap(module));
 		}
 
-		for (Service service : config.getServices()) {
+		for (Service service : config.getSubServices()) {
 			logger.info("Configuring: {}", serviceNameMap.get(service));
 			Module module = service.configure();
 			if (module != null) {
@@ -404,11 +405,14 @@ public class Services {
 			serviceElements.put(service, ServiceModuleRewriter.annotateExposedWithId(elements, service));
 		}
 
+		List<String> hints = new ArrayList<>();
+
 		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
 			Service service = entry.getKey();
 			List<com.google.inject.spi.Element> elements = entry.getValue();
 
-			serviceElements.put(service, ServiceModuleRewriter.importBindings(elements, service, serviceElements));
+			serviceElements.put(service, ServiceModuleRewriter.importBindings(elements, service, serviceElements,
+					hints));
 		}
 
 		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
@@ -425,7 +429,17 @@ public class Services {
 			GuiceBindingsHelper.printServiceElements(serviceElements);
 		}
 		logger.info("Building Guice injector");
-		return Guice.createInjector(modules);
+		try {
+			return Guice.createInjector(modules);
+		} catch (CreationException e) {
+			if (!hints.isEmpty()) {
+				logger.warn("Problem detected while creating Guice injector, possible causes:");
+				for (String hint : hints) {
+					logger.warn(" -> " + hint);
+				}
+			}
+			throw e;
+		}
 	}
 
 	/**
@@ -441,11 +455,11 @@ public class Services {
 			config = new Config();
 		}
 
-		buildServiceNameMap(config.getServices());
-		verifySingletonServicesAreUnique(config.getServices());
+		buildServiceNameMap(config.getSubServices());
+		verifySingletonServicesAreUnique(config.getSubServices());
 		injector = buildInjector();
 
-		for (Service service : config.getServices()) {
+		for (Service service : config.getSubServices()) {
 			if (logger.isInfoEnabled()) {
 				if (isMethodOverriden(service.getClass(), "start")) {
 					logger.info("Starting: {}", serviceNameMap.get(service));
@@ -473,7 +487,7 @@ public class Services {
 			logger.info("Stopping: {}", name);
 			service.stop();
 		}
-		for (Service service : config.getServices()) {
+		for (Service service : config.getSubServices()) {
 			service.deconfigure();
 		}
 		if (logger != null) {

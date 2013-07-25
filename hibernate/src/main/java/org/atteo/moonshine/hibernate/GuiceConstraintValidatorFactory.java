@@ -6,8 +6,7 @@ import javax.validation.ConstraintValidatorFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-public class GuiceConstraintValidatorFactory implements
-		ConstraintValidatorFactory {
+public class GuiceConstraintValidatorFactory implements ConstraintValidatorFactory {
 
 	private final Injector injector;
 	private ConstraintValidatorFactory defaultFactory;

@@ -22,7 +22,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.SharedCacheMode;
 import javax.persistence.ValidationMode;
@@ -41,8 +43,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.moonshine.database.DatabaseService;
+import org.atteo.moonshine.jpa.JpaService;
+import org.atteo.moonshine.jpa.TransactionScopedEntityManager;
+import org.atteo.moonshine.jta.JtaService;
 import org.atteo.moonshine.services.ImportBindings;
-import org.atteo.moonshine.services.TopLevelService;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.ejb.HibernatePersistence;
 import org.hibernate.service.jta.platform.spi.JtaPlatform;
@@ -53,24 +57,28 @@ import com.google.inject.PrivateModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import com.google.inject.Singleton;
 import com.google.inject.binder.ScopedBindingBuilder;
 
 /**
- * Starts Hibernate.
+ * Hibernate - JPA implementation.
  */
 @XmlRootElement(name = "hibernate")
-public class Hibernate extends TopLevelService {
+public class Hibernate extends JpaService {
 	/**
-	 * Select ID of the database to use.
-	 * <p>
-	 * Only needed if more than one is configured.
-	 * </p>
+	 * Specifies database to use.
 	 */
 	@XmlElement
 	@XmlIDREF
 	@ImportBindings
 	private DatabaseService database;
+
+	/**
+	 * Specifies JTA implementation to use.
+	 */
+	@XmlElement
+	@XmlIDREF
+	@ImportBindings
+	private JtaService jta;
 
 	/**
 	 * Automatically initialize database schema.
@@ -287,6 +295,9 @@ public class Hibernate extends TopLevelService {
 					binding.asEagerSingleton();
 				}
 				expose(EntityManagerFactory.class);
+
+				bind(EntityManager.class).to(TransactionScopedEntityManager.class);
+				expose(EntityManager.class);
 			}
 		};
 	}

@@ -15,9 +15,16 @@ package org.atteo.moonshine.migrations;
 
 import javax.inject.Inject;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <atomikos/>"
+		+ "    <h2/>"
+		+ "    <migrations/>"
+		+ "</config>")
 public class TestMigrations extends MoonshineTest {
 	@Inject
 	private Migrations migrations;

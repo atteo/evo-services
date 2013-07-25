@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,17 @@
 package org.atteo.moonshine.jpa;
 
 import javax.persistence.EntityManager;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.persistence.EntityManagerFactory;
 
 import org.atteo.moonshine.services.TopLevelService;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
+/**
+ * Marks JPA implementation services.
+ *
+ * <p>
+ * Should bind {@link EntityManagerFactory} and {@link EntityManager}.
+ * </p>
+ */
+public abstract class JpaService extends TopLevelService {
 
-@XmlRootElement(name = "jpa")
-public class Jpa extends TopLevelService {
-	@Override
-	public Module configure() {
-		return new AbstractModule() {
-			@Override
-			protected void configure() {
-				bind(EntityManager.class).to(TransactionScopedEntityManager.class);
-			}
-		};
-	}
 }

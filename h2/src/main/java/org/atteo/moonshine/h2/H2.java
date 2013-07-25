@@ -47,6 +47,9 @@ public class H2 extends DatabaseService {
 	@XmlElement
 	private PoolOptions pool;
 
+	@XmlElement
+	private String testQuery = "select 1";
+
 	@Inject
 	private JtaDataSourceWrapper wrapper;
 
@@ -66,7 +69,7 @@ public class H2 extends DatabaseService {
 			if (getId() != null) {
 				name = getId();
 			}
-			dataSource = wrapper.wrap(name, xaDataSource, pool);
+			dataSource = wrapper.wrap(name, xaDataSource, pool, testQuery);
 			return dataSource;
 		}
 	}
