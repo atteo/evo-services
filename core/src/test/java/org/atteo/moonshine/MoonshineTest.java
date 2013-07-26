@@ -30,13 +30,6 @@ import static com.googlecode.catchexception.apis.CatchExceptionBdd.when;
 public class MoonshineTest {
 	@Test
 	public void shouldStartWithDefaults() throws IncorrectConfigurationException, IOException {
-		try (Moonshine moonshine = Moonshine.Factory.builder().build()) {
-			moonshine.start();
-		}
-	}
-
-	@Test
-	public void shouldStartWithHomeSet() throws IncorrectConfigurationException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
 				.build()) {
