@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.moonshine.services.ExternalContainer;
 import org.atteo.moonshine.webserver.WebServerService;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
@@ -155,17 +154,10 @@ public class Jetty extends WebServerService {
 	@Inject(optional = true)
 	private MBeanServer mbeanServer;
 
-	@Inject
-	@ExternalContainer
-	private Boolean externalContainer;
-
 	private Server server;
 
 	@Override
 	public void start() {
-		if (externalContainer) {
-			return;
-		}
 		server = new Server();
 
 		server.setHandler(handler.getHandler());

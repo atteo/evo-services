@@ -16,7 +16,8 @@
 package org.atteo.moonshine.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.moonshine.services.ExternalContainer;
+import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.moonshine.services.ApplicationProperties;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -27,12 +28,12 @@ public class MoonshineRuleTest {
 	public static final MoonshineRule moonshine = new MoonshineRule();
 
 	@Test
-	public void trivial() {
+	public void shouldProvideApplicationProperties() {
 		// when
-		Boolean externalContainer = moonshine.getGlobalInjector().getInstance(
-				Key.get(Boolean.class, ExternalContainer.class));
+		PropertyResolver propertyResolver = moonshine.getGlobalInjector().getInstance(
+				Key.get(PropertyResolver.class, ApplicationProperties.class));
 
 		// then
-		assertThat(externalContainer).isFalse();
+		assertThat(propertyResolver).isNotNull();
 	}
 }

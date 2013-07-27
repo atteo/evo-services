@@ -146,7 +146,6 @@ public class Services {
 
 	private Configuration configuration;
 	private Injector injector;
-	private boolean externalContainer = false;
 	private boolean printGuiceBindings = false;
 	private Config config;
 	private PropertyResolver propertyResolver;
@@ -364,11 +363,7 @@ public class Services {
 		Module servletsModule = duplicateDetection.wrap(new ServletModule() {
 			@Override
 			public void configureServlets() {
-				bind(Key.get(PropertyResolver.class, ApplicationProperties.class))
-						.toInstance(propertyResolver);
-				bind(Key.get(Boolean.class, ExternalContainer.class))
-						.toInstance(externalContainer);
-				bind(Services.class).toInstance(Services.this);
+				bind(Key.get(PropertyResolver.class, ApplicationProperties.class)).toInstance(propertyResolver);
 				binder().requireExplicitBindings();
 			}
 		});
