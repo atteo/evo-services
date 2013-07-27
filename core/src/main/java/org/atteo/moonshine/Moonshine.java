@@ -36,13 +36,18 @@ public interface Moonshine extends AutoCloseable {
 		Builder applicationName(String applicationName);
 
 		/**
-		 * Set program arguments.
+		 * Sets program arguments.
 		 *
 		 * <p>
 		 * Usually this will be the value of argv parameter from main(String[]) method.
 		 * </p>
 		 */
 		Builder arguments(String[] arguments);
+
+		/**
+		 * Enables or disables registering shutdown hook with {@link Runtime#addShutdownHook(Thread)}.
+		 */
+		Builder shutdownHook(boolean shutdownHook);
 
 		/**
 		 * Sets logging framework implementation.

@@ -136,10 +136,10 @@ import com.google.inject.spi.Elements;
  * </p>
  */
 public class Services {
-	public final String SCHEMA_FILE_NAME = "schema.xsd";
-	public final String CONFIG_FILE_NAME = "config.xml";
-	public final String DEFAULT_CONFIG_RESOURCE_NAME = "/default-config.xml";
-	private Logger logger = LoggerFactory.getLogger("Moonshine");
+	public final static String SCHEMA_FILE_NAME = "schema.xsd";
+	public final static String CONFIG_FILE_NAME = "config.xml";
+	public final static String DEFAULT_CONFIG_RESOURCE_NAME = "/default-config.xml";
+	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private List<Module> extraModules = new ArrayList<>();
 	private CompoundPropertyResolver customPropertyResolvers = new CompoundPropertyResolver();
 	private FileAccessor fileAccessor;

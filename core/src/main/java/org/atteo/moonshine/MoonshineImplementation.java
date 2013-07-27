@@ -62,6 +62,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	private List<PropertyResolver> propertyResolvers = new ArrayList<>();
 	private List<String> configDirs = new ArrayList<>();
 	private List<String> dataDirs = new ArrayList<>();
+	private boolean shutdownHook = true;
 
 	/**
 	 * Sets application name.
@@ -75,6 +76,12 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	@Override
 	public Builder arguments(String[] arguments) {
 		this.arguments = arguments;
+		return this;
+	}
+
+	@Override
+	public Builder shutdownHook(boolean shutdownHook) {
+		this.shutdownHook = shutdownHook;
 		return this;
 	}
 
@@ -209,7 +216,9 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	public void start() throws IncorrectConfigurationException, IOException {
 		logger.info("Bootstrapping Moonshine");
 		logging.earlyBootstrap();
-		Runtime.getRuntime().addShutdownHook(shutdownThread);
+		if (shutdownHook) {
+			Runtime.getRuntime().addShutdownHook(shutdownThread);
+		}
 		ServicesCommandLineParameters servicesParameters = new ServicesCommandLineParameters();
 		JCommander commander = new JCommander();
 		commander.setProgramName(applicationName);
