@@ -44,7 +44,7 @@ public class ContainsAssertion extends Assertion {
 				return;
 			}
 		}
-		throw new RuntimeException("Actual does not contain expected, expected: " + expected
+		throw new AssertionError("Actual does not contain expected, expected: " + expected
 				+ ", actual: " + actual);
 	}
 }

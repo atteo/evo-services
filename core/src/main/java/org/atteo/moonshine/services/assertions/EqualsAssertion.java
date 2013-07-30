@@ -44,7 +44,7 @@ public class EqualsAssertion extends Assertion {
 				return;
 			}
 		}
-		throw new RuntimeException("Values not equal, expected: " + expected
+		throw new AssertionError("Values not equal, expected: " + expected
 				+ ", actual: " + actual);
 	}
 }
