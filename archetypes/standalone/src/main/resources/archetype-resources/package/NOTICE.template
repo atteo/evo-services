@@ -1,0 +1,6 @@
+Copyright 2013, ${company}
+This project includes software developed by ${company}.
+
+
+This project includes:
+#GENERATED_NOTICES#
