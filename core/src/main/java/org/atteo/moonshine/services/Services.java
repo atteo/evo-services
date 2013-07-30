@@ -246,6 +246,7 @@ public class Services {
 
 	public void generateTemplateConfigurationFile() throws FileNotFoundException, IOException {
 		Path schemaPath = fileAccessor.getWritebleConfigFile(SCHEMA_FILE_NAME);
+		Files.createDirectories(schemaPath.getParent());
 		configuration.generateSchema(schemaPath.toFile());
 
 		Path configPath = fileAccessor.getWritebleConfigFile(CONFIG_FILE_NAME);
@@ -273,6 +274,7 @@ public class Services {
 		}
 		if (params.getConfigurationFiles().isEmpty()) {
 			combineConfigDirConfiguration();
+			generateTemplateConfigurationFile();
 		} else {
 			for (String file : params.getConfigurationFiles()) {
 				combineConfigurationFromFile(new File(file), true);
