@@ -18,10 +18,10 @@ package org.atteo.moonshine;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.services.TopLevelService;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-
-import org.atteo.moonshine.services.TopLevelService;
 
 @XmlRootElement
 @Singleton

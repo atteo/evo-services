@@ -20,10 +20,13 @@ import java.io.IOException;
 import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.moonshine.directories.FileAccessorFactory;
+import org.atteo.moonshine.logging.Logback;
 import org.atteo.moonshine.logging.Logging;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
+
+import ch.qos.logback.classic.jul.LevelChangePropagator;
 
 /**
  * Moonshine framework starting class.
@@ -129,9 +132,30 @@ public interface Moonshine extends AutoCloseable {
 	}
 
 	/**
-	 * Start Moonshine framework and all configured services.
-	 * @throws IncorrectConfigurationException
-	 * @throws IOException
+	 * Starts Moonshine.
+	 *
+	 * <p>
+	 * The following operations are performed:
+	 * <ul>
+	 * <li>first, 'Bootstrapping Moonshine' message is logged through SLF4J, this should trigger
+	 * logging framework initialization, by default Moonshine is configured to use {@link Logback}
+	 * and also provides the default logback.xml file which logs WARN and ERROR messages to the console
+	 * <li>shutdown hook is registered, so Moonshine will shutdown cleanly before virtual machine stops</li>
+	 * <li>{@link Logging#earlyBootstrap()} is called, the default implementation for Logback redirects
+	 * JUL logs through SLF4J and also initializes {@link LevelChangePropagator}</li>
+	 * <li>command line parameters are parsed</li>
+	 * <li>file accessor is initialized</li>
+	 * <li>{@link Logging#initialize(FileAccessor, Properties)} is called, the default implementation
+	 * for Logback loads logback-moonshine.xml which should load final logging configuration, by default Moonshine
+	 * contains logback-moonshine.xml file which logs INFO messages to the file in ${logHome}
+	 * directory</li>
+	 * <li>
+	 * {@link Services#start()} is called which reads configuration file and starts all configured services.
+	 * </li>
+	 * </ul>
+	 * </p>
+	 * @throws IncorrectConfigurationException when there is an error in some configuration file
+	 * @throws IOException when there is some problem during file access
 	 */
 	void start() throws IncorrectConfigurationException, IOException;
 

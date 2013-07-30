@@ -47,7 +47,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 			close();
 		}
 	};
-	private Logger logger = LoggerFactory.getLogger("Moonshine");
+	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private Services services;
 	private Logging logging;
 	private FileAccessorFactory fileAccessorFactory;
@@ -64,9 +64,6 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	private List<String> dataDirs = new ArrayList<>();
 	private boolean shutdownHook = true;
 
-	/**
-	 * Sets application name.
-	 */
 	@Override
 	public Builder applicationName(String applicationName) {
 		this.applicationName = applicationName;
@@ -85,41 +82,24 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		return this;
 	}
 
-	/**
-	 * Sets logging framework implementation.
-	 */
 	@Override
 	public Builder loggingFramework(Logging logging) {
 		this.logging = logging;
 		return this;
 	}
 
-	/**
-	 * Sets file accessor implementation.
-	 */
 	@Override
 	public Builder fileAccessor(FileAccessorFactory fileAccessorFactory) {
 		this.fileAccessorFactory = fileAccessorFactory;
 		return this;
 	}
 
-	/**
-	 * Adds parameter processor.
-	 *
-	 * <p>
-	 * Moonshine parses the parameters using {@link JCommander}. The provided object
-	 * will be added to the list of parameter processors with {@link JCommander#addObject(Object)}.
-	 * </p>
-	 */
 	@Override
 	public Builder addParameterProcessor(Object object) {
 		this.parameterProcessors.add(object);
 		return this;
 	}
 
-	/**
-	 * Builds Moonshine based on this builder parameters.
-	 */
 	@Override
 	public Moonshine build() throws IOException {
 		if (logging == null) {
@@ -202,16 +182,6 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		services = new Services(applicationName, fileAccessor);
 	}
 
-	/**
-	 *
-	 * start minimal console logging
-	 * parse command line parameters
-	 * start directories
-	 * change to file logging
-	 * prepare property resolvers
-	 * read configuration file
-	 * start services
-	 */
 	@Override
 	public void start() throws IncorrectConfigurationException, IOException {
 		logger.info("Bootstrapping Moonshine");

@@ -67,17 +67,15 @@ import com.google.inject.servlet.ServletModule;
 import com.google.inject.spi.Elements;
 
 /**
- * Moonshine is a runtime service engine based on Google Guice
- * which discovers services, configures them and manages their lifecycle.
+ * Discovers, configures and manages Moonshine {@link Service services}.
  *
  * <p>
  * The engine performs the following actions when started:
  * <ul>
- *  <li>redirects all logging through {@link Logger SLF4J} with LogBack as default implementation,</li>
- *  <li>reads services configuration files config.xml and default-config.xml
- * using {@link Configuration} engine with {@link Config}
- * as a root class and a number of default property resolvers,</li>
- *  <li>collects the list of all configured services by executing {@link Config#getServices()},</li>
+ *  <li>reads services configuration '/default-config.xml' file from classpath resource and ${configHome}/config.xml
+ * file using {@link Configuration} engine with {@link Config} as a root class and a number
+ * of default property resolvers,</li>
+ *  <li>collects the list of all configured services by executing {@link Config#getSubServices()},</li>
  *  <li>creates {@link Guice} {@link Injector injector} based on the modules returned from each Service's
  * {@link Service#configure()} method,</li>
  *  <li>performs {@link Injector#injectMembers members injection} on each service,</li>
@@ -86,26 +84,17 @@ import com.google.inject.spi.Elements;
  * </p>
  *
  * <p>
- * The use of SLF4J is mandatory. By default Moonshine has dependency on LogBack in POM file
- * which suffices to use it as a default logging implementation. Use
- * <a href="http://maven.apache.org/guides/introduction/introduction-to-optional-and-excludes-dependencies.html#Dependency_Exclusions">exclusions</a>
- * if you want to use different SLF4J implementation. If you stick with LogBack there is LogBack
- * service which offers further integration with the framework.
- * </p>
- *
- * <p>
- * Two configuration files are searched for. First the classpath is searched for default-config.xml.
+ * Two configuration files are searched for. First the classpath is searched for '/default-config.xml'.
  * The idea is that this file contains default configuration prepared by the application programmer.
- * Next application home directory is searched for config.xml file which contains the configuration
- * prepared by the application administrator. If config.xml file does not exist it is created
+ * Next application configuration directory '${configHome} is searched for config.xml file which should
+ * contain the configuration prepared by the application administrator. If config.xml file does not exist it is created
  * with the reference to the XSD schema to which the file should conform.
  * </p>
  *
  * <p>
- * Configuration files are merged and filtered with a number of predefined {@link PropertyResolver}s.
- * The value for {@code ${name}} placeholder will be searched in the following ways:
+ * Configuration files are merged and then filtered with a number of predefined {@link PropertyResolver}s.
+ * In the files @code ${name}} placeholder will be replaced in the following ways:
  * <ul>
- *   <li>${applicationHome} represents the home directory of the application,</li>
  *   <li>all Java system properties, see {@link SystemPropertyResolver},</li>
  *   <li>environment variables can be referenced using env prefix, ex ${env.PATH},
  * see {@link EnvironmentPropertyResolver},</li>
@@ -121,10 +110,6 @@ import com.google.inject.spi.Elements;
  * and validating the configuration file.
  * </p>
  *
- * <p>
- * The {@link Services Services engine} can be started either directly using {@link #start()} method
- * or by registering it as a listener in Servlet Container.
- * </p>
  * <p>
  * Each of the Services should extend {@link Service}. This interface defines
  * {@link Service#configure() configure()} method which allows to register Guice {@link Module},
@@ -455,10 +440,8 @@ public class Services {
 		injector = buildInjector();
 
 		for (Service service : config.getSubServices()) {
-			if (logger.isInfoEnabled()) {
-				if (isMethodOverriden(service.getClass(), "start")) {
-					logger.info("Starting: {}", serviceNameMap.get(service));
-				}
+			if (logger.isInfoEnabled() && isMethodOverriden(service.getClass(), "start")) {
+				logger.info("Starting: {}", serviceNameMap.get(service));
 			}
 			startedServices.add(service);
 			service.start();
