@@ -74,7 +74,7 @@ public class Hsqldb extends DatabaseService {
 	}
 
 	@Override
-	public void deconfigure() {
+	public void close() {
 		if (dataSource != null) {
 			wrapper.close(dataSource);
 		}

@@ -127,7 +127,7 @@ public class Shiro extends TopLevelService {
 	}
 
 	@Override
-	public void stop() {
+	public void close() {
 		SecurityUtils.setSecurityManager(null);
 	}
 }

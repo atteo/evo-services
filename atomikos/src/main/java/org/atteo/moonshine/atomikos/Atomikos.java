@@ -193,7 +193,7 @@ public class Atomikos extends JtaService {
 	}
 
 	@Override
-	public void deconfigure() {
+	public void close() {
 		manager.close();
 		service.shutdownWait();
 	}

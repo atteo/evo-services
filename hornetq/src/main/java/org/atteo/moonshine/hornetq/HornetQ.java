@@ -84,7 +84,7 @@ public class HornetQ extends TopLevelService {
 	private JtaConnectionFactoryWrapper wrapper;
 
 	@Override
-	public void deconfigure() {
+	public void close() {
 		if (connectionFactory != null) {
 			wrapper.close(connectionFactory);
 			connectionFactory = null;

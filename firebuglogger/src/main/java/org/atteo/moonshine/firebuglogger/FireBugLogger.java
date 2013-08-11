@@ -70,7 +70,7 @@ public class FireBugLogger extends TopLevelService {
 	}
 
 	@Override
-	public void stop() {
+	public void close() {
 		final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 		final Logger rootLogger = context.getLogger(Logger.ROOT_LOGGER_NAME);
 		rootLogger.detachAppender(FIRE_BUG_APPENDER);

@@ -303,7 +303,7 @@ public class Hibernate extends JpaService {
 	}
 
 	@Override
-	public void deconfigure() {
+	public void close() {
 		if (factory != null && factory.isOpen()) {
 			factory.close();
 		}

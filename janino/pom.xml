@@ -20,7 +20,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>container</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

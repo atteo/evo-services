@@ -98,7 +98,7 @@ public class LogBack extends TopLevelService {
 	}
 
 	@Override
-	public void stop() {
+	public void close() {
 		deconfigureJMX();
 	}
 

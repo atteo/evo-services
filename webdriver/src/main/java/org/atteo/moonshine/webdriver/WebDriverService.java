@@ -85,7 +85,7 @@ public class WebDriverService extends TopLevelService {
 	}
 
 	@Override
-	public void deconfigure() {
+	public void close() {
 		if (driver != null) {
 			driver.close();
 		}

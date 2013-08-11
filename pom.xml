@@ -15,10 +15,10 @@
 	<description>Moonshine provides infrastructure commonly found in application containers.
 		But, unlike containers, it is designed to be embedded inside your application.
 		It's a modular framework build around Google Guice dependency injection
-		with uniform logging using SLF4J, easy unit testing, support for common JavaEE technologies:
+		with uniform logging using SLF4J, easy unit testing and ready to use support for common JavaEE technologies:
 		JDBC, JPA, JMS, JTA, JMX, Java Servlet API, JAX-RS.</description>
 	<!-- Javadoc adds /apidocs to this URL when it tries to find Javadocs. Make it happy. -->
-	<url>http://atteo.org/static/services</url>
+	<url>http://atteo.org/static/moonshine</url>
 	<developers>
 		<developer>
 			<id>sentinel</id>
@@ -33,8 +33,8 @@
 	</developers>
 	<modules>
 		<module>atomikos</module>
-		<module>core</module>
-		<module>core-test-utils</module>
+		<module>container</module>
+		<module>container-test-utils</module>
 		<module>database</module>
 		<module>database-test-utils</module>
 		<module>firebuglogger</module>

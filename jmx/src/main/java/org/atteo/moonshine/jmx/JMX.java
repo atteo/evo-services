@@ -90,7 +90,7 @@ public class JMX extends TopLevelService {
 	}
 
 	@Override
-	public void stop() {
+	public void close() {
 		for (ObjectName name : registeredNames) {
 			try {
 				server.unregisterMBean(name);
