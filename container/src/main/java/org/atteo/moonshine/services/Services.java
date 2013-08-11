@@ -19,7 +19,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.IncorrectConfigurationException;
+import org.atteo.moonshine.ConfigurationException;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -54,7 +54,7 @@ public interface Services extends AutoCloseable {
 		/**
 		 * Builds {@link Services} based on this builder parameters.
 		 */
-		Services build() throws IncorrectConfigurationException;
+		Services build() throws ConfigurationException;
 	}
 
 	public static class Factory {

@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.moonshine.Moonshine;
+import org.atteo.moonshine.MoonshineException;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -59,7 +59,7 @@ import com.google.inject.servlet.GuiceFilter;
  */
 public class MoonshineRule implements TestRule {
 	public final static String[] DEFAULT_CONFIG = { "/test-config.xml" };
-	private String[] configs;
+	private final String[] configs;
 	private Moonshine moonshine;
 
 	private final Map<Class<?>, Object> mocks = new HashMap<>();
@@ -134,10 +134,11 @@ public class MoonshineRule implements TestRule {
 			public void evaluate() throws Throwable {
 				try (Moonshine moonshine = buildMoonshine(method.getTestClass())) {
 					MoonshineRule.this.moonshine = moonshine;
-					moonshine.start();
+					if (moonshine != null) {
+						moonshine.start();
+					}
 
 					base.evaluate();
-
 				}
 				// Workaround for the WARNING: Multiple Servlet injectors detected.
 				new GuiceFilter().destroy();
@@ -146,7 +147,7 @@ public class MoonshineRule implements TestRule {
 		};
 	}
 
-	private Moonshine buildMoonshine(final Class<?> testClass) throws IncorrectConfigurationException {
+	private Moonshine buildMoonshine(final Class<?> testClass) throws MoonshineException {
 		try {
 			Moonshine.Builder builder = Moonshine.Factory.builder();
 
@@ -182,6 +183,7 @@ public class MoonshineRule implements TestRule {
 				}
 			};
 
+			builder.applicationName(testClass.getSimpleName());
 			builder.homeDirectory("target/test-home");
 			builder.addDataDir("src/main");
 			for (String config : configs) {

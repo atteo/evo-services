@@ -16,7 +16,7 @@
 			<OnMatch>ACCEPT</OnMatch>
 		</filter>
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%nopex%n</pattern>
 		</encoder>
 	</appender>
 	<appender name="LOGS_DIRECTORY" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -29,12 +29,12 @@
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n%rootException</pattern>
 		</encoder>
 	</appender>
 	<root level="${log.level:-INFO}">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="LOGS_DIRECTORY" />
 	</root>
-	<logger name="Moonshine" level="${moonshine.log.level:-info}"/>
+	<logger name="Moonshine" level="${log.level:-info}"/>
 </configuration>

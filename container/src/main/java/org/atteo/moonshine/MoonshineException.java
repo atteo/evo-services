@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.assertions;
+package org.atteo.moonshine;
 
-import java.io.IOException;
+/**
+ * 
+ */
+public class MoonshineException extends Exception {
+	private static final long serialVersionUID = 1L;
 
-import org.atteo.moonshine.Moonshine;
-import org.atteo.moonshine.MoonshineException;
-import org.junit.Test;
-
-public class AssertionsTest {
-	@Test
-	public void shouldStartWithHomeSet() throws MoonshineException, IOException {
-		try (Moonshine moonshine = Moonshine.Factory.builder()
-				.homeDirectory("target/test-home/")
-				.addConfigurationFromResource("/assertions.xml")
-				.build()) {
-			moonshine.start();
-		}
+	public MoonshineException() {
 	}
+
+	public MoonshineException(String message) {
+		super(message);
+	}
+
+	public MoonshineException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 }

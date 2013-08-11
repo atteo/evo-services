@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.urlhandlers.UrlHandlers;
+import org.atteo.moonshine.ConfigurationException;
 import org.atteo.moonshine.injection.InjectMembersModule;
 import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;
 import org.atteo.moonshine.services.internal.ReflectionTools;
@@ -51,7 +51,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 	private ServicesConfig config;
 	private final List<Service> startedServices = new ArrayList<>();
 	private final Map<Service, String> serviceNameMap = new IdentityHashMap<>();
-	private Map<Service, List<com.google.inject.spi.Element>> serviceElements = new LinkedHashMap<>();
+	private final Map<Service, List<com.google.inject.spi.Element>> serviceElements = new LinkedHashMap<>();
 
 	public ServicesImplementation() {
 		UrlHandlers.registerAnnotatedHandlers();
@@ -70,7 +70,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	@Override
-	public Services build() throws IncorrectConfigurationException {
+	public Services build() throws ConfigurationException {
 		createInjector();
 		return this;
 	}
@@ -149,7 +149,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
-	private void createInjector() throws IncorrectConfigurationException {
+	private void createInjector() throws ConfigurationException {
 		logger.info("Building Guice injector hierarchy");
 
 		if (config == null) {
@@ -213,19 +213,19 @@ public class ServicesImplementation implements Services, Services.Builder {
 		return serviceElements;
 	}
 
-	private void verifySingletonServicesAreUnique(List<Service> services) throws IncorrectConfigurationException {
+	private void verifySingletonServicesAreUnique(List<Service> services) throws ConfigurationException {
 		Set<Class<?>> set = new HashSet<>();
 		for (Service service : services) {
 			Class<?> klass = service.getClass();
 			if (ReflectionTools.isSingleton(klass)) {
 				if (set.contains(klass)) {
-					throw new IncorrectConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
+					throw new ConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
 							+ " as singleton, but is declared more than once in configuration file");
 				}
 				set.add(klass);
 
 				if (!Strings.isNullOrEmpty(service.getId())) {
-					throw new IncorrectConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
+					throw new ConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
 							+ " as singleton, but has an id specified");
 				}
 			}

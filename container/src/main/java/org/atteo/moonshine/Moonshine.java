@@ -17,10 +17,14 @@ package org.atteo.moonshine;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
+
 import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.moonshine.logging.Logback;
 import org.atteo.moonshine.logging.Logging;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -167,6 +171,11 @@ public interface Moonshine extends AutoCloseable {
 		Builder arguments(String[] arguments);
 
 		/**
+		 * Do not register uncaught exception handler.
+		 */
+		Builder skipUncaughtExceptionHandler();
+
+		/**
 		 * Adds parameter processor.
 		 *
 		 * <p>
@@ -213,13 +222,37 @@ public interface Moonshine extends AutoCloseable {
 
 		/**
 		 * Builds Moonshine based on this builder parameters.
+		 * <p>
+		 * Can return null, if based on provided configuration Moonshine container
+		 * is not supposed to be built. For instance, when '--help' command line parameter
+		 * is provided Moonshine logs help message and exits immediately.
+		 * </p>
+		 * @return created Moonshine container, or null if intended behavior is to skip container creation
+		 * @throws IOException when configuration could not be accessed
+		 * @throws IncorrectConfigurationException when configuration is incorrect
 		 */
-		Moonshine build() throws IncorrectConfigurationException, IOException;
+		@Nullable
+		Moonshine build() throws MoonshineException, IOException;
 	}
 
 	public static class Factory {
 		public static Builder builder() {
 			return new MoonshineImplementation();
+		}
+
+		public static void logException(MoonshineException e) {
+			Logger logger = LoggerFactory.getLogger("Moonshine");
+
+			if (e instanceof ConfigurationException) {
+				logger.error("Incorrect configuration file: " + e.getMessage());
+				logger.debug("Incorrect configuration file", e);
+			} else if (e instanceof CommandLineParameterException) {
+				logger.error(e.getMessage());
+				logger.debug(e.getMessage(), e);
+			} else {
+				logger.error("Fatal error: " + e.getMessage());
+				logger.debug("Fatal error", e);
+			}
 		}
 	}
 

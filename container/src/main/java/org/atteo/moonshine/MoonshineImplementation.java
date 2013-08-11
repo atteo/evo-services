@@ -45,12 +45,25 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 
 class MoonshineImplementation implements Moonshine.Builder, Moonshine {
-	private Thread shutdownThread = new Thread() {
+	private final Thread shutdownThread = new Thread() {
 		@Override
 		public void run() {
 			close();
 		}
 	};
+
+	private static class MoonshineUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+		@Override
+		public void uncaughtException(Thread t, Throwable e) {
+			if (e instanceof MoonshineException) {
+				Moonshine.Factory.logException((MoonshineException) e);
+			} else {
+				Logger logger = LoggerFactory.getLogger("Moonshine");
+				logger.error("Fatal error: " + e.getMessage(), e);
+			}
+		}
+	}
+
 	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private Services services;
 	private Logging logging;
@@ -68,10 +81,17 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	private final List<String> dataDirs = new ArrayList<>();
 	private boolean shutdownHook = true;
 	private boolean skipDefaultConfigurationFile = false;
+	private boolean skipExceptionHandler = false;
 
 	@Override
 	public Builder applicationName(String applicationName) {
 		this.applicationName = applicationName;
+		return this;
+	}
+
+	@Override
+	public Builder skipUncaughtExceptionHandler() {
+		skipExceptionHandler = true;
 		return this;
 	}
 
@@ -100,8 +120,13 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	}
 
 	@Override
-	public Moonshine build() throws IOException, IncorrectConfigurationException {
-		logger.info("Bootstrapping Moonshine");
+	public Moonshine build() throws IOException, CommandLineParameterException, ConfigurationException {
+		logger.info("Bootstrapping {}", applicationName != null ? applicationName : "Moonshine");
+
+		if (!skipExceptionHandler) {
+			Thread.currentThread().setUncaughtExceptionHandler(new MoonshineUncaughtExceptionHandler());
+		}
+
 		if (logging == null) {
 			logging = new Logback();
 		}
@@ -124,8 +149,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		try {
 			commander.parse(arguments);
 		} catch (ParameterException e) {
-			logger.error("Cannot parse command line parameters:\n    " + e.getMessage());
-			throw new RuntimeException("Cannot parse command line parameters");
+			throw new CommandLineParameterException("Cannot parse command line parameters: " + e.getMessage(), e);
 		}
 
 		for (ParameterProcessor parameterProcessor : parameterProcessors) {
@@ -149,14 +173,11 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		if (applicationName == null) {
 			applicationName = "moonshine";
 		}
-		if (shutdownHook) {
-			Runtime.getRuntime().addShutdownHook(shutdownThread);
-		}
 		if (moonshineParameters.isHelp()) {
 			StringBuilder builder = new StringBuilder();
 			commander.usage(builder);
 			logger.info(builder.toString());
-			return this;
+			return null;
 		}
 
 		FileAccessor fileAccessor = fileAccessorFactory.getFileAccessor();
@@ -164,22 +185,27 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		logging.initialize(fileAccessor, fileAccessorProperties);
 
 		final ConfigurationReader configuration = new ConfigurationReader(fileAccessor);
-		setupConfiguration(moonshineParameters, configuration);
-		configuration.addCustomPropertyResolver(new PropertiesPropertyResolver(fileAccessorProperties));
+		Config config;
+		try {
+			setupConfiguration(moonshineParameters, configuration);
+			configuration.addCustomPropertyResolver(new PropertiesPropertyResolver(fileAccessorProperties));
 
-		if (moonshineParameters.isPrintConfig()) {
-			logger.info("Configuration is:\n" + configuration.printCombinedXml());
-			return this;
+			if (moonshineParameters.isPrintConfig()) {
+				logger.info("Configuration is:\n" + configuration.printCombinedXml());
+				return null;
+			}
+
+			configuration.filter();
+
+			if (moonshineParameters.isPrintFilteredConfig()) {
+				logger.info("Filtered configuration is:\n" + configuration.printCombinedXml());
+				return null;
+			}
+
+			config = configuration.read();
+		} catch (IncorrectConfigurationException e) {
+			throw new ConfigurationException(e.getMessage(), e);
 		}
-
-		configuration.filter();
-
-		if (moonshineParameters.isPrintFilteredConfig()) {
-			logger.info("Filtered configuration is:\n" + configuration.printCombinedXml());
-			return this;
-		}
-
-		Config config = configuration.read();
 
 		final PropertyResolver propertyResolver = configuration.getPropertyResolver();
 
@@ -200,7 +226,10 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 		if (moonshineParameters.isPrintGuiceBindings()) {
 			GuiceBindingsHelper.printServiceElements(services.getServiceElements());
-			return this;
+			return null;
+		}
+		if (shutdownHook) {
+			Runtime.getRuntime().addShutdownHook(shutdownThread);
 		}
 		return this;
 	}
@@ -270,7 +299,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	@Override
 	public void close() {
-		logger.info("Shutting down Moonshine");
+		logger.info("Shuttind down {}", applicationName != null ? applicationName : "Moonshine");
 		try {
 			Runtime.getRuntime().removeShutdownHook(shutdownThread);
 		} catch (IllegalStateException e) {

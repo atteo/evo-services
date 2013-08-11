@@ -17,16 +17,18 @@ package org.atteo.moonshine;
 
 import java.io.IOException;
 
-import org.atteo.evo.config.IncorrectConfigurationException;
 
 /**
- * Class with main() method implementation.
+ * Default main() method implementation.
  */
 public class Main {
-	public static void main(final String[] args) throws IOException, IncorrectConfigurationException {
+	// just throw exceptions, Moonshine registers Thread.UncaughtExceptionHandler to handle them gracefully
+	public static void main(final String[] args) throws IOException, MoonshineException {
 		Moonshine moonshine = Moonshine.Factory.builder()
 				.arguments(args)
 				.build();
-		moonshine.start();
+		if (moonshine != null) {
+			moonshine.start();
+		}
 	}
 }

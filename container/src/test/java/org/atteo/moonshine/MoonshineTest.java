@@ -16,7 +16,6 @@ package org.atteo.moonshine;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.junit.Test;
@@ -32,7 +31,7 @@ import static com.googlecode.catchexception.apis.CatchExceptionBdd.when;
 
 public class MoonshineTest {
 	@Test
-	public void shouldStartWithDefaults() throws IncorrectConfigurationException, IOException {
+	public void shouldStartWithDefaults() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
 				.build()) {
@@ -41,7 +40,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldStartWithTrivialConfiguration() throws IncorrectConfigurationException, IOException {
+	public void shouldStartWithTrivialConfiguration() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
 				.addConfigurationFromString(""
@@ -53,7 +52,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldThrowWhenSingletonWithId() throws IncorrectConfigurationException, IOException {
+	public void shouldThrowWhenSingletonWithId() throws MoonshineException, IOException {
 		// given
 		try (Moonshine moonshine = when(Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
@@ -64,13 +63,13 @@ public class MoonshineTest {
 				.build()) {
 
 			// then
-			assertThat(caughtException()).isInstanceOf(IncorrectConfigurationException.class)
+			assertThat(caughtException()).isInstanceOf(MoonshineException.class)
 					.hasMessage("Service 'org.atteo.moonshine.SingletonService' is marked as singleton, but has an id specified");
 		}
 	}
 
 	@Test
-	public void shouldImportBindings() throws IncorrectConfigurationException, IOException {
+	public void shouldImportBindings() throws MoonshineException, IOException {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
@@ -88,7 +87,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldUseCustomModule() throws IncorrectConfigurationException, IOException {
+	public void shouldUseCustomModule() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
 				.addModule(new AbstractModule() {
@@ -109,7 +108,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldInjectMembers() throws IncorrectConfigurationException, IOException {
+	public void shouldInjectMembers() throws MoonshineException, IOException {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
@@ -138,7 +137,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldInjectCustomProperty() throws IOException, IncorrectConfigurationException {
+	public void shouldInjectCustomProperty() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
 				.addConfigurationFromString(""
@@ -167,7 +166,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldInjectProperties() throws IOException, IncorrectConfigurationException {
+	public void shouldInjectProperties() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
 				.addConfigurationFromString(""
@@ -194,7 +193,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldEnableInfo() throws IOException, IncorrectConfigurationException {
+	public void shouldEnableInfo() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
 				.arguments(new String[] { "--loglevel", "INFO" })
@@ -213,7 +212,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldEnableDebugLogging() throws IOException, IncorrectConfigurationException {
+	public void shouldEnableDebugLogging() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
 				.arguments(new String[] { "--loglevel", "DEBUG" })
@@ -242,7 +241,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldUseCustomCommandLineObject() throws IncorrectConfigurationException, IOException {
+	public void shouldUseCustomCommandLineObject() throws MoonshineException, IOException {
 		CustomParameters custom = new CustomParameters();
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
@@ -252,6 +251,18 @@ public class MoonshineTest {
 
 			// then
 			assertThat(custom.custom).isEqualTo(true);
+		}
+	}
+
+	@Test
+	public void shouldExitAfterPrintingHelp() throws MoonshineException, IOException {
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.homeDirectory("target/test-home")
+				.arguments(new String[] { "--help" })
+				.build()) {
+
+			// then
+			assertThat(moonshine).isNull();
 		}
 	}
 }

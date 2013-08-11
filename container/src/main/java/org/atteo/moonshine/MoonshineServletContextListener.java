@@ -23,7 +23,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.filtering.PropertiesPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
 
@@ -80,8 +79,10 @@ public class MoonshineServletContextListener extends GuiceServletContextListener
 
 			moonshine = builder.build();
 
-			moonshine.start();
-		} catch (IOException | IncorrectConfigurationException e) {
+			if (moonshine != null) {
+				moonshine.start();
+			}
+		} catch (IOException | MoonshineException e) {
 			throw new RuntimeException(e);
 		}
 		super.contextInitialized(servletContextEvent);
