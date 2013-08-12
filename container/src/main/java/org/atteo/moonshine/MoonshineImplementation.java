@@ -182,6 +182,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 		FileAccessor fileAccessor = fileAccessorFactory.getFileAccessor();
 		Properties fileAccessorProperties = fileAccessor.getProperties();
+		fileAccessorProperties.setProperty("applicationName", applicationName);
 		logging.initialize(fileAccessor, fileAccessorProperties);
 
 		final ConfigurationReader configuration = new ConfigurationReader(fileAccessor);

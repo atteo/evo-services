@@ -20,10 +20,10 @@
 		</encoder>
 	</appender>
 	<appender name="LOGS_DIRECTORY" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${logHome}/moonshine.log</file>
+		<file>${logHome}/${applicationName}.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<!-- daily rollover -->
-			<fileNamePattern>${logHome}/moonshine.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${logHome}/${applicationName}.%d{yyyy-MM-dd}.log</fileNamePattern>
 
 			<!-- keep 30 days' worth of history -->
 			<maxHistory>30</maxHistory>
