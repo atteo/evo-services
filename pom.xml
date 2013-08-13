@@ -48,6 +48,7 @@
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>jmx</module>
+		<module>jolokia</module>
 		<module>jpa</module>
 		<module>jta</module>
 		<module>logback</module>
