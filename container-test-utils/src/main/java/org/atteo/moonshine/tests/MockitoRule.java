@@ -26,9 +26,8 @@ import org.mockito.MockitoAnnotations;
  * <p>
  * Usage:
  * <pre>
- * {@code
  * class Test {
- *     @Rule
+ *     &#064;Rule
  *     private MockitoRule mockitoRule = new MockitoRule();
  * }
  * </pre>

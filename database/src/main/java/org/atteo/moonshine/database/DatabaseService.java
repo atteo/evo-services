@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 import org.atteo.moonshine.services.TopLevelService;
 
 /**
- * Marks database service.
+ * Database service.
  * <p>
  * Database services should bind {@link DataSource}.
  * </p>

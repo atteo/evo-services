@@ -27,12 +27,19 @@ import org.atteo.evo.filtering.PropertyResolver;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Allows injecting property resolver used by {@link Service} framework.
+ * Allows injecting property resolver used by {@link Moonshine} container.
  *
  * <p>
  * When used on field of type {@link PropertyResolver} and marked with {@link Inject}
- * annotation triggers the injection of property resolver
- * used in the {@link Service} framework.
+ * annotation triggers the injection of property resolver used in the {@link Moonshine} container.
+ * </p>
+ * <p>
+ * Usage:
+ * <pre>
+ * &#064;Inject
+ * &#064;ApplicationProperties
+ * PropertyResolver propertyResolver;
+ * </pre>
  * </p>
  */
 @BindingAnnotation

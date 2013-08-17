@@ -13,6 +13,8 @@
  */
 package org.atteo.moonshine.services;
 
+import org.atteo.moonshine.Config;
+
 /**
  * Top-level {@link Service} in the {@link Config}.
  */

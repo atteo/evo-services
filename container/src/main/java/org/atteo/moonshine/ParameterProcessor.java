@@ -15,12 +15,14 @@
  */
 package org.atteo.moonshine;
 
+import com.beust.jcommander.JCommander;
+
 /**
  * Command line parameters processor.
  *
  * <p>
  * Moonshine parses the parameters using {@link JCommander}.
- * Use {@link Moonshine.Builder#addParameterProcessor(ParameterProcessor) to register parameter processor.
+ * Use {@link Moonshine.Builder#addParameterProcessor(ParameterProcessor)} to register parameter processor.
  * The provided object will be added to the list of parameter processors with {@link JCommander#addObject(Object)}.
  * </p>
  */

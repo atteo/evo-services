@@ -20,21 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.atteo.moonshine.Moonshine;
-import org.atteo.moonshine.services.Services;
+import org.atteo.moonshine.services.Service;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
 
 /**
- * Runs the tests with {@link Services} framework initialized.
+ * Runs the tests with {@link Moonshine} container initialized.
  *
  * <p>
- * Any method marked with {@link Bindings} annotation will executed with {@link Binder}
- * as a sole parameter to allow you to register additional Guice bindings.
- * </p>
- * <p>
- * The {@link Services} engine will be initialized with the specified configuration
+ * The {@link Moonshine} engine will be initialized with the specified configuration
  * file. All {@link Service services} will be started.
  * </p>
  * <p>

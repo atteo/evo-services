@@ -98,13 +98,7 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>examples</id>
-			<modules>
-				<module>examples</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>service-docs</id>
+			<id>javadocs</id>
 			<build>
 				<plugins>
 					<plugin>
@@ -119,9 +113,9 @@
 									<doclet>org.atteo.evo.config.doclet.ConfigDoclet</doclet>
 									<docletArtifacts>
 										<docletArtifact>
-											<groupId>${project.groupId}</groupId>
-											<artifactId>config-doclet</artifactId>
-											<version>${project.version}</version>
+											<groupId>org.atteo</groupId>
+											<artifactId>evo-config-doclet</artifactId>
+											<version>1.0-SNAPSHOT</version>
 										</docletArtifact>
 									</docletArtifacts>
 								</configuration>

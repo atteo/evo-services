@@ -15,12 +15,14 @@ package org.atteo.moonshine.services;
 
 import java.util.Collections;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.atteo.evo.classindex.IndexSubclasses;
 import org.atteo.evo.config.Configurable;
 
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 
@@ -34,9 +36,10 @@ import com.google.inject.servlet.ServletModule;
  * so it can be lazily initialized by {@link Guice} which knows about dependencies between services.
  * </p>
  * <p>
- * {@link #configure()} is executed once before creating {@link Injector Guice injector}.
- * {@link #close()} is executed just before destroying the injector. {@link #start()}
- * and {@link #stop()} methods can be executed separately any time.
+ * {@link #configure()} is executed only once before creating {@link Injector Guice injector} and can be used
+ * to configure it. {@link #close()} is also executed only once, just before destroying the injector.
+ * {@link #start()} and {@link #stop()} methods should start and stop any functionality which this service
+ * provides to the outside world.
  * </p>
  */
 @IndexSubclasses(storeJavadoc = true)
@@ -68,7 +71,7 @@ public abstract class Service extends Configurable implements AutoCloseable {
 	 * Starts this service.
 	 *
 	 * <p>
-	 * All class fields marked with {@link Inject} will be already injected before execution of this method.
+	 * All fields marked with {@link Inject} will be injected before execution of this method.
 	 * </p>
 	 * <p>
 	 * Every functionality that is exported to other services should be started in {@link #configure()} method

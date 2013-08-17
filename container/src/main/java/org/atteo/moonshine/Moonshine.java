@@ -19,13 +19,21 @@ import java.io.IOException;
 
 import javax.annotation.Nullable;
 
+import org.atteo.evo.config.Configuration;
 import org.atteo.evo.config.IncorrectConfigurationException;
+import org.atteo.evo.filtering.EnvironmentPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.evo.filtering.SystemPropertyResolver;
+import org.atteo.evo.filtering.XmlPropertyResolver;
+import org.atteo.moonshine.directories.FileAccessor;
 import org.atteo.moonshine.logging.Logback;
 import org.atteo.moonshine.logging.Logging;
+import org.atteo.moonshine.services.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.beust.jcommander.JCommander;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -78,8 +86,7 @@ import ch.qos.logback.classic.jul.LevelChangePropagator;
  *   <li>all elements in the XML configuration file can be referenced using dot to separate tag names,
  * see {@link XmlPropertyResolver},</li>
  *   <li>custom properties under {@code <properties>} section in the configuration file,</li>
- *   <li>properties are resolved recursively, for instance: ${env.${VARNAME}},
- * see {@link RecursivePropertyResolver},</li>
+ *   <li>properties are resolved recursively, for instance: ${env.${VARNAME}}</li>
  *   <li>you can add your own custom {@link PropertyResolver}s using
  * {@link Moonshine.Builder#addPropertyResolver(PropertyResolver)}.</li>
  * </ul>
@@ -100,9 +107,6 @@ public interface Moonshine extends AutoCloseable {
 
 		/**
 		 * Sets home directory for default file accessor.
-		 * <p>
-		 * If you want more control you can set your own file accessor using {@link #fileAccessor(org.atteo.moonshine.directories.FileAccessorFactory)}.
-		 * </p>
 		 */
 		RestrictedBuilder homeDirectory(String homeDirectory);
 

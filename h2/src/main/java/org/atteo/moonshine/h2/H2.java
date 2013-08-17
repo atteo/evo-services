@@ -42,16 +42,29 @@ public class H2 extends DatabaseService {
 	@ImportBindings
 	private JtaService jtaService;
 
+	/**
+	 * Database URL.
+	 * @see <a href="http://www.h2database.com/html/features.html#database_url">H2 documentation</a>
+	 */
 	@XmlElement
 	@XmlDefaultValue("jdbc:h2:${dataHome}/database;AUTO_SERVER=TRUE")
 	private String url;
 
+	/**
+	 * Database user.
+	 */
 	@XmlElement
 	private String username = "";
 
+	/**
+	 * Database password.
+	 */
 	@XmlElement
 	private String password = "";
 
+	/**
+	 * Connection pool options.
+	 */
 	@XmlElement
 	private PoolOptions pool;
 

@@ -25,6 +25,7 @@ import org.atteo.moonshine.MoonshineException;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runner.RunWith;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 import static org.mockito.Mockito.mock;
@@ -37,7 +38,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceFilter;
 
 /**
- * JUnit {@link TestRule rule} which initializes {@link Moonshine} environment.
+ * JUnit {@link TestRule rule} which initializes {@link Moonshine} container.
  *
  * <p>
  * It is better for your test class to extend {@link MoonshineTest} or have it annotated with
@@ -74,11 +75,9 @@ public class MoonshineRule implements TestRule {
 	 * <p>
 	 * Usage:
 	 * <pre>
-	 * {@code
 	 * class Test {
-	 *     @ClassRule
+	 *     &#064;ClassRule
 	 *     public static final MoonshineRule moonshine = new MoonshineRule();
-	 * }
 	 * }
 	 * </pre>
 	 * </p>

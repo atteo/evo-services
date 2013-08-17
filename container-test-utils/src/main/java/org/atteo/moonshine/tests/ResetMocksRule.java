@@ -22,21 +22,21 @@ import org.mockito.Mockito;
  * Resets the mocks registered using {@link MockAndBind}.
  * <p>
  * Usage:
- * {@code
+ * <pre>
  * class Test {
- *     @ClassRule
+ *     &#064;ClassRule
  *     public static final MoonshineRule moonshine = new Moonshine();
  *
- *     @Rule
+ *     &#064;Rule
  *     public ResetMocksRule resetMocks = new ResetMocksRule(moonshine);
- *
  * }
+ * </pre>
  */
 public class ResetMocksRule implements MethodRule {
-	private MoonshineRule servicesRule;
+	private final MoonshineRule moonshineRule;
 
-	public ResetMocksRule(MoonshineRule servicesRule) {
-		this.servicesRule = servicesRule;
+	public ResetMocksRule(MoonshineRule moonshineRule) {
+		this.moonshineRule = moonshineRule;
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ResetMocksRule implements MethodRule {
 	}
 
 	private void resetMocks() {
-		for (Object mock : servicesRule.getMocks().values()) {
+		for (Object mock : moonshineRule.getMocks().values()) {
 			Mockito.reset(mock);
 		}
 	}

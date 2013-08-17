@@ -15,6 +15,9 @@ package org.atteo.moonshine.services.assertions;
 
 import org.atteo.evo.config.Configurable;
 
+/**
+ * Assertion.
+ */
 public abstract class Assertion extends Configurable {
 	public abstract void check();
 }

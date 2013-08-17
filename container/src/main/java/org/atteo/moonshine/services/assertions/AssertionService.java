@@ -37,6 +37,9 @@ import org.atteo.moonshine.services.TopLevelService;
  */
 @XmlRootElement(name = "assertions")
 public class AssertionService extends TopLevelService {
+	/**
+	 * List of assertions.
+	 */
 	@InjectMembers
 	@XmlElementRef
 	private List<Assertion> assertions;

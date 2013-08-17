@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import org.atteo.moonshine.services.ImportBindings;
 import org.atteo.moonshine.services.Service;
 
@@ -117,7 +115,7 @@ public class ServiceModuleRewriter {
 	 * @param service service to scan for {@link ImportBindings} annotation
 	 * @param serviceElements map with elements for all services
 	 * @param hints list where hints will be stored
-	 * @return
+	 * @return provided elements with bindings imported from given service
 	 */
 	public static List<Element> importBindings(final List<Element> elements, final Service service,
 			final Map<Service, List<Element>> serviceElements, final List<String> hints) {
