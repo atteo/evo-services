@@ -11,6 +11,21 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>atomikos</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>container</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>container-test-utils</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>database</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -71,17 +86,17 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>jolokia</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>jpa</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>jta</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>atomikos</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -96,12 +111,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>container</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>container-test-utils</artifactId>
+				<artifactId>perf4j</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

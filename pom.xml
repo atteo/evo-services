@@ -53,6 +53,7 @@
 		<module>jta</module>
 		<module>logback</module>
 		<module>migrations</module>
+		<module>perf4j</module>
 		<module>shiro</module>
 		<module>shiro-test-utils</module>
 		<module>spring-data</module>
