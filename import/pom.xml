@@ -131,6 +131,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>tomcat</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>webdriver</artifactId>
 				<version>${project.version}</version>
 			</dependency>
