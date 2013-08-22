@@ -16,7 +16,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>migrations</artifactId>
+			<artifactId>liquibase</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

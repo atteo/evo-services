@@ -300,7 +300,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	@Override
 	public void close() {
-		logger.info("Shuttind down {}", applicationName != null ? applicationName : "Moonshine");
+		logger.info("Shutting down {}", applicationName != null ? applicationName : "Moonshine");
 		try {
 			Runtime.getRuntime().removeShutdownHook(shutdownThread);
 		} catch (IllegalStateException e) {

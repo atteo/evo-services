@@ -38,6 +38,8 @@ public class ShiroRule implements TestRule {
 					public Object call() throws Exception {
 						try {
 							base.evaluate();
+						} catch (Exception | Error e) {
+							throw e;
 						} catch (Throwable e) {
 							throw new RuntimeException(e);
 						}

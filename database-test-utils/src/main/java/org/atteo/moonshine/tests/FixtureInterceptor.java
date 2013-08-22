@@ -17,7 +17,7 @@ package org.atteo.moonshine.tests;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.atteo.moonshine.migrations.Migrations;
+import org.atteo.moonshine.liquibase.LiquibaseFacade;
 
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
@@ -34,12 +34,12 @@ public class FixtureInterceptor implements MethodInterceptor {
 		String fixtureName = invocation.getMethod().getAnnotation(Fixture.class).value();
 		String databaseName = invocation.getMethod().getAnnotation(Fixture.class).database();
 
-		Migrations migrations;
+		LiquibaseFacade liquibase;
 
 		if (Strings.isNullOrEmpty(databaseName)) {
-			migrations = injector.getInstance(Migrations.class);
+			liquibase = injector.getInstance(LiquibaseFacade.class);
 		} else {
-			migrations = injector.getInstance(Key.get(Migrations.class, Names.named(databaseName)));
+			liquibase = injector.getInstance(Key.get(LiquibaseFacade.class, Names.named(databaseName)));
 		}
 
 		if (fixtureName.startsWith("/")) {
@@ -50,12 +50,12 @@ public class FixtureInterceptor implements MethodInterceptor {
 					+ "/" + fixtureName;
 		}
 
-		migrations.migrate(fixtureName);
+		liquibase.migrate(fixtureName);
 		Object o = null;
 		try {
 			o = invocation.proceed();
 		} finally {
-			migrations.rollbackLastUpdate(fixtureName);
+			liquibase.rollbackLastUpdate(fixtureName);
 		}
 		return o;
 	}

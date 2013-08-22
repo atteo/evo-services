@@ -115,8 +115,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
 			Service service = entry.getKey();
 			List<com.google.inject.spi.Element> elements = entry.getValue();
-
-			serviceElements.put(service, ServiceModuleRewriter.annotateExposedWithId(elements, service));
+			entry.setValue(ServiceModuleRewriter.annotateExposedWithId(elements, service));
 		}
 
 		List<String> hints = new ArrayList<>();
@@ -125,12 +124,10 @@ public class ServicesImplementation implements Services, Services.Builder {
 			Service service = entry.getKey();
 			List<com.google.inject.spi.Element> elements = entry.getValue();
 
-			serviceElements.put(service, ServiceModuleRewriter.importBindings(elements, service, serviceElements,
-					hints));
+			entry.setValue(ServiceModuleRewriter.importBindings(elements, service, serviceElements, hints));
 		}
 
-		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
-			List<com.google.inject.spi.Element> elements = entry.getValue();
+		for (List<com.google.inject.spi.Element> elements : serviceElements.values()) {
 			modules.add(Elements.getModule(elements));
 		}
 

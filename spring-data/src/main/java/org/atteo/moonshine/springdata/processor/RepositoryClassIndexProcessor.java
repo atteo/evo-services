@@ -15,9 +15,11 @@ package org.atteo.moonshine.springdata.processor;
 
 import org.atteo.evo.classindex.processor.ClassIndexProcessor;
 import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.RepositoryDefinition;
 
 public class RepositoryClassIndexProcessor extends ClassIndexProcessor {
 	public RepositoryClassIndexProcessor() {
 		indexSubclasses(Repository.class);
+		indexAnnotations(RepositoryDefinition.class);
 	}
 }

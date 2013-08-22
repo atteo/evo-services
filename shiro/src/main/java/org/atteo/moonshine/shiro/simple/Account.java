@@ -17,19 +17,23 @@ package org.atteo.moonshine.shiro.simple;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.atteo.evo.config.XmlDefaultValue;
 
+/**
+ * Single user account.
+ */
 public class Account {
-	@XmlElement
+	@XmlAttribute
 	private String username;
 
-	@XmlElement
+	@XmlAttribute
 	private String password;
 
-	@XmlElement
+	@XmlAttribute
 	@XmlDefaultValue("false")
 	private Boolean administrator;
 

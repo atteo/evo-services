@@ -15,15 +15,19 @@
  */
 package org.atteo.moonshine.springdata;
 
-import javax.inject.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.jta.Transactional;
+import org.atteo.moonshine.springdata.users.User;
+import org.atteo.moonshine.springdata.users.UserRepository;
+import org.atteo.moonshine.springdata.users2.UserRepository2;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.inject.Inject;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
@@ -33,16 +37,17 @@ import com.google.common.collect.Iterables;
 		+ "    <hibernate>"
 		+ "        <initSchema>create</initSchema>"
 		+ "    </hibernate>"
-		+ "    <springData/>"
+		+ "    <springData>"
+		+ "        <packagePrefix>org.atteo.moonshine.springdata.users</packagePrefix>"
+		+ "    </springData>"
 		+ "</config>")
 public class SpringDataTest extends MoonshineTest {
-
 	@Inject
 	private UserRepository userRepository;
 
 	@Test
 	@Transactional
-	public void simple() {
+	public void shouldBindUserRepository() {
 		User user = new User();
 		user.setName("Nicolaus Copernicus");
 		userRepository.save(user);
@@ -51,5 +56,13 @@ public class SpringDataTest extends MoonshineTest {
 
 		users = userRepository.findByName("Nicolaus Copernicus");
 		assertEquals(1, Iterables.size(users));
+	}
+
+	@Inject(optional = true)
+	private UserRepository2 userRepository2;
+
+	@Test
+	public void shouldNotBindUserRepository2() {
+		assertThat(userRepository2).isNull();
 	}
 }

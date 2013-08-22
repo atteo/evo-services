@@ -48,6 +48,32 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.3.1</version>
+				<executions>
+					<execution>
+						<!--
+							 Sometimes when annotation processor fails javac returns success, but does not compile any files.
+						-->
+						<id>check-tests-compile-correctly</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireFilesExist>
+									<files>
+										<file>${project.build.testOutputDirectory}/org/atteo/moonshine/webserver/crypto/CryptoTest.class</file>
+									</files>
+									<message>javac returned success, but did not compile any files</message>
+								</requireFilesExist>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

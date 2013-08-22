@@ -40,6 +40,10 @@ import com.google.inject.spi.Elements;
 import com.google.inject.spi.PrivateElements;
 
 public class ServiceModuleRewriter {
+	/**
+	 * Annotate exposed bindings with Names.named(service.getId()).
+	 * Additionally request injection of service object.
+	 */
 	public static List<Element> annotateExposedWithId(final List<Element> elements, final Service service) {
 		final boolean singleton = ReflectionTools.isSingleton(service.getClass());
 		return Elements.getElements(new Module() {
