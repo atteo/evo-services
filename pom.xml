@@ -33,6 +33,7 @@
 	</developers>
 	<modules>
 		<module>atomikos</module>
+		<module>bom</module>
 		<module>container</module>
 		<module>container-test-utils</module>
 		<module>database</module>
@@ -43,7 +44,6 @@
 		<module>hibernate-search</module>
 		<module>hornetq</module>
 		<module>hsqldb</module>
-		<module>import</module>
 		<module>jersey</module>
 		<module>jetty</module>
 		<module>jminix</module>
