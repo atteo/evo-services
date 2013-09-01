@@ -15,7 +15,7 @@ JPA (Hibernate), JMX, JAX-RS (Jersey), and many more.
 Changes
 =======
 
-1.0 Initial Moonshine revision, beta quality
+0.9 Initial revision
 
 License
 =======
@@ -25,8 +25,6 @@ Moonshine is available under [Apache License 2.0](https://www.apache.org/license
 Documentation
 =============
 
-[Manual](http://moonshine.atteo.org/manual/)
-
 [Javadoc](http://moonshine.atteo.org/apidocs/)
 
-Tutorial: [How to create blog application with Moonshine](http://moonshine.atteo.org/tutorial/)
+[Examples](https://github.com/atteo/moonshine-examples)
