@@ -15,11 +15,14 @@
  */
 package org.atteo.moonshine.tests;
 
+import javax.sql.DataSource;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.atteo.moonshine.liquibase.LiquibaseFacade;
 
 import com.google.common.base.Strings;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -27,29 +30,32 @@ import com.google.inject.name.Names;
 
 public class FixtureInterceptor implements MethodInterceptor {
 	@Inject
-	Injector injector;
+	private Injector injector;
 
 	@Override
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
-		String fixtureName = invocation.getMethod().getAnnotation(Fixture.class).value();
-		String databaseName = invocation.getMethod().getAnnotation(Fixture.class).database();
+		final Fixture annotation = invocation.getMethod().getAnnotation(Fixture.class);
+		String fixtureName = annotation.value();
+		String databaseName = annotation.database();
 
-		LiquibaseFacade liquibase;
-
-		if (Strings.isNullOrEmpty(databaseName)) {
-			liquibase = injector.getInstance(LiquibaseFacade.class);
-		} else {
-			liquibase = injector.getInstance(Key.get(LiquibaseFacade.class, Names.named(databaseName)));
+		DataSource dataSource;
+		try {
+			if (Strings.isNullOrEmpty(databaseName)) {
+				dataSource = injector.getInstance(DataSource.class);
+			} else {
+				dataSource = injector.getInstance(Key.get(DataSource.class, Names.named(databaseName)));
+			}
+		} catch (ConfigurationException e) {
+			throw new RuntimeException("Cannot find database for annotation " + annotation, e);
 		}
 
-		if (fixtureName.startsWith("/")) {
-			fixtureName = fixtureName.substring(1);
-		} else {
-			fixtureName = invocation.getMethod().getDeclaringClass().getPackage().getName()
+		if (!fixtureName.startsWith("/")) {
+			fixtureName = "/" + invocation.getMethod().getDeclaringClass().getPackage().getName()
 					.replace('.', '/')
 					+ "/" + fixtureName;
 		}
 
+		LiquibaseFacade liquibase = new LiquibaseFacade(dataSource);
 		liquibase.migrate(fixtureName);
 		Object o = null;
 		try {

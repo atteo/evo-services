@@ -13,10 +13,18 @@
  */
 package org.atteo.moonshine.liquibase;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javax.inject.Inject;
+import javax.sql.DataSource;
 
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
@@ -27,11 +35,28 @@ import org.junit.Test;
 		+ "</config>")
 public class LiquibaseServiceTest extends MoonshineTest {
 	@Inject
+	private DataSource dataSource;
+
+	@Inject
 	private LiquibaseFacade migrations;
 
+	private boolean userExists() throws SQLException {
+		try (Connection connection = dataSource.getConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(
+						"select * from users where name = 'Joey Tribbiani';");
+				ResultSet result = preparedStatement.executeQuery()) {
+			return result.next();
+		}
+	}
+
 	@Test
-	public void testMigrations() {
-		migrations.migrate("test-migration1.xml");
-		migrations.migrate("test-migration2.xml");
+	public void testMigrations() throws SQLException {
+		migrations.migrate("/test-migration1.xml");
+
+		assertFalse(userExists());
+		migrations.migrate("/test-migration2.xml");
+		assertTrue((userExists()));
+		migrations.rollbackLastUpdate("/test-migration2.xml");
+		assertFalse(userExists());
 	}
 }

@@ -38,21 +38,31 @@ import liquibase.resource.ResourceAccessor;
 public class LiquibaseFacade {
 	private static final String BEFORE_LAST_UPDATE = "BEFORE_LAST_UPDATE";
 
-	private DataSource dataSource;
+	private final DataSource dataSource;
 
 	@Inject
 	public LiquibaseFacade(DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 
+	/**
+	 * Migrate using given migration.
+	 * @param changelog resource with the migration
+	 */
 	public void migrate(String changelog) {
 		migrate(changelog, null);
 	}
 
+	/**
+	 * Migrate using given migration.
+	 * @param changelog resource with the migration
+	 * @param contexts contexts, see {@link Liquibase#update(String)}.
+	 */
 	public void migrate(String changelog, String contexts) {
 		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
 		DatabaseConnection databaseConnection = null;
+		changelog = normalizeName(changelog);
 
 		try {
 			databaseConnection = new JdbcConnection(dataSource.getConnection());
@@ -71,15 +81,32 @@ public class LiquibaseFacade {
 		}
 	}
 
+	/**
+	 * Rollbacks last update.
+	 * @param changelog resource with the migration
+	 */
 	public void rollbackLastUpdate(String changelog) {
 		rollback(changelog, null, BEFORE_LAST_UPDATE);
 	}
 
+	/**
+	 * Rollbacks last update.
+	 * @param changelog resource with the migration
+	 * @param contexts contexts, see {@link Liquibase#update(String)}.
+	 */
 	public void rollbackLastUpdate(String changelog, String contexts) {
 		rollback(changelog, contexts, BEFORE_LAST_UPDATE) ;
 	}
 
+	/**
+	 * Rollbacks given changelog to given tag.
+	 * @param changelog resource with the migration
+	 * @param contexts contexts, see {@link Liquibase#update(String)}.
+	 * @param tag tag to rollback to
+	 */
 	private void rollback(String changelog, String contexts, String tag) {
+		changelog = normalizeName(changelog);
+
 		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
 		DatabaseConnection databaseConnection = null;
@@ -120,5 +147,12 @@ public class LiquibaseFacade {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	private String normalizeName(String changelog) {
+		if (changelog.startsWith("/") ){
+			changelog = changelog.substring(1);
+		}
+		return changelog;
 	}
 }
