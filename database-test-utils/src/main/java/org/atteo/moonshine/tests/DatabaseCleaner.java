@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class DatabaseCleaner {
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseCleaner.class);
 
-	public void clean(DataSource dataSource) {
+	public static void clean(DataSource dataSource) {
 		logger.debug("Clearing database");
 		try (Connection connection = dataSource.getConnection()) {
 
@@ -43,7 +43,7 @@ public class DatabaseCleaner {
 		}
 	}
 
-	private List<String> analyseDatabase(Connection connection) {
+	private static List<String> analyseDatabase(Connection connection) {
 		try {
 			List<String> tables = new ArrayList<>();
 
@@ -66,13 +66,13 @@ public class DatabaseCleaner {
 		}
 	}
 
-	private void clearTables(Connection connection, List<String> tables) {
+	private static void clearTables(Connection connection, List<String> tables) {
 		for (String table : tables) {
 			clearSingleTable(connection, table);
 		}
 	}
 
-	private void dropTable(Connection connection, String tableName) {
+	private static void dropTable(Connection connection, String tableName) {
 		try (Statement statement = connection.createStatement()) {
 			statement.executeUpdate("DROP TABLE " + tableName);
 		} catch (SQLException ex) {
@@ -80,7 +80,7 @@ public class DatabaseCleaner {
 		}
 	}
 
-	private void clearSingleTable(Connection connection, String tableName) {
+	private static void clearSingleTable(Connection connection, String tableName) {
 		try (Statement statement = connection.createStatement()) {
 			statement.executeUpdate("DELETE FROM " + tableName);
 		} catch (SQLException ex) {
