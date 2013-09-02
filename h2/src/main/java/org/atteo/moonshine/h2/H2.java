@@ -47,7 +47,7 @@ public class H2 extends DatabaseService {
 	 * @see <a href="http://www.h2database.com/html/features.html#database_url">H2 documentation</a>
 	 */
 	@XmlElement
-	@XmlDefaultValue("jdbc:h2:${dataHome}/database;AUTO_SERVER=TRUE")
+	@XmlDefaultValue("jdbc:h2:${dataHome}/database")
 	private String url;
 
 	/**
@@ -83,12 +83,13 @@ public class H2 extends DatabaseService {
 		@Override
 		public DataSource get() {
 			final JdbcDataSource xaDataSource = new JdbcDataSource();
-			xaDataSource.setURL(url);
+			xaDataSource.setURL(url + ";DB_CLOSE_ON_EXIT=FALSE");
 			xaDataSource.setUser(username);
 			xaDataSource.setPassword(password);
 			String name = "defaultDataSource";
 			if (getId() != null) {
 				name = getId();
+				xaDataSource.setDescription(name);
 			}
 			dataSource = wrapper.wrap(name, xaDataSource, pool, testQuery);
 			return dataSource;
