@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.database.DatabaseService;
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.TopLevelService;
 
 import com.google.inject.AbstractModule;
@@ -41,7 +41,7 @@ import com.google.inject.Scopes;
 public class LiquibaseService extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private DatabaseService database;
 
 	@Override

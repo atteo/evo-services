@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.TopLevelService;
 
 /**
@@ -44,7 +44,7 @@ public class PublishJmx extends TopLevelService {
 	 */
 	@XmlElement
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private JMX jmx;
 
 	/**
@@ -52,7 +52,7 @@ public class PublishJmx extends TopLevelService {
 	 */
 	@XmlElement
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private RmiRegistry rmiRegistry;
 
 	@Inject

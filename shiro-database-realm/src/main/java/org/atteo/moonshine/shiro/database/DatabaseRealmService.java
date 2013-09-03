@@ -24,7 +24,7 @@ import org.apache.shiro.realm.Realm;
 import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.liquibase.LiquibaseFacade;
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.shiro.RealmService;
 import org.atteo.moonshine.springdata.DatabaseInitializer;
 import org.atteo.moonshine.springdata.RepositoryFactoryProvider;
@@ -44,11 +44,11 @@ import com.google.inject.Provides;
  */
 @XmlRootElement(name = "database")
 public class DatabaseRealmService extends RealmService {
-	@ImportBindings
+	@ImportService
 	@XmlIDREF
 	private DatabaseService database;
 
-	@ImportBindings
+	@ImportService
 	@XmlIDREF
 	private JpaService jpa;
 

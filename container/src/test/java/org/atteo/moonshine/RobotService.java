@@ -18,11 +18,12 @@ package org.atteo.moonshine;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.services.ImportService;
+import org.atteo.moonshine.services.TopLevelService;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-
-import org.atteo.moonshine.services.ImportBindings;
-import org.atteo.moonshine.services.TopLevelService;
+import com.google.inject.name.Names;
 
 /**
  * Robot service.
@@ -30,27 +31,27 @@ import org.atteo.moonshine.services.TopLevelService;
 @XmlRootElement(name = "robot")
 public class RobotService extends TopLevelService {
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	@Left
 	private LegService leftLeg;
 
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	@Right
 	private LegService rightLeg;
 
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	@Left
 	private HandService leftHand;
 
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	@Right
 	private HandService rightHand;
 
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private HeadService head;
 
 	@Override
@@ -59,6 +60,7 @@ public class RobotService extends TopLevelService {
 			@Override
 			protected void configure() {
 				bind(Robot.class);
+				bind(Boolean.class).annotatedWith(Names.named("headless")).toInstance(head == null);
 			}
 		};
 	};

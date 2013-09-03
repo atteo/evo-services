@@ -12,7 +12,7 @@ import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jta.JtaDataSourceWrapper;
 import org.atteo.moonshine.jta.JtaService;
 import org.atteo.moonshine.jta.PoolOptions;
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.hsqldb.jdbc.pool.JDBCXADataSource;
 
 import com.google.inject.AbstractModule;
@@ -27,7 +27,7 @@ import com.google.inject.Singleton;
 public class Hsqldb extends DatabaseService {
 	@XmlIDREF
 	@XmlElement
-	@ImportBindings
+	@ImportService
 	private JtaService jtaService;
 	@XmlElement
 	private String url = "jdbc:hsqldb:mem:mymemdb";

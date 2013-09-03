@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.moonshine.jpa.JpaService;
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.TopLevelService;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
@@ -41,7 +41,7 @@ import com.google.inject.PrivateModule;
 @XmlRootElement
 public class SpringData extends TopLevelService {
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private JpaService jpa;
 
 	/**
@@ -56,6 +56,10 @@ public class SpringData extends TopLevelService {
 			@Override
 			protected void configure() {
 				bind(RepositoryFactorySupport.class).toProvider(new RepositoryFactoryProvider());
+
+				if (Strings.isNullOrEmpty(packagePrefix)) {
+					return;
+				}
 				bind(DatabaseInitializer.class).toInstance(new DatabaseInitializer() {});
 				Set<Class<?>> classes = new HashSet<>();
 				for (Class<? extends Repository> klass : ClassIndex.getSubclasses(Repository.class)) {
@@ -74,8 +78,7 @@ public class SpringData extends TopLevelService {
 				if (klass.getAnnotation(NoRepositoryBean.class) != null) {
 					return;
 				}
-				if (!Strings.isNullOrEmpty(packagePrefix)
-						&& !klass.getCanonicalName().startsWith(packagePrefix + ".")) {
+				if (!klass.getCanonicalName().startsWith(packagePrefix + ".")) {
 					return;
 				}
 				bind(klass).toProvider(new RepositoryProvider<>(klass));

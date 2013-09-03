@@ -46,7 +46,7 @@ import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.jpa.TransactionScopedEntityManager;
 import org.atteo.moonshine.jta.JtaService;
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.ejb.HibernatePersistence;
 import org.hibernate.service.jta.platform.spi.JtaPlatform;
@@ -60,16 +60,16 @@ import com.google.inject.Scopes;
 import com.google.inject.binder.ScopedBindingBuilder;
 
 /**
- * Hibernate - JPA implementation.
+ * HibernateService - JPA implementation.
  */
 @XmlRootElement(name = "hibernate")
-public class Hibernate extends JpaService {
+public class HibernateService extends JpaService {
 	/**
 	 * Specifies database to use.
 	 */
 	@XmlElement
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private DatabaseService database;
 
 	/**
@@ -77,7 +77,7 @@ public class Hibernate extends JpaService {
 	 */
 	@XmlElement
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private JtaService jta;
 
 	/**
@@ -106,7 +106,7 @@ public class Hibernate extends JpaService {
 	private boolean useNewIdGeneratorMappings = true;
 
 	/**
-	 * If turned on, Hibernate will generate comments inside the SQL, for easier debugging.
+	 * If turned on, HibernateService will generate comments inside the SQL, for easier debugging.
 	 */
 	@XmlElement
 	private boolean useSqlComments = true;
@@ -125,14 +125,14 @@ public class Hibernate extends JpaService {
 	private boolean showSql= false;
 
 	/**
-	 * List of Hibernate plugins.
+	 * List of HibernateService plugins.
 	 */
 	@XmlElementRef
 	@XmlElementWrapper(name = "plugins")
 	private List<HibernatePlugin> plugins;
 
 	/**
-	 * Should Hibernate be loaded on first use.
+	 * Should HibernateService be loaded on first use.
 	 */
 	@XmlElement
 	private boolean lazyLoading = false;
@@ -218,7 +218,7 @@ public class Hibernate extends JpaService {
 
 				@Override
 				public ClassLoader getClassLoader() {
-					return Hibernate.class.getClassLoader();
+					return Thread.currentThread().getContextClassLoader();
 				}
 
 				@Override

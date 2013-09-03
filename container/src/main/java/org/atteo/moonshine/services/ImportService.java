@@ -42,12 +42,12 @@ import com.google.inject.PrivateModule;
  * class Robot {
  *     // LegService provides binding for Leg class
  *     &#064;XmlIDREF
- *     &#064;ImportBindings
+ *     &#064;ImportService
  *     &#064;Left
  *     LegService legService;
  *
  *     &#064;XmlIDREF
- *     &#064;ImportBindings
+ *     &#064;ImportService
  *     &#064;Right
  *     LegService legService;
  *
@@ -65,5 +65,5 @@ import com.google.inject.PrivateModule;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ImportBindings {
+public @interface ImportService {
 }

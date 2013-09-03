@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.XmlDefaultValue;
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.TopLevelService;
 
 import com.google.inject.Module;
@@ -38,7 +38,7 @@ import com.google.inject.servlet.ServletModule;
 @Singleton
 public class TransactionalService extends TopLevelService {
 	@XmlIDREF
-	@ImportBindings
+	@ImportService
 	private JtaService jtaService;
 
 	/**

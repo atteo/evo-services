@@ -69,7 +69,7 @@ public class MoonshineTest {
 	}
 
 	@Test
-	public void shouldImportBindings() throws MoonshineException, IOException {
+	public void shouldImportService() throws MoonshineException, IOException {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
@@ -79,10 +79,13 @@ public class MoonshineTest {
 
 			// when
 			Robot robot = moonshine.getGlobalInjector().getInstance(Robot.class);
+			boolean headless = moonshine.getGlobalInjector().getInstance(Key.get(Boolean.class,
+					Names.named("headless")));
 
 			// then
 			assertThat(robot).isNotNull();
 			assertThat(robot.getLeftLeg()).isNotNull();
+			assertThat(headless).isFalse();
 		}
 	}
 

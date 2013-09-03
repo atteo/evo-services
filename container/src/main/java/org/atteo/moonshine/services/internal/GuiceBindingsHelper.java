@@ -17,9 +17,8 @@ package org.atteo.moonshine.services.internal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.atteo.moonshine.services.Service;
+import org.atteo.moonshine.services.ServiceInfo;
 
 import com.google.inject.Binding;
 import com.google.inject.Module;
@@ -30,13 +29,11 @@ import com.google.inject.spi.PrivateElements;
 
 public class GuiceBindingsHelper {
 
-	public static void printServiceElements(Map<Service, List<com.google.inject.spi.Element>> serviceElements) {
-		for (Map.Entry<Service, List<com.google.inject.spi.Element>> entry : serviceElements.entrySet()) {
-			Service service = entry.getKey();
-			List<com.google.inject.spi.Element> elements = entry.getValue();
+	public static void printServiceElements(List<? extends ServiceInfo> infos) {
+		for (ServiceInfo info : infos) {
 
-			System.out.println("Service: " + service + " {");
-			printElements(elements, 1);
+			System.out.println("Service: " + info.getName() + " {");
+			printElements(info.getElements(), 1);
 			System.out.println("}");
 		}
 	}

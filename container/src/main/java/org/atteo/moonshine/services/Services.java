@@ -15,7 +15,6 @@ package org.atteo.moonshine.services;
 
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -23,7 +22,6 @@ import org.atteo.moonshine.ConfigurationException;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.spi.Element;
 
 /**
  * Configures and starts Moonshine {@link Service services}.
@@ -77,7 +75,7 @@ public interface Services extends AutoCloseable {
 	 * </p>
 	 * @return map from service to the list of bindings
 	 */
-	Map<Service, List<Element>> getServiceElements();
+	List<? extends ServiceInfo> getServiceElements();
 
 	/**
 	 * Starts all services.

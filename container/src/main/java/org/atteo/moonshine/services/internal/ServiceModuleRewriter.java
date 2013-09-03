@@ -16,20 +16,14 @@
 package org.atteo.moonshine.services.internal;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.Service;
 
 import com.google.common.base.Strings;
 import com.google.inject.Binder;
 import com.google.inject.Binding;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.PrivateBinder;
@@ -114,26 +108,26 @@ public class ServiceModuleRewriter {
 
 	/**
 	 * Create a module with all provided elements and also with bindings imported
-	 * with {@link ImportBindings} annotation.
+	 * with {@link ImportService} annotation.
 	 * @param elements elements to include in the module
-	 * @param service service to scan for {@link ImportBindings} annotation
+	 * @param service service to scan for {@link ImportService} annotation
 	 * @param serviceElements map with elements for all services
 	 * @param hints list where hints will be stored
 	 * @return provided elements with bindings imported from given service
 	 */
-	public static List<Element> importBindings(final List<Element> elements, final Service service,
-			final Map<Service, List<Element>> serviceElements, final List<String> hints) {
+	public static List<Element> importBindings(final ServiceMetadata service,
+			final List<ServiceMetadata> services, final List<String> hints) {
 		return Elements.getElements(new Module() {
 			@Override
 			public void configure(final Binder binder) {
-				for (Element element : elements) {
+				for (Element element : service.getElements()) {
 					element.acceptVisitor(new DefaultElementVisitor<Void>() {
 						@Override
 						public Void visit(PrivateElements privateElements) {
 							PrivateBinder privateBinder = binder.newPrivateBinder().withSource(
 									privateElements.getSource());
 
-							importBindings(privateBinder, privateElements, service, serviceElements, hints);
+							importBindings(privateBinder, privateElements, service, services, hints);
 							return null;
 						}
 
@@ -149,27 +143,8 @@ public class ServiceModuleRewriter {
 		});
 	}
 
-	/**
-	 * Find annotation on the field which is itself annotated with {@link BindingAnnotation}.
-	 * @param field field with {@link Field#setAccessible(boolean)} already called
-	 * @return binding annotation or null, if not found
-	 */
-	private static Annotation findBindingAnnotation(Field field) {
-		Annotation result = null;
-		for (Annotation annotation : field.getAnnotations()) {
-			if (annotation.annotationType().isAnnotationPresent(BindingAnnotation.class)) {
-				if (result == null) {
-					result = annotation;
-				} else {
-					throw new RuntimeException("More than one binding annotation specified");
-				}
-			}
-		}
-		return result;
-	}
-
-	private static void importBindings(final PrivateBinder binder, PrivateElements elements, Service service,
-			Map<Service, List<Element>> serviceElements, List<String> hints) {
+	private static void importBindings(final PrivateBinder binder, PrivateElements elements, ServiceMetadata service,
+			List<ServiceMetadata> services, List<String> hints) {
 
 		// copy all elements
 		for (Element element : elements.getElements()) {
@@ -179,44 +154,12 @@ public class ServiceModuleRewriter {
 			binder.expose(key);
 		}
 
-		for (final Field field : service.getClass().getDeclaredFields()) {
-			if (!field.isAnnotationPresent(ImportBindings.class)) {
-				continue;
-			}
-
-			if (!Service.class.isAssignableFrom(field.getType())) {
-				throw new RuntimeException("@" + ImportBindings.class.getSimpleName() + " annotation can only"
-						+ " be specified on a field of type " + Service.class.getSimpleName());
-			}
-
-			AccessController.doPrivileged(new PrivilegedAction<Void>() {
-				@Override
-				public Void run() {
-					field.setAccessible(true);
-					return null;
-				}
-			});
-			Service importedService;
-			try {
-				importedService = (Service) field.get(service);
-			} catch (IllegalAccessException| IllegalArgumentException e) {
-				throw new RuntimeException("Cannot access field", e);
-			}
-
+		for (final ServiceMetadata.Dependency dependency : service.getDependencies()) {
 			List<Element> importedElements;
 
-			if (importedService != null) {
-				importedElements = serviceElements.get(importedService);
-				if (importedElements == null) {
-					throw new RuntimeException("Imported service does not specify any module");
-				}
-			} else {
-				importedElements = findDefaultServiceElements(serviceElements, field.getType());
-				if (importedElements == null) {
-					hints.add("Service '" + service.toString() + "' depends on '" + field.getType().getSimpleName()
-							+ "' which is not available");
-					importedElements = Collections.emptyList();
-				}
+			importedElements = dependency.getService().getElements();
+			if (importedElements == null) {
+				throw new RuntimeException("Imported service does not specify any module");
 			}
 
 			for (Element element : importedElements) {
@@ -224,7 +167,7 @@ public class ServiceModuleRewriter {
 					private <T> void bindKey(Key<T> key) {
 						Key<T> sourceKey;
 
-						Annotation annotation = findBindingAnnotation(field);
+						Annotation annotation = dependency.getAnnotation();
 						if (annotation == null) {
 							sourceKey = Key.get(key.getTypeLiteral());
 						} else {
@@ -252,23 +195,5 @@ public class ServiceModuleRewriter {
 				});
 			}
 		}
-	}
-
-	private static List<Element> findDefaultServiceElements(Map<Service, List<Element>> serviceElements,
-			Class<?> type) {
-
-		List<Element> result = null;
-		for (Map.Entry<Service, List<Element>> entry : serviceElements.entrySet()) {
-			Service service = entry.getKey();
-			List<Element> elements = entry.getValue();
-
-			if (type.isAssignableFrom(service.getClass())) {
-				if (result != null) {
-					throw new RuntimeException("Could not find unique service of type: " + type);
-				}
-				result = elements;
-			}
-		}
-		return result;
 	}
 }

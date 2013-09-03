@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.ImportBindings;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.TopLevelService;
 import org.atteo.moonshine.webserver.WebServerService;
 
@@ -28,12 +28,12 @@ import com.google.inject.PrivateModule;
 
 @XmlRootElement(name = "webdriver-helper")
 public class WebDriverHelperService extends TopLevelService {
-	@ImportBindings
+	@ImportService
 	@XmlElement
 	@XmlIDREF
 	private WebDriverService webDriver;
 
-	@ImportBindings
+	@ImportService
 	@XmlElement
 	@XmlIDREF
 	private WebServerService webServer;
