@@ -14,6 +14,11 @@
 package org.atteo.moonshine.h2;
 
 import org.atteo.moonshine.database.DatabaseTest;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <h2/>"
+		+ "</config>")
 public class H2Test extends DatabaseTest {
 }

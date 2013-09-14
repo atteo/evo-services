@@ -59,6 +59,8 @@ public class Hsqldb extends DatabaseService {
 			}
 			xaDataSource.setUrl(url);
 			dataSource = wrapper.wrap(name, xaDataSource, pool, "VALUES 1");
+
+			executeMigrations(dataSource);
 			return dataSource;
 		}
 	}

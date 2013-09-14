@@ -23,43 +23,23 @@ import javax.sql.DataSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.jta.Transaction;
-import org.atteo.moonshine.jta.Transactional;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <atomikos>"
+		+ "        <transactionTimeout>5</transactionTimeout>"
+		+ "    </atomikos>"
+		+ "    <transactional/>"
+		+ "    <migration-service/>"
+		+ "</config>")
 public abstract class DatabaseTest extends MoonshineTest {
+
 	@Inject
 	private DataSource dataSource;
-
-	@Before
-	@Transactional
-	public void setupDatabase() throws SQLException {
-		try (Connection connection = dataSource.getConnection()) {
-			try (PreparedStatement statement = connection.prepareStatement(
-					"create table users (name varchar(256))")) {
-				statement.execute();
-			}
-			try (PreparedStatement statement = connection.prepareStatement(
-					"insert into users(name) values ('John')")) {
-				statement.execute();
-			}
-		}
-	}
-
-	@After
-	@Transactional
-	public void dropDatabase() throws SQLException {
-		try (Connection connection = dataSource.getConnection()) {
-			try (PreparedStatement statement = connection.prepareStatement(
-					"drop table users")) {
-				statement.execute();
-			}
-		}
-	}
-
 
 	@Test
 	public void shouldInjectDataSource() {

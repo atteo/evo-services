@@ -13,6 +13,9 @@
  */
 package org.atteo.moonshine.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.atteo.moonshine.services.TopLevelService;
@@ -24,4 +27,22 @@ import org.atteo.moonshine.services.TopLevelService;
  * </p>
  */
 public abstract class DatabaseService extends TopLevelService {
+	protected List<DatabaseMigration> migrations = new ArrayList<>();
+
+	/**
+	 * Register database migration.
+	 */
+	public void registerMigration(DatabaseMigration migration) {
+		migrations.add(migration);
+	}
+
+	/**
+	 * Execute registered database migrations.
+	 */
+	protected void executeMigrations(DataSource dataSource) {
+		for (DatabaseMigration migration : migrations) {
+			migration.execute(dataSource);
+		}
+		migrations = null;
+	}
 }

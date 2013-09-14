@@ -44,10 +44,16 @@ public class H2 extends DatabaseService {
 
 	/**
 	 * Database URL.
+	 * <p>
+	 * By default in-memory database is used. For file repository use:
+	 * <pre>
+	 * jdbc:h2:${dataHome}/database
+	 * </pre>
+	 * </p>
 	 * @see <a href="http://www.h2database.com/html/features.html#database_url">H2 documentation</a>
 	 */
 	@XmlElement
-	@XmlDefaultValue("jdbc:h2:${dataHome}/database")
+	@XmlDefaultValue("jdbc:h2:mem:;DB_CLOSE_DELAY=-1")
 	private String url;
 
 	/**
@@ -92,6 +98,7 @@ public class H2 extends DatabaseService {
 				xaDataSource.setDescription(name);
 			}
 			dataSource = wrapper.wrap(name, xaDataSource, pool, testQuery);
+			executeMigrations(dataSource);
 			return dataSource;
 		}
 	}
