@@ -246,41 +246,43 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 
 		for (ServiceMetadata metadata : servicesMetadata) {
-			for (final Field field : metadata.getService().getClass().getDeclaredFields()) {
-				if (!field.isAnnotationPresent(ImportService.class)) {
-					continue;
-				}
-
-				if (!Service.class.isAssignableFrom(field.getType())) {
-					throw new RuntimeException("@" + ImportService.class.getSimpleName() + " annotation can only"
-							+ " be specified on a field of type " + Service.class.getSimpleName());
-				}
-
-				AccessController.doPrivileged(new PrivilegedAction<Void>() {
-					@Override
-					public Void run() {
-						field.setAccessible(true);
-						return null;
+			for (Class<? super Service> serviceClass : ReflectionTools.getAncestors(metadata.getService().getClass())) {
+				for (final Field field : serviceClass.getDeclaredFields()) {
+					if (!field.isAnnotationPresent(ImportService.class)) {
+						continue;
 					}
-				});
-				Service importedService;
-				try {
-					importedService = (Service) field.get(metadata.getService());
-					ServiceMetadata importedServiceMetadata;
-					if (importedService == null) {
-						importedServiceMetadata = findDefaultService(servicesMetadata, field.getType());
 
-						field.set(metadata.getService(), importedServiceMetadata.getService());
-					} else {
-						importedServiceMetadata = map.get(importedService);
-						if (importedServiceMetadata == null) {
-							throw new RuntimeException("Unknown service imported");
+					if (!Service.class.isAssignableFrom(field.getType())) {
+						throw new RuntimeException("@" + ImportService.class.getSimpleName() + " annotation can only"
+								+ " be specified on a field of type " + Service.class.getSimpleName());
+					}
+
+					AccessController.doPrivileged(new PrivilegedAction<Void>() {
+						@Override
+						public Void run() {
+							field.setAccessible(true);
+							return null;
 						}
+					});
+					Service importedService;
+					try {
+						importedService = (Service) field.get(metadata.getService());
+						ServiceMetadata importedServiceMetadata;
+						if (importedService == null) {
+							importedServiceMetadata = findDefaultService(servicesMetadata, field.getType());
+
+							field.set(metadata.getService(), importedServiceMetadata.getService());
+						} else {
+							importedServiceMetadata = map.get(importedService);
+							if (importedServiceMetadata == null) {
+								throw new RuntimeException("Unknown service imported");
+							}
+						}
+						Annotation annotation = findBindingAnnotation(field);
+						metadata.addDependency(importedServiceMetadata, annotation);
+					} catch (IllegalAccessException| IllegalArgumentException e) {
+						throw new RuntimeException("Cannot access field", e);
 					}
-					Annotation annotation = findBindingAnnotation(field);
-					metadata.addDependency(importedServiceMetadata, annotation);
-				} catch (IllegalAccessException| IllegalArgumentException e) {
-					throw new RuntimeException("Cannot access field", e);
 				}
 			}
 		}

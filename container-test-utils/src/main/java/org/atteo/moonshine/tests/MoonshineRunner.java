@@ -17,19 +17,15 @@ package org.atteo.moonshine.tests;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.services.Service;
+import org.atteo.moonshine.services.internal.ReflectionTools;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
-
-import com.google.common.collect.Sets;
 
 /**
  * Runs the tests with {@link Moonshine} container initialized.
@@ -56,7 +52,7 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected List<TestRule> classRules() {
-		Iterable<Class<?>> ancestors = getAncestors(getTestClass().getJavaClass());
+		Iterable<Class<?>> ancestors = ReflectionTools.getAncestorsWithInterfaces(getTestClass().getJavaClass());
 
 		List<String> configs = new ArrayList<>();
 		List<MoonshineConfigurator> configurators = new ArrayList<>();
@@ -123,28 +119,5 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 		rules.add(moonshineRule.injectMembers(target));
 		rules.add(new MockitoRule());
 		return rules;
-	}
-
-	private static Iterable<Class<?>> getAncestors(Class<?> klass) {
-		List<Class<?>> result = new ArrayList<>();
-
-		Deque<Class<?>> ancestors = new LinkedList<>();
-		for (Class<?> ancestor = klass; ancestor != Object.class; ancestor = ancestor.getSuperclass()) {
-			ancestors.addFirst(ancestor);
-		}
-
-		Set<Class<?>> implementedInterfaces = Sets.newIdentityHashSet();
-
-		for (Class<?> ancestor : ancestors) {
-			for (Class<?> interfaceClass : ancestor.getInterfaces()) {
-				if (implementedInterfaces.add(interfaceClass)) {
-					result.add(interfaceClass);
-				}
-			}
-
-			result.add(ancestor);
-		}
-
-		return result;
 	}
 }
