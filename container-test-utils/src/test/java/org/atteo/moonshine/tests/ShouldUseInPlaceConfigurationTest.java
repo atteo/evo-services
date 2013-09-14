@@ -26,7 +26,7 @@ import org.junit.Test;
 		+ "<config>"
 		+ "    <simple message = 'Hello World'/>"
 		+ "</config>")
-public class MoonshineConfigurationTest extends MoonshineTest {
+public class ShouldUseInPlaceConfigurationTest extends MoonshineTest {
 	@Inject
 	@Named("message")
 	private String message;

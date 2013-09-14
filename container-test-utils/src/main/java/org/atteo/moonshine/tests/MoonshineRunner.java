@@ -17,7 +17,10 @@ package org.atteo.moonshine.tests;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.services.Service;
@@ -25,6 +28,8 @@ import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+
+import com.google.common.collect.Sets;
 
 /**
  * Runs the tests with {@link Moonshine} container initialized.
@@ -51,18 +56,23 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected List<TestRule> classRules() {
-		if (getTestClass().getJavaClass().isAnnotationPresent(MoonshineConfiguration.class)) {
-			final MoonshineConfiguration annotation = getTestClass().getJavaClass()
-					.getAnnotation(MoonshineConfiguration.class);
-			String[] configs = annotation.value();
+		Iterable<Class<?>> ancestors = getAncestors(getTestClass().getJavaClass());
 
-			for (int i = 0; i < configs.length; i++) {
-				if (!configs[i].startsWith("/")) {
-					configs[i] = "/" + getTestClass().getJavaClass().getPackage() .getName().replace(".", "/") + "/"
-							+ configs[i];
-				}
+		List<String> configs = new ArrayList<>();
+		List<MoonshineConfigurator> configurators = new ArrayList<>();
+
+		for (Class<?> ancestor : ancestors) {
+			final MoonshineConfiguration annotation = ancestor.getAnnotation(MoonshineConfiguration.class);
+			if (annotation == null) {
+				continue;
 			}
-			List<MoonshineConfigurator> configurators = new ArrayList<>();
+
+			for (String config : annotation.value()) {
+				if (!config.startsWith("/")) {
+					config = "/" + ancestor.getPackage() .getName().replace(".", "/") + "/" + config;
+				}
+				configs.add(config);
+			}
 
 			Class<? extends MoonshineConfigurator> configuratorKlass = annotation.configurator();
 			if (configuratorKlass != null && configuratorKlass != MoonshineConfigurator.class) {
@@ -74,25 +84,26 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 					throw new RuntimeException(e);
 				}
 			}
-			MoonshineConfigurator configurator = new MoonshineConfigurator() {
-				@Override
-				public void configureMoonshine(Moonshine.Builder builder) {
-					if (annotation.skipDefault()) {
-						builder.skipDefaultConfigurationFiles();
-					}
-					if (!annotation.fromString().isEmpty()) {
-						builder.addConfigurationFromString(annotation.fromString());
-					}
 
-					builder.arguments(annotation.arguments());
-				}
-			};
-			configurators.add(configurator);
+			if (annotation.skipDefault() || !annotation.fromString().isEmpty()) {
+				MoonshineConfigurator configurator = new MoonshineConfigurator() {
+					@Override
+					public void configureMoonshine(Moonshine.Builder builder) {
+						if (annotation.skipDefault()) {
+							builder.skipDefaultConfigurationFiles();
+						}
+						if (!annotation.fromString().isEmpty()) {
+							builder.addConfigurationFromString(annotation.fromString());
+						}
 
-			moonshineRule = new MoonshineRule(configurators, configs);
-		} else {
-			moonshineRule = new MoonshineRule();
+						builder.arguments(annotation.arguments());
+					}
+				};
+				configurators.add(configurator);
+			}
 		}
+
+		moonshineRule = new MoonshineRule(configurators, configs.toArray(new String[configs.size()]));
 
 		List<TestRule> rules = super.classRules();
 		rules.add(moonshineRule);
@@ -112,5 +123,28 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 		rules.add(moonshineRule.injectMembers(target));
 		rules.add(new MockitoRule());
 		return rules;
+	}
+
+	private static Iterable<Class<?>> getAncestors(Class<?> klass) {
+		List<Class<?>> result = new ArrayList<>();
+
+		Deque<Class<?>> ancestors = new LinkedList<>();
+		for (Class<?> ancestor = klass; ancestor != Object.class; ancestor = ancestor.getSuperclass()) {
+			ancestors.addFirst(ancestor);
+		}
+
+		Set<Class<?>> implementedInterfaces = Sets.newIdentityHashSet();
+
+		for (Class<?> ancestor : ancestors) {
+			for (Class<?> interfaceClass : ancestor.getInterfaces()) {
+				if (implementedInterfaces.add(interfaceClass)) {
+					result.add(interfaceClass);
+				}
+			}
+
+			result.add(ancestor);
+		}
+
+		return result;
 	}
 }

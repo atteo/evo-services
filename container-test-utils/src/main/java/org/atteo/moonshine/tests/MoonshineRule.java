@@ -71,7 +71,8 @@ public class MoonshineRule implements TestRule {
 	}
 
 	/**
-	 * Initializes {@link Moonshine} environment from "/test-config.xml" configuration file.
+	 * Initializes {@link Moonshine} environment.
+	 *
 	 * <p>
 	 * Usage:
 	 * <pre>
@@ -81,27 +82,15 @@ public class MoonshineRule implements TestRule {
 	 * }
 	 * </pre>
 	 * </p>
+	 * @param configs resource path to the configuration files, by default "/test-config.xml"
 	 */
-	public MoonshineRule() {
-		this.configs = DEFAULT_CONFIG;
-	}
 
-	/**
-	 * Initializes {@link Moonshine} environment from given configuration file.
-	 *
-	 * @param config resource path to the configuration file
-	 */
-	public MoonshineRule(String config) {
-		this.configs = new String[] { config };
-	}
-
-	/**
-	 * Initializes {@link Moonshine} environment from given configuration files.
-	 *
-	 * @param configs resource path to the configuration files
-	 */
 	public MoonshineRule(String... configs) {
-		this.configs = configs;
+		if (configs.length == 0) {
+			this.configs = DEFAULT_CONFIG;
+		} else {
+			this.configs = configs;
+		}
 	}
 
 	/**
@@ -112,7 +101,11 @@ public class MoonshineRule implements TestRule {
 	 */
 	public MoonshineRule(MoonshineConfigurator configurator, String... configs) {
 		this.configurators = Lists.newArrayList(configurator);
-		this.configs = configs;
+		if (configs.length == 0) {
+			this.configs = DEFAULT_CONFIG;
+		} else {
+			this.configs = configs;
+		}
 	}
 
 	/**
@@ -123,7 +116,11 @@ public class MoonshineRule implements TestRule {
 	 */
 	public MoonshineRule(List<MoonshineConfigurator> configurators, String... configs) {
 		this.configurators = configurators;
-		this.configs = configs;
+		if (configs.length == 0) {
+			this.configs = DEFAULT_CONFIG;
+		} else {
+			this.configs = configs;
+		}
 	}
 
 	@Override

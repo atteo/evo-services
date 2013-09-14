@@ -19,13 +19,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.injection.InjectMembers;
+import org.atteo.moonshine.services.TopLevelService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
-
-import org.atteo.moonshine.services.TopLevelService;
 
 @XmlRootElement(name = "injectmembers")
 public class InjectMemberService extends TopLevelService {
