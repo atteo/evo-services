@@ -38,15 +38,11 @@ import javax.validation.ValidatorFactory;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.jpa.TransactionScopedEntityManager;
-import org.atteo.moonshine.jta.JtaService;
-import org.atteo.moonshine.services.ImportService;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.ejb.HibernatePersistence;
 import org.hibernate.service.jta.platform.spi.JtaPlatform;
@@ -64,22 +60,6 @@ import com.google.inject.binder.ScopedBindingBuilder;
  */
 @XmlRootElement(name = "hibernate")
 public class HibernateService extends JpaService {
-	/**
-	 * Specifies database to use.
-	 */
-	@XmlElement
-	@XmlIDREF
-	@ImportService
-	private DatabaseService database;
-
-	/**
-	 * Specifies JTA implementation to use.
-	 */
-	@XmlElement
-	@XmlIDREF
-	@ImportService
-	private JtaService jta;
-
 	/**
 	 * Automatically initialize database schema.
 	 *

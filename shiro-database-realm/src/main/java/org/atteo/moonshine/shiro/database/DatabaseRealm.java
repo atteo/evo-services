@@ -32,9 +32,9 @@ import org.apache.shiro.util.SimpleByteSource;
 import com.google.inject.Inject;
 
 public class DatabaseRealm extends AuthenticatingRealm {
-	private int hashIterations = 1536;
-	private String hashAlgorithm = "SHA-256";
-	private RandomNumberGenerator randomNumberGenerator;
+	private final int hashIterations = 1536;
+	private final String hashAlgorithm = "SHA-256";
+	private final RandomNumberGenerator randomNumberGenerator;
 
 	@Inject
 	private AccountRepository accountRepository;

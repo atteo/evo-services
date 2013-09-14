@@ -21,19 +21,18 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.shiro.realm.Realm;
+import org.atteo.moonshine.database.DatabaseMigration;
 import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.liquibase.LiquibaseFacade;
 import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.shiro.RealmService;
-import org.atteo.moonshine.springdata.DatabaseInitializer;
 import org.atteo.moonshine.springdata.RepositoryFactoryProvider;
 import org.atteo.moonshine.springdata.RepositoryProvider;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
-import com.google.inject.Provides;
 
 /**
  * Realm which keeps accounts in the database.
@@ -46,23 +45,25 @@ import com.google.inject.Provides;
 public class DatabaseRealmService extends RealmService {
 	@ImportService
 	@XmlIDREF
-	private DatabaseService database;
+	private JpaService jpa;
 
 	@ImportService
-	@XmlIDREF
-	private JpaService jpa;
+	private DatabaseService database;
 
 	@Override
 	public Module configure() {
-		return new PrivateModule() {
-			@Provides
-			@Singleton
-			public DatabaseInitializer migrateDatabase(DataSource dataSource) {
+		// we need to use the same database as JPA which we are using
+		database = jpa.getDatabaseService();
+
+		database.registerMigration(new DatabaseMigration() {
+			@Override
+			public void execute(DataSource dataSource) {
 				new LiquibaseFacade(dataSource).migrate("liquibase/database-realm.xml");
-
-				return new DatabaseInitializer() { };
 			}
+		});
 
+
+		return new PrivateModule() {
 			@Override
 			protected void configure() {
 				bind(RepositoryFactorySupport.class).toProvider(RepositoryFactoryProvider.class)

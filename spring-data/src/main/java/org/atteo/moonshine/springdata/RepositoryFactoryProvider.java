@@ -31,13 +31,6 @@ import com.google.inject.Provider;
  * </p>
  */
 public class RepositoryFactoryProvider implements Provider<RepositoryFactorySupport> {
-	/*
-		Let's inject DatabaseInitializer before injecting EntityManager, so the provider registered
-		for DatabaseInitializer can initialize the database before EntityManager is created.
-	*/
-	@Inject
-	private DatabaseInitializer databaseInitializer;
-
 	@Inject
 	private EntityManager manager;
 

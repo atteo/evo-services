@@ -60,7 +60,6 @@ public class SpringData extends TopLevelService {
 				if (Strings.isNullOrEmpty(packagePrefix)) {
 					return;
 				}
-				bind(DatabaseInitializer.class).toInstance(new DatabaseInitializer() {});
 				Set<Class<?>> classes = new HashSet<>();
 				for (Class<? extends Repository> klass : ClassIndex.getSubclasses(Repository.class)) {
 					configureProvider(klass);

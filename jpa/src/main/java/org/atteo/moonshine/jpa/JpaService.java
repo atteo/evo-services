@@ -17,7 +17,12 @@ package org.atteo.moonshine.jpa;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 
+import org.atteo.moonshine.database.DatabaseService;
+import org.atteo.moonshine.jta.JtaService;
+import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.TopLevelService;
 
 /**
@@ -28,5 +33,27 @@ import org.atteo.moonshine.services.TopLevelService;
  * </p>
  */
 public abstract class JpaService extends TopLevelService {
+	/**
+	 * Specifies database to use.
+	 */
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	protected DatabaseService database;
 
+	/**
+	 * Specifies JTA implementation to use.
+	 */
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	private JtaService jta;
+
+
+	/**
+	 * Returns {@link DatabaseService} used by this JPA instance.
+	 */
+	public DatabaseService getDatabaseService() {
+		return database;
+	}
 }
