@@ -101,11 +101,7 @@ public class MoonshineRule implements TestRule {
 	 */
 	public MoonshineRule(MoonshineConfigurator configurator, String... configs) {
 		this.configurators = Lists.newArrayList(configurator);
-		if (configs.length == 0) {
-			this.configs = DEFAULT_CONFIG;
-		} else {
-			this.configs = configs;
-		}
+		this.configs = configs;
 	}
 
 	/**
@@ -116,7 +112,7 @@ public class MoonshineRule implements TestRule {
 	 */
 	public MoonshineRule(List<MoonshineConfigurator> configurators, String... configs) {
 		this.configurators = configurators;
-		if (configs.length == 0) {
+		if (configs.length == 0 && configurators.isEmpty()) {
 			this.configs = DEFAULT_CONFIG;
 		} else {
 			this.configs = configs;
