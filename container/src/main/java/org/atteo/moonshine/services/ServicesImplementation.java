@@ -78,7 +78,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		return this;
 	}
 
-	private Injector buildInjector() {
+	private Injector buildInjector() throws ConfigurationException {
 		List<Module> modules = new ArrayList<>();
 		DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();
 
@@ -236,7 +236,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 	/**
 	 * Finds dependencies between services.
 	 */
-	private List<ServiceMetadata> readServiceMetadata(List<Service> services) {
+	private List<ServiceMetadata> readServiceMetadata(List<Service> services) throws ConfigurationException {
 		List<ServiceMetadata> servicesMetadata = new ArrayList<>();
 		Map<Service, ServiceMetadata> map = new IdentityHashMap<>();
 		for (Service service : services) {
@@ -270,6 +270,11 @@ public class ServicesImplementation implements Services, Services.Builder {
 						ServiceMetadata importedServiceMetadata;
 						if (importedService == null) {
 							importedServiceMetadata = findDefaultService(servicesMetadata, field.getType());
+							if (importedServiceMetadata == null) {
+								throw new ConfigurationException("Service '" + metadata.getName()
+										+ "' requires '" + field.getType().getName() + "' which was not found."
+										+ " Please check your configuration files.");
+							}
 
 							field.set(metadata.getService(), importedServiceMetadata.getService());
 						} else {
