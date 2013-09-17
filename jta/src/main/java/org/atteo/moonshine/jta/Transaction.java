@@ -23,6 +23,7 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -63,6 +64,8 @@ public class Transaction {
 	}
 
 	public static <T, E extends Throwable> T require(ReturningRunnable<T, E> runnable) throws E {
+		checkNotNull(userTransactionProvider, "Transactions not supported. You need to add <transactional/>"
+				+ " to your configuration file.");
 		UserTransaction userTransaction = userTransactionProvider.get();
 
 		boolean myTransaction = false;

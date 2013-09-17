@@ -20,6 +20,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Wraps method call inside transaction.
+ *
+ * <p>
+ * You need to add {@link TransactionalService} to your configuration to support this annotation.
+ * </p>
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface Transactional {
