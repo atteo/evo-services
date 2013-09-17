@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.config.Configurable;
 import org.eclipse.jetty.server.handler.ContextHandler;
 
-import com.google.inject.Module;
 
 /**
  * ContextHandler. This handler wraps a call to handle
@@ -57,9 +56,5 @@ public class ContextHandlerConfig extends Configurable {
 		contextHandler.setVirtualHosts(virtualHosts);
 
 		return contextHandler;
-	}
-
-	public Module configure() {
-		return wrappedHandler.configure();
 	}
 }

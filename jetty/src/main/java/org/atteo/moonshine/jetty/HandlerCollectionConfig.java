@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 
 /**
  * A collection of handlers.
@@ -51,20 +49,5 @@ public class HandlerCollectionConfig extends HandlerConfig {
 			handlerCollection.addHandler(handler.getHandler());
 		}
 		return handlerCollection;
-	}
-
-	@Override
-	public Module configure() {
-		return new AbstractModule() {
-			@Override
-			protected void configure() {
-				for (HandlerConfig handler : handlers) {
-					Module module = handler.configure();
-					if (module != null) {
-						install(module);
-					}
-				}
-			}
-		};
 	}
 }

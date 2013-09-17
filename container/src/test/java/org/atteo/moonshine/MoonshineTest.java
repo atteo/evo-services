@@ -64,7 +64,58 @@ public class MoonshineTest {
 
 			// then
 			assertThat(caughtException()).isInstanceOf(MoonshineException.class)
-					.hasMessage("Service 'org.atteo.moonshine.SingletonService' is marked as singleton, but has an id specified");
+					.hasMessage("Service '\"test\" SingletonService' is marked as singleton, but has an id specified");
+		}
+	}
+
+	@Test
+	public void shouldThrowWhenMultipleSingletonServices() throws MoonshineException, IOException {
+		// given
+		try (Moonshine moonshine = when(Moonshine.Factory.builder()
+				.homeDirectory("target/test-home/")
+				.addConfigurationFromString(""
+				+ "<config>"
+				+ "    <singletonService/>"
+				+ "    <singletonService/>"
+				+ "</config>"))
+				.build()) {
+
+			// then
+			assertThat(caughtException()).isInstanceOf(MoonshineException.class)
+					.hasMessageContaining("Service 'SingletonService' is marked as singleton,"
+					+ " but is declared more than once in configuration file");
+		}
+	}
+
+	@Test
+	public void shouldAllowMultipleNonSingletonServices() throws MoonshineException, IOException {
+		// given
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.homeDirectory("target/test-home/")
+				.addConfigurationFromString(""
+				+ "<config>"
+				+ "    <head id='first'/>"
+				+ "    <head id='second'/>"
+				+ "</config>")
+				.build()) {
+
+			// then
+		}
+	}
+
+	@Test
+	public void shouldAllowSingletonAndNonSingletonServicesToCoexist() throws MoonshineException, IOException {
+		// given
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.homeDirectory("target/test-home/")
+				.addConfigurationFromString(""
+				+ "<config>"
+				+ "    <head/>"
+				+ "    <singletonService/>"
+				+ "</config>")
+				.build()) {
+
+			// then
 		}
 	}
 
@@ -79,13 +130,10 @@ public class MoonshineTest {
 
 			// when
 			Robot robot = moonshine.getGlobalInjector().getInstance(Robot.class);
-			boolean headless = moonshine.getGlobalInjector().getInstance(Key.get(Boolean.class,
-					Names.named("headless")));
 
 			// then
 			assertThat(robot).isNotNull();
 			assertThat(robot.getLeftLeg()).isNotNull();
-			assertThat(headless).isFalse();
 		}
 	}
 
@@ -267,5 +315,38 @@ public class MoonshineTest {
 			// then
 			assertThat(moonshine).isNull();
 		}
+	}
+
+	@Test
+	public void shouldDetectNonSingletonServicesBindingWithAnnotation() throws MoonshineException, IOException {
+		try (Moonshine moonshine = when(Moonshine.Factory.builder()
+				.homeDirectory("target/test-home")
+				.addConfigurationFromString(""
+					+ "<config>"
+					+ "    <incorrect/>"
+					+ "</config>"))
+				.build()) {
+		}
+
+		// then
+		assertThat(caughtException()).isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Only services marked with @Singleton can bind with annotation");
+	}
+
+	@Test
+	public void shouldDetectNonSingletonServicesBindingWithAnnotationInPrivateModule()
+			throws MoonshineException, IOException {
+		try (Moonshine moonshine = when(Moonshine.Factory.builder()
+				.homeDirectory("target/test-home")
+				.addConfigurationFromString(""
+					+ "<config>"
+					+ "    <incorrect-private/>"
+					+ "</config>"))
+				.build()) {
+		}
+
+		// then
+		assertThat(caughtException()).isInstanceOf(IllegalStateException.class)
+				.hasMessageContaining("Only services marked with @Singleton can expose bindings with annotation");
 	}
 }

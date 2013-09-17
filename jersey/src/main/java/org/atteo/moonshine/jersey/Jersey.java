@@ -16,6 +16,7 @@ package org.atteo.moonshine.jersey;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Singleton;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.annotation.XmlElement;
@@ -36,6 +37,7 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
  * Starts Jersey JAX-RS implementation.
  */
 @XmlRootElement(name = "jersey")
+@Singleton
 public class Jersey extends TopLevelService {
 	/**
 	 * Prefix under which JAX-RS resources should be registered.

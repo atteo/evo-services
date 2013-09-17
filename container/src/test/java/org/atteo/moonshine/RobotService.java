@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.services.ImportService;
 
+import static com.google.common.base.Preconditions.checkState;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
 
 /**
  * Robot service.
@@ -38,8 +38,8 @@ public class RobotService extends HeadLessRobotService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
+				checkState(head != null, "HeadService was not imported");
 				bind(Robot.class);
-				bind(Boolean.class).annotatedWith(Names.named("headless")).toInstance(head == null);
 			}
 		};
 	};

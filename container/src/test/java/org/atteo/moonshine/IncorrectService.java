@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine;
 
-import org.atteo.evo.config.Configurable;
-import org.eclipse.jetty.server.Handler;
+import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.services.TopLevelService;
 
-public abstract class HandlerConfig extends Configurable {
-	public abstract Handler getHandler();
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.name.Names;
+
+@XmlRootElement(name = "incorrect")
+public class IncorrectService extends TopLevelService {
+	@Override
+	public Module configure() {
+		return new AbstractModule() {
+			@Override
+			protected void configure() {
+				bind(String.class).annotatedWith(Names.named("dummy")).toInstance("dummy");
+			}
+		};
+	}
 }

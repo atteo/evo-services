@@ -31,6 +31,7 @@ public class ServiceMetadata implements ServiceInfo {
 	private final List<Dependency> dependencies = new ArrayList<>();
 	private Status status = Status.CREATED;
 	private List<com.google.inject.spi.Element> elements;
+	private boolean singleton = false;
 
 	public ServiceMetadata(Service service) {
 		this.service = service;
@@ -90,6 +91,14 @@ public class ServiceMetadata implements ServiceInfo {
 		return builder.toString();
 	}
 
+	public boolean isSingleton() {
+		return singleton;
+	}
+
+	public void setSingleton(boolean singleton) {
+		this.singleton = singleton;
+	}
+
 	public static class Dependency {
 		private final ServiceMetadata service;
 		private final Annotation annotation;
@@ -110,6 +119,5 @@ public class ServiceMetadata implements ServiceInfo {
 
 	public static enum Status {
 		CREATED, READY, STARTED, CLOSED
-
 	}
 }

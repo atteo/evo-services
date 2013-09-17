@@ -6,7 +6,7 @@
 			</sslcontextfactory>
 		</sslcontextfactories>
 		<connectors>
-			<serverconnector>
+			<serverconnector id="nonssl">
 				<provideAddress>true</provideAddress>
 			</serverconnector>
 			<serverconnector id="ssl">

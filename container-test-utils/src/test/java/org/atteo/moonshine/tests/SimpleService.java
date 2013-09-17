@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine.tests;
 
+import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -25,6 +26,7 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 
 @XmlRootElement(name = "simple")
+@Singleton
 public class SimpleService extends TopLevelService {
 	@XmlAttribute
 	private String message;

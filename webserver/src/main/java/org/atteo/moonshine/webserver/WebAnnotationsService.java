@@ -41,6 +41,7 @@ import com.google.inject.servlet.ServletModule;
  * </p>
  */
 @XmlRootElement(name = "web-annotations")
+@Singleton
 public class WebAnnotationsService extends TopLevelService {
 
 	@Override

@@ -17,21 +17,20 @@ package org.atteo.moonshine;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.services.TopLevelService;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
-
-import org.atteo.moonshine.services.TopLevelService;
 
 /**
  * Robot hand service.
  */
 @XmlRootElement(name = "hand")
 public class HandService extends TopLevelService {
-	private static Module staticModule = new AbstractModule() {
+	private static final Module staticModule = new AbstractModule() {
 		@Override
 		protected void configure() {
-			bind(String.class).annotatedWith(Names.named("CHECK DUPLICATE MODULES")).toInstance("TEST");
+			bind(String.class).toInstance("Should be rewritten with Named(ID) annotation");
 		}
 	};
 

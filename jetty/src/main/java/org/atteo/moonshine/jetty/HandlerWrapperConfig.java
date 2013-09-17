@@ -20,21 +20,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
-import com.google.inject.Module;
 
 abstract public class HandlerWrapperConfig extends HandlerConfig {
 	@XmlElementRef
 	protected HandlerConfig wrappedHandler;
 
 	abstract protected HandlerWrapper createHandler();
-
-	@Override
-	public Module configure() {
-		if (wrappedHandler == null) {
-			return null;
-		}
-		return wrappedHandler.configure();
-	}
 
 	@Override
 	public Handler getHandler() {

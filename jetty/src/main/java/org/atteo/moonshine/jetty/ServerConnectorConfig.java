@@ -28,10 +28,9 @@ import org.eclipse.jetty.server.ServerConnector;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
 
 /**
- * This connector uses efficient NIO buffers with a non blocking threading model.
+ * Jetty connector using NIO buffers and non blocking threading model.
  * Direct NIO buffers are used and threads are only allocated to connections with requests.
  * Synchronization is used to simulate blocking for the servlet API, and any unflushed content
  * at the end of request handling is written asynchronously.
@@ -74,12 +73,7 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 			@Override
 			protected void configure() {
 				if (provideAddress) {
-					if (getId() == null) {
-						bind(WebServerAddress.class).toInstance(getWebServerAddress());
-					} else {
-						bind(WebServerAddress.class).annotatedWith(Names.named(getId()))
-								.toInstance(getWebServerAddress());
-					}
+					bind(WebServerAddress.class).toInstance(getWebServerAddress());
 				}
 			}
 		};

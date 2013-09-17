@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine.jolokia;
 
+import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -29,6 +30,7 @@ import com.google.inject.servlet.ServletModule;
  * Jolokia - JMX-HTTP bridge.
  */
 @XmlRootElement(name = "jolokia")
+@Singleton
 public class JolokiaService extends TopLevelService {
 	/**
 	 * URL prefix under which Jolokia should be served.

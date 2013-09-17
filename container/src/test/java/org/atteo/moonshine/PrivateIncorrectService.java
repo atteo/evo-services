@@ -15,36 +15,24 @@
  */
 package org.atteo.moonshine;
 
-import javax.inject.Singleton;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.injection.InjectMembers;
 import org.atteo.moonshine.services.TopLevelService;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.Provider;
+import com.google.inject.PrivateModule;
 import com.google.inject.name.Names;
 
-@XmlRootElement(name = "injectmembers")
-@Singleton
-public class InjectMemberService extends TopLevelService {
-	@InjectMembers
-	@XmlElementRef
-	private SubService subservice;
-
+@XmlRootElement(name = "incorrect-private")
+public class PrivateIncorrectService extends TopLevelService {
 	@Override
 	public Module configure() {
-		return new AbstractModule() {
+		return new PrivateModule() {
 			@Override
 			protected void configure() {
-				bind(String.class).annotatedWith(Names.named("injected message")).toProvider(new Provider<String>() {
-					@Override
-					public String get() {
-						return subservice.getMessage();
-					}
-				});
+				bind(String.class).annotatedWith(Names.named("dummy2")).toInstance("dummy2");
+				expose(Key.get(String.class, Names.named("dummy2")));
 			}
 		};
 	}

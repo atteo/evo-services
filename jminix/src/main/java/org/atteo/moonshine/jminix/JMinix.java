@@ -34,6 +34,7 @@ import com.google.inject.servlet.ServletModule;
  * </p>
  */
 @XmlRootElement(name = "jminix")
+@Singleton
 public class JMinix extends TopLevelService {
 	@XmlElement
 	private String prefix = "/jmx";

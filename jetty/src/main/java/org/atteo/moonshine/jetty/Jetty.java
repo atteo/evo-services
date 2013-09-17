@@ -13,6 +13,8 @@
  */
 package org.atteo.moonshine.jetty;
 
+import java.util.Arrays;
+
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 import javax.servlet.annotation.WebFilter;
@@ -23,13 +25,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.WebServerService;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 
 import com.google.inject.Inject;
-import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 
 /**
@@ -76,23 +78,8 @@ public class Jetty extends WebServerService {
 	private HandlerConfig handler = new ServletContextHandlerConfig();
 
 	@Override
-	public Module configure() {
-		return new ServletModule() {
-			@Override
-			protected void configureServlets() {
-				for (ConnectorConfig connector : connectors) {
-					Module module = connector.configure();
-					if (module != null) {
-						install(module);
-					}
-				}
-
-				Module module = handler.configure();
-				if (module != null) {
-					install(module);
-				}
-			}
-		};
+	public Iterable<? extends Service> getSubServices() {
+		return Arrays.asList(connectors);
 	}
 
 	@Inject(optional = true)

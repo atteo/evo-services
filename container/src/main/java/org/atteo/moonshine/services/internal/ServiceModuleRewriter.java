@@ -124,8 +124,7 @@ public class ServiceModuleRewriter {
 					element.acceptVisitor(new DefaultElementVisitor<Void>() {
 						@Override
 						public Void visit(PrivateElements privateElements) {
-							PrivateBinder privateBinder = binder.newPrivateBinder().withSource(
-									privateElements.getSource());
+							PrivateBinder privateBinder = binder.newPrivateBinder();
 
 							importBindings(privateBinder, privateElements, service, services, hints);
 							return null;
@@ -162,7 +161,7 @@ public class ServiceModuleRewriter {
 				throw new RuntimeException("Imported service does not specify any module");
 			}
 
-			for (Element element : importedElements) {
+			for (final Element element : importedElements) {
 				element.acceptVisitor(new DefaultElementVisitor<Void>() {
 					private <T> void bindKey(Key<T> key) {
 						Key<T> sourceKey;
@@ -175,7 +174,7 @@ public class ServiceModuleRewriter {
 						}
 
 						if (!sourceKey.equals(key)) {
-							binder.bind(sourceKey).to(key);
+							binder.withSource(element.getSource()).bind(sourceKey).to(key);
 						}
 					}
 

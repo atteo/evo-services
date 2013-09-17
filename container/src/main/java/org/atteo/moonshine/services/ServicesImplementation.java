@@ -40,13 +40,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.inject.Binding;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
+import com.google.inject.spi.DefaultElementVisitor;
+import com.google.inject.spi.Element;
 import com.google.inject.spi.Elements;
+import com.google.inject.spi.PrivateElements;
 
 public class ServicesImplementation implements Services, Services.Builder {
 	private final Logger logger = LoggerFactory.getLogger("Moonshine");
@@ -106,6 +111,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 
 		services = readServiceMetadata(config.getSubServices());
+		verifySingletonServicesAreUnique(services);
 
 		for (ServiceMetadata service : services) {
 			logger.info("Configuring: {}", service.getName());
@@ -115,6 +121,10 @@ public class ServicesImplementation implements Services, Services.Builder {
 			} else {
 				service.setElements(Collections.<com.google.inject.spi.Element>emptyList());
 			}
+		}
+
+		for (ServiceMetadata service : services) {
+			checkOnlySingletonBindWithoutAnnotation(service);
 		}
 
 		for (ServiceMetadata service : services) {
@@ -154,7 +164,6 @@ public class ServicesImplementation implements Services, Services.Builder {
 			config = new ServicesConfig();
 		}
 
-		verifySingletonServicesAreUnique(config.getSubServices());
 		injector = buildInjector();
 	}
 
@@ -214,22 +223,58 @@ public class ServicesImplementation implements Services, Services.Builder {
 		return services;
 	}
 
-	private void verifySingletonServicesAreUnique(List<Service> services) throws ConfigurationException {
+	private void verifySingletonServicesAreUnique(List<ServiceMetadata> services) throws ConfigurationException {
 		Set<Class<?>> set = new HashSet<>();
-		for (Service service : services) {
-			Class<?> klass = service.getClass();
-			if (ReflectionTools.isSingleton(klass)) {
+		for (ServiceMetadata service : services) {
+			Class<?> klass = service.getService().getClass();
+			if (service.isSingleton()) {
 				if (set.contains(klass)) {
-					throw new ConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
+					throw new ConfigurationException("Service '" + service.getName() + "' is marked"
 							+ " as singleton, but is declared more than once in configuration file");
 				}
 				set.add(klass);
 
-				if (!Strings.isNullOrEmpty(service.getId())) {
-					throw new ConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"
+				if (!Strings.isNullOrEmpty(service.getService().getId())) {
+					throw new ConfigurationException("Service '" + service.getName() + "' is marked"
 							+ " as singleton, but has an id specified");
 				}
 			}
+		}
+	}
+
+	private static void ensureBindsWithoutAnnotation(Element element, final ServiceMetadata service) {
+			element.acceptVisitor(new DefaultElementVisitor<Void>() {
+				@Override
+				public <T> Void visit(Binding<T> binding) {
+					if (binding.getKey().getAnnotation() != null) {
+						throw new IllegalStateException("Non singleton service " + service.getName()
+								+ " cannot bind " + binding.toString() + ". Only services marked with @Singleton"
+								+ " can bind with annotation.");
+					}
+					return null;
+				}
+
+				@Override
+				public Void visit(PrivateElements privateElements) {
+					for (Key<?> key : privateElements.getExposedKeys()) {
+						if (key.getAnnotation() != null) {
+							throw new IllegalStateException("Non singleton service " + service.getName()
+									+ " cannot expose " + key.toString() + ". Only services marked with @Singleton"
+									+ " can expose bindings with annotation.");
+						}
+					}
+
+					return null;
+				}
+			});
+	}
+
+	private static void checkOnlySingletonBindWithoutAnnotation(final ServiceMetadata service) {
+		if (service.isSingleton()) {
+			return;
+		}
+		for (Element element : service.getElements()) {
+			ensureBindsWithoutAnnotation(element, service);
 		}
 	}
 
@@ -247,6 +292,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 
 		for (ServiceMetadata metadata : servicesMetadata) {
 			for (Class<? super Service> serviceClass : ReflectionTools.getAncestors(metadata.getService().getClass())) {
+				metadata.setSingleton(ReflectionTools.isSingleton(serviceClass));
 				for (final Field field : serviceClass.getDeclaredFields()) {
 					if (!field.isAnnotationPresent(ImportService.class)) {
 						continue;

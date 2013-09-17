@@ -31,7 +31,6 @@ public class SingletonService extends TopLevelService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(Robot.class);
 			}
 		};
 	}

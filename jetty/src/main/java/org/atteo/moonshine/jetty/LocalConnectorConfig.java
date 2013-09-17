@@ -27,8 +27,8 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 
 /**
- * Internal connector to the Jetty which sends data directly
- * without any network operations.
+ * Jetty in-JVM internal connector.
+ * Sends data directly to Jetty without any network operations.
  * <p>
  * Use one of {@link LocalConnector#getResponses} methods to send/receive data.
  * {@link LocalConnector} will be available in Guice injector.

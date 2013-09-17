@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 
 @XmlRootElement(name = "contextCollection")
 public class ContextHandlerCollectionConfig extends HandlerConfig {
@@ -39,20 +37,5 @@ public class ContextHandlerCollectionConfig extends HandlerConfig {
 			handlerCollection.addHandler(handler.getHandler());
 		}
 		return handlerCollection;
-	}
-
-	@Override
-	public Module configure() {
-		return new AbstractModule() {
-			@Override
-			protected void configure() {
-				for (ContextHandlerConfig handler : handlers) {
-					Module module = handler.configure();
-					if (module != null) {
-						install(module);
-					}
-				}
-			}
-		};
 	}
 }

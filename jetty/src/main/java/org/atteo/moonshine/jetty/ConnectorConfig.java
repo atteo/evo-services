@@ -15,16 +15,11 @@
  */
 package org.atteo.moonshine.jetty;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.moonshine.services.Service;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 
-import com.google.inject.Module;
 
-public abstract class ConnectorConfig extends Configurable {
+public abstract class ConnectorConfig extends Service {
 	public abstract Connector getConnector(Server server);
-
-	public Module configure() {
-		return null;
-	}
 }

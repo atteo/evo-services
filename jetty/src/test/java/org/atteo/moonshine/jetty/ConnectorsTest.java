@@ -51,6 +51,7 @@ public class ConnectorsTest extends MoonshineTest {
 	private LocalConnector localConnector;
 
 	@Inject
+	@Named("nonssl")
 	private WebServerAddress webServerAddress;
 
 	@Inject
