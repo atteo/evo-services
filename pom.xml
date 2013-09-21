@@ -53,6 +53,7 @@
 		<module>jta</module>
 		<module>logback</module>
 		<module>liquibase</module>
+		<module>metrics</module>
 		<module>perf4j</module>
 		<module>shiro</module>
 		<module>shiro-database-realm</module>

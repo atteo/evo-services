@@ -11,25 +11,17 @@
  */
 package org.atteo.moonshine.jmx;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
@@ -38,7 +30,7 @@ import com.sun.tools.attach.AttachNotSupportedException;
 public class MBeanTest extends MoonshineTest {
 	@Test
 	public void getData() throws IOException, MalformedObjectNameException {
-		JMXConnector connector = JMXConnectorFactory.connect(getServiceUrl(getVirtualMachinePid()));
+		JMXConnector connector = JmxUtils.connectToItself();
 		MBeanServerConnection server = connector.getMBeanServerConnection();
 
 		ObjectName name = ObjectName.getInstance(Car.class.getPackage().getName()
@@ -46,47 +38,5 @@ public class MBeanTest extends MoonshineTest {
 		CarMBean proxy = javax.management.JMX.newMBeanProxy(server, name, CarMBean.class);
 
 		assertEquals("blue", proxy.getColor());
-	}
-
-	private JMXServiceURL getServiceUrl(Long pid) {
-		String CONNECTOR_ADDRESS = "com.sun.management.jmxremote.localConnectorAddress";
-
-		// attach to the target application
-		com.sun.tools.attach.VirtualMachine vm;
-
-		try {
-			vm = com.sun.tools.attach.VirtualMachine.attach(pid.toString());
-		} catch (AttachNotSupportedException | IOException e) {
-			throw new RuntimeException(e);
-		}
-		try {
-			String connectorAddress = vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
-
-			// no connector address, so we start the JMX agent
-			if (connectorAddress == null) {
-				String agent = vm.getSystemProperties().getProperty("java.home") +
-						File.separator + "lib" + File.separator + "management-agent.jar";
-				vm.loadAgent(agent);
-
-				// agent is started, get the connector address
-				connectorAddress = vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
-			}
-
-			// establish connection to connector server
-			return new JMXServiceURL(connectorAddress);
-		} catch (IOException | AgentLoadException | AgentInitializationException e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				vm.detach();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	private long getVirtualMachinePid() {
-		String name = ManagementFactory.getRuntimeMXBean().getName();
-		return Long.parseLong(name.substring(0, name.indexOf('@')));
 	}
 }

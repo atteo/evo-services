@@ -46,6 +46,16 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>metrics</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>hibernate</artifactId>
 				<version>${project.version}</version>
 			</dependency>
