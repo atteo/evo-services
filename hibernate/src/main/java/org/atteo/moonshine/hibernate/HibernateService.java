@@ -80,7 +80,6 @@ public class HibernateService extends JpaService {
 	 * Setting is relevant when using @GeneratedValue. It indicates whether
 	 * or not the new IdentifierGenerator implementations are used for javax.persistence.GenerationType.AUTO,
 	 * javax.persistence.GenerationType.TABLE and javax.persistence.GenerationType.SEQUENCE.
-	 * Default to false to keep backward compatibility.
 	 */
 	@XmlElement
 	private boolean useNewIdGeneratorMappings = true;
@@ -276,7 +275,7 @@ public class HibernateService extends JpaService {
 				}
 				expose(EntityManagerFactory.class);
 
-				bind(EntityManager.class).to(TransactionScopedEntityManager.class);
+				bind(EntityManager.class).to(TransactionScopedEntityManager.class).in(Scopes.SINGLETON);
 				expose(EntityManager.class);
 			}
 		};

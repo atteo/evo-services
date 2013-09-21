@@ -29,16 +29,19 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 public class TransactionScopedEntityManager extends DelegatingEntityManager {
+
 	@Inject
 	private EntityManagerFactory factory;
 
 	@Inject
 	private TransactionManager transactionManager;
 
-	private EntityManager entityManager = null;
+	private final ThreadLocal<EntityManager> entityManagerHolder = new ThreadLocal<>();
 
 	@Override
 	protected EntityManager getEntityManager() {
+		EntityManager entityManager = entityManagerHolder.get();
+
 		if (entityManager == null) {
 			try {
 				Transaction transaction = transactionManager.getTransaction();
@@ -46,6 +49,9 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 					throw new TransactionRequiredException("Not in transaction. Initiate transaction in JTA.");
 				}
 				entityManager = factory.createEntityManager();
+
+				final EntityManager entityManagerToClose = entityManager;
+				entityManagerHolder.set(entityManager);
 				transaction.registerSynchronization(new Synchronization() {
 					@Override
 					public void beforeCompletion() {
@@ -53,10 +59,13 @@ public class TransactionScopedEntityManager extends DelegatingEntityManager {
 
 					@Override
 					public void afterCompletion(int status) {
-						if (entityManager != null) {
-							entityManager.close();
-							entityManager = null;
+						if (entityManagerHolder.get() != entityManagerToClose) {
+							throw new RuntimeException("Synchronization called from different thread");
 						}
+						if (entityManagerToClose != null) {
+							entityManagerToClose.close();
+						}
+						entityManagerHolder.set(null);
 					}
 				});
 			} catch (SystemException | RollbackException e) {
