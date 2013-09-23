@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.jta.JtaService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 /**
  * Marks JPA implementation services.

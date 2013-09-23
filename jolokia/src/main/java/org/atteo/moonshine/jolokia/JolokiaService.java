@@ -17,14 +17,17 @@ package org.atteo.moonshine.jolokia;
 
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
+import org.atteo.moonshine.webserver.ServletRegistry;
 import org.jolokia.http.AgentServlet;
 import org.jolokia.restrictor.AllowAllRestrictor;
 
 import com.google.inject.Module;
-import com.google.inject.servlet.ServletModule;
+import com.google.inject.PrivateModule;
 
 /**
  * Jolokia - JMX-HTTP bridge.
@@ -32,6 +35,11 @@ import com.google.inject.servlet.ServletModule;
 @XmlRootElement(name = "jolokia")
 @Singleton
 public class JolokiaService extends TopLevelService {
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	private ServletRegistry servletContainer;
+
 	/**
 	 * URL prefix under which Jolokia should be served.
 	 */
@@ -40,11 +48,11 @@ public class JolokiaService extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		return new ServletModule() {
+		return new PrivateModule() {
 			@Override
-			protected void configureServlets() {
+			protected void configure() {
 				bind(AgentServlet.class).toInstance(new AgentServlet(new AllowAllRestrictor()));
-				serve(prefix).with(AgentServlet.class);
+				servletContainer.addServlet(prefix, AgentServlet.class, getProvider(AgentServlet.class));
 			}
 		};
 	}

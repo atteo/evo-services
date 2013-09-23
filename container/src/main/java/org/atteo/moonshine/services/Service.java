@@ -1,9 +1,11 @@
 /*
+ * Copyright 2013 Atteo.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,18 +15,11 @@
  */
 package org.atteo.moonshine.services;
 
-import java.util.Collections;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.annotation.Nonnull;
 
 import org.atteo.evo.classindex.IndexSubclasses;
-import org.atteo.evo.config.Configurable;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.servlet.ServletModule;
 
 /**
  * Basic configurable component which can be {@link #configure() configured}, {@link #start() started}
@@ -43,29 +38,16 @@ import com.google.inject.servlet.ServletModule;
  * </p>
  */
 @IndexSubclasses(storeJavadoc = true)
-public abstract class Service extends Configurable implements AutoCloseable {
+public interface Service extends AutoCloseable {
+	String getId();
+
 	/**
 	 * Returns {@link Module} which specifies this service dependencies and what it provides
 	 * to other services.
 	 *
-	 * <p>
-	 * Additionally {@link ServletModule} implementation can also be returned
-	 * which allows to register servlets and filters (you need appropriate service enabled which uses this info,
-	 * like Jetty).
-	 * </p>
-	 *
 	 * @return Guice module
 	 */
-	public Module configure() {
-	    return null;
-	}
-
-	/**
-	 * Closes this services, it won't be started again.
-	 */
-	@Override
-	public void close() {
-	}
+	Module configure();
 
 	/**
 	 * Starts this service.
@@ -78,8 +60,7 @@ public abstract class Service extends Configurable implements AutoCloseable {
 	 * or in registered {@link Provider}. Here you can start functionalities which are used outside this application.
 	 * </p>
 	 */
-	public void start() {
-	}
+	void start();
 
 	/**
 	 * Stops this service.
@@ -88,19 +69,27 @@ public abstract class Service extends Configurable implements AutoCloseable {
 	 * Service can still be started later using {@link #start()} method.
 	 * </p>
 	 */
-	public void stop() {
-	}
+	void stop();
 
 	/**
-	 * Returns a list of sub-services this service contains.
+	 * Closes this services, it won't be started again.
+	 */
+	@Override
+	void close();
+
+	/**
+	 * Returns a list of direct sub-services this service contains.
 	 *
 	 * <p>
 	 * Although usually the list will come from unmarshalling the XML file,
 	 * there is nothing which forbids the service from generating the list on the fly.
 	 * </p>
+	 * <p>
+	 * Only direct sub-services should be returned. Moonshine will on its own ask
+	 * returned sub-services for their sub-services.
+	 * </p>
 	 * @return list of services
 	 */
-	public Iterable<? extends Service> getSubServices() {
-		return Collections.emptyList();
-	}
+	@Nonnull
+	Iterable<? extends Service> getSubServices();
 }

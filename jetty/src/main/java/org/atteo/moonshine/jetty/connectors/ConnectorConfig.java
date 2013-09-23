@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.connectors;
 
-import org.atteo.moonshine.services.Service;
+import org.atteo.moonshine.ConfigurableService;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 
-
-public abstract class ConnectorConfig extends Service {
+public abstract class ConnectorConfig extends ConfigurableService {
 	public abstract Connector getConnector(Server server);
 }

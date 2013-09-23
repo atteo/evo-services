@@ -32,6 +32,7 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.atteo.moonshine.webserver.WebServerService;
 
@@ -97,41 +98,6 @@ public class TomcatService extends WebServerService {
 					throw new RuntimeException(e);
 				}
 
-				tomcat = new Tomcat();
-				tomcat.setBaseDir(baseDir);
-				if (defaultHost != null) {
-					tomcat.getEngine().setDefaultHost(defaultHost);
-				}
-
-				for (HostConfig hostConfig : hosts) {
-					StandardHost host = new StandardHost();
-					host.setAppBase(hostConfig.getAppBase());
-					host.setName(hostConfig.getName());
-					if (defaultHost == null) {
-						defaultHost = hostConfig.getName();
-						tomcat.getEngine().setDefaultHost(defaultHost);
-					}
-
-					for (ContextConfig contextConfig : hostConfig.getContexts()) {
-						Context context = tomcat.addWebapp(host, contextConfig.getPath(), contextConfig.getBaseDir());
-						for (FilterConfig filterConfig : contextConfig.getFilters()) {
-							filterConfig.configure(context);
-							requestInjection(filterConfig);
-						}
-					}
-
-					tomcat.getEngine().addChild(host);
-					tomcat.setHost(host);
-				}
-
-				for (ConnectorConfig connectorConfig : connectors) {
-					Connector connector = new Connector(connectorConfig.getProtocol());
-					connector.setPort(connectorConfig.getPort());
-
-					tomcat.setConnector(connector);
-					tomcat.getService().addConnector(connector);
-				}
-
 				bind(WebServerAddress.class).toInstance(new WebServerAddress() {
 					@Override
 					public int getPort() {
@@ -156,8 +122,45 @@ public class TomcatService extends WebServerService {
 		};
 	}
 
+	private void init() {
+		tomcat = new Tomcat();
+		tomcat.setBaseDir(baseDir);
+		if (defaultHost != null) {
+			tomcat.getEngine().setDefaultHost(defaultHost);
+		}
+
+		for (HostConfig hostConfig : hosts) {
+			StandardHost host = new StandardHost();
+			host.setAppBase(hostConfig.getAppBase());
+			host.setName(hostConfig.getName());
+			if (defaultHost == null) {
+				defaultHost = hostConfig.getName();
+				tomcat.getEngine().setDefaultHost(defaultHost);
+			}
+
+			for (ContextConfig contextConfig : hostConfig.getContexts()) {
+				Context context = tomcat.addWebapp(host, contextConfig.getPath(), contextConfig.getBaseDir());
+				contextConfig.configure(context);
+			}
+
+			tomcat.getEngine().addChild(host);
+			tomcat.setHost(host);
+		}
+
+		for (ConnectorConfig connectorConfig : connectors) {
+			Connector connector = new Connector(connectorConfig.getProtocol());
+			connector.setPort(connectorConfig.getPort());
+
+			tomcat.setConnector(connector);
+			tomcat.getService().addConnector(connector);
+		}
+	}
+
 	@Override
 	public void start() {
+		if (tomcat == null) {
+			init();
+		}
 		try {
 			tomcat.start();
 			if (tomcat.getConnector().getState() != STARTED) {
@@ -176,4 +179,24 @@ public class TomcatService extends WebServerService {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public Iterable<? extends Service> getSubServices() {
+		List<Service> result = new ArrayList<>();
+		for (ConnectorConfig connector : connectors) {
+			if (connector instanceof Service) {
+				result.add((Service) connector);
+			}
+		}
+
+		for (HostConfig host : hosts) {
+			for (ContextConfig context : host.getContexts()) {
+				if (context instanceof Service) {
+					result.add((Service) context);
+				}
+			}
+		}
+		return result;
+	}
+
 }

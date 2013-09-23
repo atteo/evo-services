@@ -58,7 +58,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 	private final List<Module> extraModules = new ArrayList<>();
 
 	private Injector injector;
-	private ServicesConfig config;
+	private Service config;
 	private List<ServiceMetadata> services;
 
 	public ServicesImplementation() {
@@ -72,7 +72,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	@Override
-	public Builder configuration(ServicesConfig config) {
+	public Builder configuration(Service config) {
 		this.config = config;
 		return this;
 	}
@@ -110,7 +110,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 			modules.add(duplicateDetection.wrap(module));
 		}
 
-		services = readServiceMetadata(config.getSubServices());
+		services = readServiceMetadata(retrieveServicesRecursively(config.getSubServices()));
 		verifySingletonServicesAreUnique(services);
 
 		for (ServiceMetadata service : services) {
@@ -161,7 +161,8 @@ public class ServicesImplementation implements Services, Services.Builder {
 		logger.info("Building Guice injector hierarchy");
 
 		if (config == null) {
-			config = new ServicesConfig();
+			config = new AbstractService() {
+			};
 		}
 
 		injector = buildInjector();
@@ -209,8 +210,8 @@ public class ServicesImplementation implements Services, Services.Builder {
 	@Override
 	public void close() {
 		stop();
-		for (Service service : config.getSubServices()) {
-			service.close();
+		for (ServiceMetadata service : services) {
+			service.getService().close();
 		}
 		if (logger != null) {
 			logger.info("All services stopped");
@@ -375,4 +376,16 @@ public class ServicesImplementation implements Services, Services.Builder {
 		return result;
 	}
 
+	private static List<Service> retrieveServicesRecursively(Iterable<? extends Service> services) {
+		List<Service> result = new ArrayList<>();
+		addServicesRecursively(result, services);
+		return result;
+	}
+
+	private static void addServicesRecursively(List<Service> result, Iterable<? extends Service> services) {
+		for (Service service : services) {
+			result.add(service);
+			addServicesRecursively(result, service.getSubServices());
+		}
+	}
 }

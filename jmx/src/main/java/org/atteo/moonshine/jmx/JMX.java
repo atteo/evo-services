@@ -30,7 +30,7 @@ import javax.management.ObjectName;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;

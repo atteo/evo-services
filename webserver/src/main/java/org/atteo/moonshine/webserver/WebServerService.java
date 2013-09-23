@@ -15,7 +15,7 @@
  */
 package org.atteo.moonshine.webserver;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 /**
  * WebServer service.

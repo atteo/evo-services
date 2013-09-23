@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -24,8 +24,11 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 
 
 /**
- * ContextHandler. This handler wraps a call to handle
+ * Jetty context handler.
+ * <p>
+ * This handler wraps a call to handle
  * by setting the context and servlet path, plus setting the context classloader.
+ * </p>
  */
 @XmlRootElement(name = "context")
 public class ContextHandlerConfig extends Configurable {
@@ -56,5 +59,9 @@ public class ContextHandlerConfig extends Configurable {
 		contextHandler.setVirtualHosts(virtualHosts);
 
 		return contextHandler;
+	}
+
+	public HandlerConfig getWrappedHandlerConfig() {
+		return wrappedHandler;
 	}
 }

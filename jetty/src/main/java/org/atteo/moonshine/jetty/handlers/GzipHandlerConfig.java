@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,7 +22,7 @@ import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.servlets.gzip.GzipHandler;
 
 /**
- * GZIP Handler This handler will gzip the content of a response if:
+ * Jetty GZIP compression handler. This handler will gzip the content of a response if:
  * <ul>
  * <li>The filter is mapped to a matching path</li>
  * <li>The response status code is >=200 and <300

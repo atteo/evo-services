@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.jta.Transaction;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.Module;
 

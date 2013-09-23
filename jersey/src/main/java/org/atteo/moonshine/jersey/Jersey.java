@@ -16,18 +16,20 @@ package org.atteo.moonshine.jersey;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Singleton;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
+import org.atteo.moonshine.webserver.ServletRegistry;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import com.google.inject.servlet.ServletModule;
+import com.google.inject.PrivateModule;
 import com.sun.jersey.core.util.FeaturesAndProperties;
 import com.sun.jersey.freemarker.FreemarkerViewProcessor;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
@@ -37,8 +39,12 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
  * Starts Jersey JAX-RS implementation.
  */
 @XmlRootElement(name = "jersey")
-@Singleton
 public class Jersey extends TopLevelService {
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	private ServletRegistry servletContainer;
+
 	/**
 	 * Prefix under which JAX-RS resources should be registered.
 	 */
@@ -61,9 +67,9 @@ public class Jersey extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		return new ServletModule() {
+		return new PrivateModule() {
 			@Override
-			protected void configureServlets() {
+			protected void configure() {
 				Map<String, String> params = new HashMap<>();
 				params.put(ServletContainer.FEATURE_FILTER_FORWARD_ON_404, "true");
 				if (formatOutput) {
@@ -73,8 +79,8 @@ public class Jersey extends TopLevelService {
 				params.put(FreemarkerViewProcessor.FREEMARKER_TEMPLATES_BASE_PATH, "templates");
 
 				bind(GuiceContainer.class);
-				filter(prefix + "/*").through(GuiceContainer.class, params);
-
+				servletContainer.addFilter(prefix + "/*", GuiceContainer.class, getProvider(GuiceContainer.class),
+						params);
 
 				if (discoverResources) {
 					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {

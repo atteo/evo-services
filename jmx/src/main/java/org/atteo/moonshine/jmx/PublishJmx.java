@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 /**
  * Publishes JMX MBeanServer through RMI.

@@ -18,7 +18,7 @@ package org.atteo.moonshine.jta;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 /**
  * Marks services which implements JTA.

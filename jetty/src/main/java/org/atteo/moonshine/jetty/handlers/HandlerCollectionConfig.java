@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,7 +26,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 
 
 /**
- * A collection of handlers.
+ * Jetty handler collection.
  * <p>
  * The default implementations calls all handlers in list order,
  * regardless of the response status or exceptions. Derived implementation
@@ -36,7 +39,7 @@ public class HandlerCollectionConfig extends HandlerConfig {
 	 * List of handlers.
 	 */
 	@XmlElementRef
-	private HandlerConfig[] handlers = new HandlerConfig[0];
+	private List<HandlerConfig> handlers = new ArrayList<>();
 
 	protected HandlerCollection createCollection() {
 		return new HandlerCollection();
@@ -49,5 +52,10 @@ public class HandlerCollectionConfig extends HandlerConfig {
 			handlerCollection.addHandler(handler.getHandler());
 		}
 		return handlerCollection;
+	}
+
+	@Override
+	public Iterable<HandlerConfig> getSubHandlers() {
+		return handlers;
 	}
 }

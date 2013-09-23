@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Atteo.
+ * Copyright 2012 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.tomcat;
+package org.atteo.moonshine.jetty.handlers;
 
-import org.apache.catalina.Context;
+import java.util.Collections;
+
 import org.atteo.evo.config.Configurable;
+import org.eclipse.jetty.server.Handler;
 
-public abstract class FilterConfig extends Configurable {
-	protected abstract void configure(Context context);
+
+public abstract class HandlerConfig extends Configurable {
+	public abstract Handler getHandler();
+
+	public Iterable<HandlerConfig> getSubHandlers() {
+		return Collections.emptyList();
+	}
 }

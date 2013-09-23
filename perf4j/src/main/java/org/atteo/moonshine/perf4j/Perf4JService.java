@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 import org.perf4j.aop.AbstractJoinPoint;
 import org.perf4j.aop.AgnosticTimingAspect;
 import org.perf4j.aop.Profiled;

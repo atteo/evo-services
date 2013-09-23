@@ -16,7 +16,7 @@
 package org.atteo.moonshine.shiro;
 
 import org.apache.shiro.realm.Realm;
-import org.atteo.moonshine.services.Service;
+import org.atteo.moonshine.ConfigurableService;
 
 /**
  * Shiro realm service.
@@ -25,5 +25,5 @@ import org.atteo.moonshine.services.Service;
  * Must bind {@link Realm}.
  * </p>
  */
-public abstract class RealmService extends Service {
+public abstract class RealmService extends ConfigurableService {
 }

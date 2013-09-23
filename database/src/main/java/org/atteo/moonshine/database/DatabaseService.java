@@ -18,7 +18,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 /**
  * Database service.

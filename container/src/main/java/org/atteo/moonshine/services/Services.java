@@ -47,7 +47,7 @@ public interface Services extends AutoCloseable {
 		/**
 		 * Sets services configuration.
 		 */
-		Builder configuration(ServicesConfig config);
+		Builder configuration(Service config);
 
 		/**
 		 * Builds {@link Services} based on this builder parameters.

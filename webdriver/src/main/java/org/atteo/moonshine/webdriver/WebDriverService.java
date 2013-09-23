@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.config.XmlDefaultValue;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.webdriver.browsers.Browser;
 import org.openqa.selenium.remote.RemoteWebDriver;
 

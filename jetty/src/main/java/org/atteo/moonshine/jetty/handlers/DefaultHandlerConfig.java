@@ -13,32 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-
-import com.google.inject.servlet.GuiceFilter;
-import com.google.inject.servlet.ServletModule;
+import org.eclipse.jetty.server.handler.DefaultHandler;
 
 /**
- * Handles servlets and filters registered in Guice using {@link ServletModule}.
+ * Jetty default handler.
  */
-@XmlRootElement(name = "servlets")
-public class ServletContextHandlerConfig extends HandlerConfig {
+@XmlRootElement(name = "default")
+public class DefaultHandlerConfig extends HandlerConfig {
 	@Override
 	public Handler getHandler() {
-		ServletContextHandler handler = new ServletContextHandler();
-
-		handler.addFilter(GuiceFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
-		handler.addServlet(DefaultServlet.class, "/");
-
+		DefaultHandler handler = new DefaultHandler();
+		handler.setServeIcon(false);
 		return handler;
 	}
 }

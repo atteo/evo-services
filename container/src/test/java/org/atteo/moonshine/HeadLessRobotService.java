@@ -18,7 +18,6 @@ package org.atteo.moonshine;
 import javax.xml.bind.annotation.XmlIDREF;
 
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.services.TopLevelService;
 
 public abstract class HeadLessRobotService extends TopLevelService{
 	@XmlIDREF

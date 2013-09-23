@@ -13,46 +13,33 @@
  */
 package org.atteo.moonshine.jetty;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.management.MBeanServer;
-import javax.servlet.Filter;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.moonshine.jetty.connectors.ConnectorConfig;
+import org.atteo.moonshine.jetty.connectors.ServerConnectorConfig;
+import org.atteo.moonshine.jetty.connectors.SslContextFactoryConfig;
+import org.atteo.moonshine.jetty.handlers.HandlerCollectionConfig;
+import org.atteo.moonshine.jetty.handlers.HandlerConfig;
+import org.atteo.moonshine.jetty.handlers.HandlerListConfig;
+import org.atteo.moonshine.jetty.handlers.ServletContextHandlerConfig;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.WebServerService;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-import com.google.inject.servlet.ServletModule;
 
 /**
- * Starts embedded Jetty web server instance.
- *
- * <p>
- * There are two ways to register servlets and filters:
- * <ul>
- * <li>by annotating {@link HttpServlet servlet} with &#064;{@link WebServlet}
- * and {@link Filter filter} with &#064;{@link WebFilter}</li>
- * <li>by registering {@link ServletModule} in Guice</li>
- * </ul>
- * </p>
- * <p>
- * Please note that when using annotations the {@link ClassIndex} facility
- * is used to get the list of annotated classes as opposed to otherwise more common
- * classpath scanning. The implication of that is that the class will be "visible"
- * to this Jetty service only when it was compiled with webserver.jar in the classpath
- * which contains annotation processor generating the needed class index.
- * Use {@link ServletModule} when that is not the case.
- * </p>
+ * Starts Jetty web server instance.
  */
 @XmlRootElement(name = "jetty")
 public class Jetty extends WebServerService {
@@ -77,9 +64,21 @@ public class Jetty extends WebServerService {
 	@XmlElementRef
 	private HandlerConfig handler = new ServletContextHandlerConfig();
 
+	private static void addRecursively(List<Service> handlerServices, HandlerConfig handler) {
+		if (handler instanceof Service) {
+			handlerServices.add((Service) handler);
+		}
+		for (HandlerConfig subHandler : handler.getSubHandlers()) {
+			addRecursively(handlerServices, subHandler);
+		}
+	}
+
 	@Override
 	public Iterable<? extends Service> getSubServices() {
-		return Arrays.asList(connectors);
+		List<Service> handlerServices = new ArrayList<>();
+		addRecursively(handlerServices, handler);
+
+		return Iterables.concat(Arrays.asList(connectors), handlerServices);
 	}
 
 	@Inject(optional = true)

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.connectors;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.ServerConnector;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+
 
 /**
  * Jetty connector using NIO buffers and non blocking threading model.

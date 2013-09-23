@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.RepositoryDefinition;

@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
-import org.atteo.moonshine.services.TopLevelService;
 
 /**
  * Robot head service.

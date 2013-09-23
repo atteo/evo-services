@@ -45,7 +45,7 @@ import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.moonshine.services.Service;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.Key;
 import com.google.inject.Module;

@@ -13,40 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.connectors;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.SslConnectionFactory;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 
 /**
- * A Connection Factory for SSL Connections.
+ * A Connection Factory for HTTP Connections.
+ * <p>
+ * Accepts connections either directly or via SSL and/or NPN chained connection factories.
+ * </p>
  */
-@XmlRootElement(name = "ssl")
-public class SslConnectionFactoryConfig extends ConnectionFactoryConfig {
-	@XmlIDREF
-	@XmlElement(name = "sslcontextfactory", required = true)
-	private SslContextFactoryConfig sslContextFactory;
-
-	@XmlElement
-	private String nextProtocol = "http/1.1";
-
+@XmlRootElement(name = "http")
+public class HttpConnectionFactoryConfig extends ConnectionFactoryConfig {
 	@Override
 	public ConnectionFactory getConnectionFactory() {
-		SslContextFactory factory = null;
-		if (sslContextFactory != null) {
-			factory = sslContextFactory.getSslContextFactory();
-		}
-		return new SslConnectionFactory(factory, nextProtocol);
+		HttpConnectionFactory factory = new HttpConnectionFactory();
+		return factory;
 	}
 
 	@Override
 	public String getProtocolString() {
-		// TODO: this is correct assuming nextProtocol is HTTP
-		return "https";
+		return "http";
 	}
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -24,9 +24,12 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 
 /**
+ * Jetty resource handler.
+ * <p>
  * Serves static content and handles If-Modified-Since headers.
  * No caching is done. Requests for resources that do not exist
  * are let pass (Eg no 404's).
+ * </p>
  *
  * @see ResourceHandler
  */

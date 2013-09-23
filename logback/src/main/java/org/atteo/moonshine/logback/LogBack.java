@@ -21,7 +21,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;

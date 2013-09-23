@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.Module;
 import com.google.inject.matcher.Matchers;

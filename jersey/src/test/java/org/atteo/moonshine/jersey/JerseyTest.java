@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 
 import javax.inject.Inject;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpTester.Response;
@@ -26,6 +27,18 @@ import org.eclipse.jetty.server.LocalConnector;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <servlet-registry/>"
+		+ "    <jetty>"
+		+ "        <connectors>"
+		+ "            <local/>"
+		+ "        </connectors>"
+		+ "    </jetty>"
+		+ "    <jersey>"
+		+ "        <prefix>/rest</prefix>"
+		+ "    </jersey>"
+		+ "</config>")
 public class JerseyTest extends MoonshineTest {
 	@Inject
 	private LocalConnector localConnector;

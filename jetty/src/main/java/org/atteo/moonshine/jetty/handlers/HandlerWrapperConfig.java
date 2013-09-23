@@ -13,19 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlElementRef;
 
 import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.HandlerWrapper;
 
-@XmlRootElement(name = "default")
-public class DefaultHandlerConfig extends HandlerConfig {
+import com.google.common.collect.Lists;
+
+abstract public class HandlerWrapperConfig extends HandlerConfig {
+	@XmlElementRef
+	protected HandlerConfig wrappedHandler;
+
+	abstract protected HandlerWrapper createHandler();
+
 	@Override
 	public Handler getHandler() {
-		DefaultHandler handler = new DefaultHandler();
-		handler.setServeIcon(false);
+		HandlerWrapper handler = createHandler();
+		if (wrappedHandler != null) {
+			handler.setHandler(wrappedHandler.getHandler());
+		}
 		return handler;
+	}
+
+	@Override
+	public Iterable<HandlerConfig> getSubHandlers() {
+		return Lists.newArrayList(wrappedHandler);
 	}
 }

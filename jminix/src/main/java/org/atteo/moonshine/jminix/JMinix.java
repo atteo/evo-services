@@ -15,13 +15,16 @@ package org.atteo.moonshine.jminix;
 
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
+import org.atteo.moonshine.webserver.ServletRegistry;
 import org.jminix.console.servlet.MiniConsoleServlet;
 
 import com.google.inject.Module;
-import com.google.inject.servlet.ServletModule;
+import com.google.inject.PrivateModule;
 
 /**
  * JMX web console.
@@ -34,18 +37,23 @@ import com.google.inject.servlet.ServletModule;
  * </p>
  */
 @XmlRootElement(name = "jminix")
-@Singleton
 public class JMinix extends TopLevelService {
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	private ServletRegistry servletContainer;
+
 	@XmlElement
 	private String prefix = "/jmx";
 
 	@Override
 	public Module configure() {
-		return new ServletModule() {
+		return new PrivateModule() {
 			@Override
-			protected void configureServlets() {
+			protected void configure() {
 				bind(MiniConsoleServlet.class).in(Singleton.class);
-				serve(prefix + "/*").with(MiniConsoleServlet.class);
+				servletContainer.addServlet(prefix + "/*", MiniConsoleServlet.class,
+						getProvider(MiniConsoleServlet.class));
 			}
 		};
 	}

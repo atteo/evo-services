@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Atteo.
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.services;
 
-import javax.xml.bind.annotation.XmlElementRef;
+import java.util.Collections;
 
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.HandlerWrapper;
+import com.google.inject.Module;
 
-
-abstract public class HandlerWrapperConfig extends HandlerConfig {
-	@XmlElementRef
-	protected HandlerConfig wrappedHandler;
-
-	abstract protected HandlerWrapper createHandler();
-
+public abstract class AbstractService implements Service {
 	@Override
-	public Handler getHandler() {
-		HandlerWrapper handler = createHandler();
-		if (wrappedHandler != null) {
-			handler.setHandler(wrappedHandler.getHandler());
-		}
-		return handler;
+	public String getId() {
+		return null;
 	}
 
+	@Override
+	public Module configure() {
+		return null;
+	}
+
+	@Override
+	public void start() {
+	}
+
+	@Override
+	public void stop() {
+	}
+
+	@Override
+	public void close() {
+	}
+
+	@Override
+	public Iterable<? extends Service> getSubServices() {
+		return Collections.emptyList();
+	}
 }

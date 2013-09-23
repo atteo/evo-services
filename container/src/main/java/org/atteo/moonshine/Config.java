@@ -13,21 +13,33 @@
  */
 package org.atteo.moonshine;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.ServicesConfig;
+import org.atteo.moonshine.services.Service;
 import org.w3c.dom.Element;
 
 /**
  * Root class for the {@link Moonshine} configuration file.
  */
 @XmlRootElement
-public class Config extends ServicesConfig {
+public class Config extends ConfigurableService {
 	@XmlElementWrapper(name = "properties")
 	@XmlAnyElement(lax = false)
 	private List<Element> properties;
+
+	@XmlElementRef
+	@Valid
+	private List<TopLevelService> services = new ArrayList<>();
+
+	@Override
+	public List<? extends Service> getSubServices() {
+		return services;
+	}
 }

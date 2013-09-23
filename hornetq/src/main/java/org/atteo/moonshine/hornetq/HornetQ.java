@@ -20,9 +20,9 @@ import javax.jms.XAConnectionFactory;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.jta.JtaConnectionFactoryWrapper;
 import org.atteo.moonshine.jta.PoolOptions;
-import org.atteo.moonshine.services.TopLevelService;
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.api.jms.HornetQJMSClient;
 import org.hornetq.api.jms.JMSFactoryType;

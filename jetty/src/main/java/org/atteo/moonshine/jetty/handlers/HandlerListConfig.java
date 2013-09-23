@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,7 +21,7 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 
 /**
- * HandlerList.
+ * Jetty handler list.
  * <p>
  * This extension of {@link HandlerCollection} will call each contained handler
  * in turn until either an exception is thrown, the response is committed

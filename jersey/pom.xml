@@ -18,6 +18,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>webserver</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-guice</artifactId>
 			<version>${jersey.version}</version>

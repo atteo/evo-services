@@ -14,13 +14,16 @@
 package org.atteo.moonshine.firebuglogger;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.TopLevelService;
+import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
+import org.atteo.moonshine.webserver.ServletRegistry;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Module;
-import com.google.inject.servlet.ServletModule;
+import com.google.inject.PrivateModule;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -39,6 +42,11 @@ import ch.qos.logback.core.Appender;
 public class FireBugLoggerService extends TopLevelService {
 	public static final String FIRE_BUG_APPENDER = "FireBug Appender";
 
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	private ServletRegistry servletContainer;
+
 	/**
 	 * URL pattern specifying to which responses the headers will be added.
 	 */
@@ -47,11 +55,11 @@ public class FireBugLoggerService extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		return new ServletModule() {
+		return new PrivateModule() {
 			@Override
-			protected void configureServlets() {
+			protected void configure() {
 				bind(FireBugFilter.class);
-				filter(urlPattern).through(FireBugFilter.class);
+				servletContainer.addFilter(urlPattern, FireBugFilter.class, getProvider(FireBugFilter.class));
 			}
 		};
 	}

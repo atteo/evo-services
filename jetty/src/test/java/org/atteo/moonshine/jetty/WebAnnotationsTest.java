@@ -21,6 +21,7 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import static org.junit.Assert.assertEquals;
@@ -29,7 +30,19 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 
-public class DefaultTest extends MoonshineTest {
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <servlet-registry/>"
+		+ "    <web-annotations/>"
+		+ "    <jetty>"
+		+ "	       <connectors>"
+		+ "            <serverconnector>"
+		+ "                 <provideAddress>true</provideAddress>"
+		+ "            </serverconnector>"
+		+ "        </connectors>"
+		+ "    </jetty>"
+		+ "</config>")
+public class WebAnnotationsTest extends MoonshineTest {
 	@Inject
 	private WebServerAddress webServerAddress;
 

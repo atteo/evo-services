@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
 import java.util.List;
 
@@ -26,6 +26,9 @@ import org.atteo.moonshine.jetty.rewriterules.RuleConfig;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 
+/**
+ * Jetty rewrite handler.
+ */
 @XmlRootElement(name = "rewrite")
 public class RewriteHandlerConfig extends HandlerWrapperConfig {
 	@XmlElementWrapper(name = "rules")

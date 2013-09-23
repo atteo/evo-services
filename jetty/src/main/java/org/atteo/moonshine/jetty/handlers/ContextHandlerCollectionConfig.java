@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,14 +24,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 
-
+/**
+ * Jetty context handler collection.
+ */
 @XmlRootElement(name = "contextCollection")
 public class ContextHandlerCollectionConfig extends HandlerConfig {
 	/**
 	 * List of handlers.
 	 */
 	@XmlElementRef
-	private ContextHandlerConfig[] handlers;
+	private List<ContextHandlerConfig> handlers = new ArrayList<>();
 
 	@Override
 	public Handler getHandler() {
@@ -37,5 +42,16 @@ public class ContextHandlerCollectionConfig extends HandlerConfig {
 			handlerCollection.addHandler(handler.getHandler());
 		}
 		return handlerCollection;
+	}
+
+	@Override
+	public Iterable<HandlerConfig> getSubHandlers() {
+		List<HandlerConfig> result = new ArrayList<>();
+		for (ContextHandlerConfig handler : handlers) {
+			if (handler.getWrappedHandlerConfig() != null) {
+				result.add(handler.getWrappedHandlerConfig());
+			}
+		}
+		return result;
 	}
 }

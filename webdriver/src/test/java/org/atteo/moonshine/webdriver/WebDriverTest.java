@@ -17,6 +17,7 @@ package org.atteo.moonshine.webdriver;
 
 import javax.inject.Inject;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -24,6 +25,24 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <jetty>"
+		+ "        <connectors>"
+		+ "            <serverconnector>"
+		+ "                <provideAddress>true</provideAddress>"
+		+ "            </serverconnector>"
+		+ "        </connectors>"
+		+ "        <contextCollection>"
+		+ "            <context>"
+		+ "                <contextPath>/hello</contextPath>"
+		+ "                <hello/>"
+		+ "            </context>"
+		+ "        </contextCollection>"
+		+ "    </jetty>"
+		+ "    <webdriver/>"
+		+ "    <webdriver-helper/>"
+		+ "</config>")
 public class WebDriverTest extends MoonshineTest {
 	@Inject
 	private RemoteWebDriver driver;

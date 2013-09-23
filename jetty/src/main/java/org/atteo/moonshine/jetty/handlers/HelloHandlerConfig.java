@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
- * Handler which prints given message.
+ * Jetty handler which prints given message.
  */
 @XmlRootElement(name = "hello")
 public class HelloHandlerConfig extends HandlerConfig {

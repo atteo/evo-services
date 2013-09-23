@@ -13,12 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.jetty.handlers;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.Configurable;
-import org.eclipse.jetty.server.Handler;
 
+@XmlRootElement(name="mimeType")
+public class ResourceHandlerMimeTypeConfig extends Configurable {
+	@XmlElement
+	private String extension;
 
-public abstract class HandlerConfig extends Configurable {
-	public abstract Handler getHandler();
+	@XmlElement
+	private String name;
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public String getName() {
+		return name;
+	}
+
 }
