@@ -45,15 +45,15 @@ public class H2 extends DatabaseService {
 	/**
 	 * Database URL.
 	 * <p>
-	 * By default in-memory database is used. For file repository use:
+	 * By default file database is used. For in-memory database set url to:
 	 * <pre>
-	 * jdbc:h2:${dataHome}/database
+	 * jdbc:h2:mem:;DB_CLOSE_DELAY=-1
 	 * </pre>
 	 * </p>
 	 * @see <a href="http://www.h2database.com/html/features.html#database_url">H2 documentation</a>
 	 */
 	@XmlElement
-	@XmlDefaultValue("jdbc:h2:mem:;DB_CLOSE_DELAY=-1")
+	@XmlDefaultValue("jdbc:h2:${dataHome}/database")
 	private String url;
 
 	/**
