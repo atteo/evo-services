@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.beust.jcommander.Parameter;
 import com.google.inject.AbstractModule;
+import com.google.inject.CreationException;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -348,5 +349,24 @@ public class MoonshineTest {
 		// then
 		assertThat(caughtException()).isInstanceOf(IllegalStateException.class)
 				.hasMessageContaining("Only services marked with @Singleton can expose bindings with annotation");
+	}
+
+	@Test
+	public void shouldExecuteDeconfigureEvenWhenInjectorCreationFails() throws MoonshineException, IOException {
+		try (Moonshine moonshine = when(Moonshine.Factory.builder()
+				.homeDirectory("target/test-home")
+				.addConfigurationFromString(""
+						+ "<config>"
+						+ "    <missing-dependency-service/>"
+						+ "</config>"))
+				.build()) {
+		}
+
+		// then
+		assertThat(caughtException()).isInstanceOf(CreationException.class)
+				.hasMessageContaining("Explicit bindings are required and java.lang.String is not explicitly bound.");
+
+		assertThat(MissingDependencyService.configureCount).isEqualTo(1);
+		assertThat(MissingDependencyService.closeCount).isEqualTo(1);
 	}
 }

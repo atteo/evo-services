@@ -113,38 +113,38 @@ public class ServicesImplementation implements Services, Services.Builder {
 		services = readServiceMetadata(retrieveServicesRecursively(config.getSubServices()));
 		verifySingletonServicesAreUnique(services);
 
-		for (ServiceMetadata service : services) {
-			logger.info("Configuring: {}", service.getName());
-			Module module = service.getService().configure();
-			if (module != null) {
-				service.setElements(Elements.getElements(duplicateDetection.wrap(module)));
-			} else {
-				service.setElements(Collections.<com.google.inject.spi.Element>emptyList());
-			}
-		}
-
-		for (ServiceMetadata service : services) {
-			checkOnlySingletonBindWithoutAnnotation(service);
-		}
-
-		for (ServiceMetadata service : services) {
-			service.setElements(ServiceModuleRewriter.annotateExposedWithId(service.getElements(),
-					service.getService()));
-		}
-
 		List<String> hints = new ArrayList<>();
 
-		for (ServiceMetadata service : services) {
-			service.setElements(ServiceModuleRewriter.importBindings(service, services, hints));
-		}
-
-		for (ServiceMetadata service : services) {
-			modules.add(Elements.getModule(service.getElements()));
-		}
-
-		modules.add(new InjectMembersModule());
-
 		try {
+			for (ServiceMetadata service : services) {
+				logger.info("Configuring: {}", service.getName());
+				Module module = service.getService().configure();
+				if (module != null) {
+					service.setElements(Elements.getElements(duplicateDetection.wrap(module)));
+				} else {
+					service.setElements(Collections.<com.google.inject.spi.Element>emptyList());
+				}
+			}
+
+			for (ServiceMetadata service : services) {
+				checkOnlySingletonBindWithoutAnnotation(service);
+			}
+
+			for (ServiceMetadata service : services) {
+				service.setElements(ServiceModuleRewriter.annotateExposedWithId(service.getElements(),
+						service.getService()));
+			}
+
+			for (ServiceMetadata service : services) {
+				service.setElements(ServiceModuleRewriter.importBindings(service, services, hints));
+			}
+
+			for (ServiceMetadata service : services) {
+				modules.add(Elements.getModule(service.getElements()));
+			}
+
+			modules.add(new InjectMembersModule());
+
 			return Guice.createInjector(modules);
 		} catch (CreationException e) {
 			if (!hints.isEmpty()) {
@@ -152,6 +152,18 @@ public class ServicesImplementation implements Services, Services.Builder {
 				for (String hint : hints) {
 					logger.warn(" -> " + hint);
 				}
+			}
+			try {
+				close();
+			} catch (Exception f) {
+				e.addSuppressed(f);
+			}
+			throw e;
+		} catch (RuntimeException e) {
+			try {
+				close();
+			} catch (Exception f) {
+				e.addSuppressed(f);
 			}
 			throw e;
 		}

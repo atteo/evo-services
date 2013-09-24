@@ -227,7 +227,6 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 		if (moonshineParameters.isPrintGuiceBindings()) {
 			GuiceBindingsHelper.printServiceElements(services.getServiceElements());
-			return null;
 		}
 		if (shutdownHook) {
 			Runtime.getRuntime().addShutdownHook(shutdownThread);
