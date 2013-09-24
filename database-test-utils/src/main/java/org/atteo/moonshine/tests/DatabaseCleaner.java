@@ -52,9 +52,7 @@ public class DatabaseCleaner {
 			try (ResultSet result = metaData.getTables(null, null, "%", new String[]{"TABLE"})) {
 				while (result.next()) {
 					String tableName = result.getString("TABLE_NAME");
-					if (tableName.equals("DATABASECHANGELOG") || tableName.equals("DATABASECHANGELOGLOCK")) {
-						dropTable(connection, tableName);
-					} else {
+					if (!tableName.equals("DATABASECHANGELOG") && !tableName.equals("DATABASECHANGELOGLOCK")) {
 						tables.add(tableName);
 					}
 				}
@@ -69,14 +67,6 @@ public class DatabaseCleaner {
 	private static void clearTables(Connection connection, List<String> tables) {
 		for (String table : tables) {
 			clearSingleTable(connection, table);
-		}
-	}
-
-	private static void dropTable(Connection connection, String tableName) {
-		try (Statement statement = connection.createStatement()) {
-			statement.executeUpdate("DROP TABLE " + tableName);
-		} catch (SQLException ex) {
-			throw new RuntimeException("Can't read table contents from table ".concat(tableName), ex);
 		}
 	}
 
