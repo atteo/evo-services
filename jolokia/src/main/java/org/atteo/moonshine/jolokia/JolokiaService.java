@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.webserver.ServletRegistry;
+import org.atteo.moonshine.webserver.ServletContainer;
 import org.jolokia.http.AgentServlet;
 import org.jolokia.restrictor.AllowAllRestrictor;
 
@@ -38,13 +38,13 @@ public class JolokiaService extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
 	@ImportService
-	private ServletRegistry servletContainer;
+	private ServletContainer servletContainer;
 
 	/**
 	 * URL prefix under which Jolokia should be served.
 	 */
 	@XmlElement
-	private String prefix = "/jolokia/*";
+	private String pattern = "/jolokia/*";
 
 	@Override
 	public Module configure() {
@@ -52,7 +52,7 @@ public class JolokiaService extends TopLevelService {
 			@Override
 			protected void configure() {
 				bind(AgentServlet.class).toInstance(new AgentServlet(new AllowAllRestrictor()));
-				servletContainer.addServlet(prefix, AgentServlet.class, getProvider(AgentServlet.class));
+				servletContainer.addServlet(getProvider(AgentServlet.class), pattern);
 			}
 		};
 	}

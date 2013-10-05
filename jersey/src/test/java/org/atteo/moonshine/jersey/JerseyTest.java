@@ -29,7 +29,7 @@ import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <servlet-registry/>"
+		+ "    <servlet-container/>"
 		+ "    <jetty>"
 		+ "        <connectors>"
 		+ "            <local/>"

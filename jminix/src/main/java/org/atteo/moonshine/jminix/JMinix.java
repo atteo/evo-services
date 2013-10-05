@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.webserver.ServletRegistry;
+import org.atteo.moonshine.webserver.ServletContainer;
 import org.jminix.console.servlet.MiniConsoleServlet;
 
 import com.google.inject.Module;
@@ -41,10 +41,10 @@ public class JMinix extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
 	@ImportService
-	private ServletRegistry servletContainer;
+	private ServletContainer servletContainer;
 
 	@XmlElement
-	private String prefix = "/jmx";
+	private String pattern = "/jmx/*";
 
 	@Override
 	public Module configure() {
@@ -52,8 +52,7 @@ public class JMinix extends TopLevelService {
 			@Override
 			protected void configure() {
 				bind(MiniConsoleServlet.class).in(Singleton.class);
-				servletContainer.addServlet(prefix + "/*", MiniConsoleServlet.class,
-						getProvider(MiniConsoleServlet.class));
+				servletContainer.addServlet(getProvider(MiniConsoleServlet.class), pattern);
 			}
 		};
 	}

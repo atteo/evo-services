@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.webserver.ServletRegistry;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -43,7 +42,7 @@ public class Jersey extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
 	@ImportService
-	private ServletRegistry servletContainer;
+	private org.atteo.moonshine.webserver.ServletContainer servletContainer;
 
 	/**
 	 * Prefix under which JAX-RS resources should be registered.
@@ -79,8 +78,7 @@ public class Jersey extends TopLevelService {
 				params.put(FreemarkerViewProcessor.FREEMARKER_TEMPLATES_BASE_PATH, "templates");
 
 				bind(GuiceContainer.class);
-				servletContainer.addFilter(prefix + "/*", GuiceContainer.class, getProvider(GuiceContainer.class),
-						params);
+				servletContainer.addFilter(getProvider(GuiceContainer.class), params, prefix + "/*");
 
 				if (discoverResources) {
 					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {

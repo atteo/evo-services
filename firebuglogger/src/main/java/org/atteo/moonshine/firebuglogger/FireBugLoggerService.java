@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.webserver.ServletRegistry;
+import org.atteo.moonshine.webserver.ServletContainer;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Module;
@@ -45,13 +45,13 @@ public class FireBugLoggerService extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
 	@ImportService
-	private ServletRegistry servletContainer;
+	private ServletContainer servletContainer;
 
 	/**
 	 * URL pattern specifying to which responses the headers will be added.
 	 */
 	@XmlElement
-	private String urlPattern = "/*";
+	private String pattern = "/*";
 
 	@Override
 	public Module configure() {
@@ -59,7 +59,7 @@ public class FireBugLoggerService extends TopLevelService {
 			@Override
 			protected void configure() {
 				bind(FireBugFilter.class);
-				servletContainer.addFilter(urlPattern, FireBugFilter.class, getProvider(FireBugFilter.class));
+				servletContainer.addFilter(getProvider(FireBugFilter.class), pattern);
 			}
 		};
 	}

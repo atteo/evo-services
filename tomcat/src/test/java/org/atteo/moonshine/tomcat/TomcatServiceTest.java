@@ -35,7 +35,7 @@ import com.google.common.io.CharStreams;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <servlet-registry/>"
+		+ "    <servlet-container/>"
 		+ "    <web-annotations/>"
 		+ "    <tomcat/>"
 		+ "</config>")

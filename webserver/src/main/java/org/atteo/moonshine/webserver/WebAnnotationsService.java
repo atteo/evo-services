@@ -16,6 +16,7 @@
 
 package org.atteo.moonshine.webserver;
 
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -50,7 +52,7 @@ public class WebAnnotationsService extends TopLevelService {
 	@XmlElement
 	@XmlIDREF
 	@ImportService
-	private ServletRegistry servletContainer;
+	private ServletContainer servletContainer;
 
 	@Override
 	public Module configure() {
@@ -75,9 +77,7 @@ public class WebAnnotationsService extends TopLevelService {
 					Class<Filter> filterClass = (Class<Filter>) klass;
 					bind(filterClass).in(Singleton.class);
 
-					for (String url : urls) {
-						servletContainer.addFilter(url, filterClass, getProvider(filterClass), params);
-					}
+					servletContainer.addFilter(getProvider(filterClass), params, urls);
 				}
 				for (Class<?> klass : ClassIndex.getAnnotated(WebServlet.class)) {
 					WebServlet annotation = klass.getAnnotation(WebServlet.class);
@@ -96,9 +96,18 @@ public class WebAnnotationsService extends TopLevelService {
 					Class<Servlet> servletClass = (Class<Servlet>) klass;
 					bind(servletClass).in(Singleton.class);
 
-					for (String url : urls) {
-						servletContainer.addServlet(url, servletClass, getProvider(servletClass), params);
+					servletContainer.addServlet(getProvider(servletClass), params, urls);
+				}
+				for (Class<?> klass : ClassIndex.getAnnotated(WebListener.class)) {
+					if (!EventListener.class.isAssignableFrom(klass)) {
+						throw new RuntimeException("Class " + klass.getName() + " annotated with @"
+								+ WebListener.class.getSimpleName() + " must implement "
+								+ EventListener.class.getName() + " interface");
 					}
+					Class<? extends EventListener> eventListenerClass = (Class<? extends EventListener>) klass;
+
+					bind(klass).in(Singleton.class);
+					servletContainer.addListener(getProvider(eventListenerClass));
 				}
 			}
 		};

@@ -35,7 +35,7 @@ import com.google.common.io.CharStreams;
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
 		+ "    <jmx/>"
-		+ "    <servlet-registry/>"
+		+ "    <servlet-container/>"
 		+ "    <jetty>"
 		+ "        <connectors>"
 		+ "            <serverconnector>"

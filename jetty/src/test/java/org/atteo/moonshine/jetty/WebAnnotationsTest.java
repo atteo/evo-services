@@ -21,6 +21,7 @@ import java.net.URL;
 
 import javax.inject.Inject;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.atteo.moonshine.webserver.WebServerAddress;
@@ -32,7 +33,7 @@ import com.google.common.io.CharStreams;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <servlet-registry/>"
+		+ "    <servlet-container/>"
 		+ "    <web-annotations/>"
 		+ "    <jetty>"
 		+ "	       <connectors>"
@@ -51,11 +52,16 @@ public class WebAnnotationsTest extends MoonshineTest {
 	}
 
 	@Test
-	public void testServlet() throws MalformedURLException, IOException {
-		URL url = new URL(webServerAddress.getUrl() + "/servlet");
+	public void testServletAndFilter() throws MalformedURLException, IOException {
+		URL url = new URL(webServerAddress.getUrl() + "/hello");
 		try (InputStream stream = url.openStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
-			assertEquals("hello", result);
+			assertEquals("filtered: hello", result);
 		}
+	}
+
+	@Test
+	public void testListener() throws MalformedURLException, IOException {
+		assertThat(HelloListener.initializer);
 	}
 }

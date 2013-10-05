@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.atteo.moonshine.jetty;
 
-import java.io.IOException;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-@WebServlet(urlPatterns = "/hello")
-public class HelloServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+@WebListener
+public class HelloListener implements ServletContextListener {
+	public static boolean initializer = false;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		resp.getWriter().append("hello");
+	public void contextInitialized(ServletContextEvent sce) {
+		initializer = true;
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent sce) {
+		initializer = false;
 	}
 }

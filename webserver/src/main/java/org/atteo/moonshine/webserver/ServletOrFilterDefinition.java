@@ -21,24 +21,18 @@ import java.util.Map;
 import javax.inject.Provider;
 
 public class ServletOrFilterDefinition<T> {
-	private final String prefix;
-	private final Class<T> servletClass;
+	private final String[] patterns;
 	private final Provider<T> servlet;
 	private final Map<String, String> params;
 
-	public ServletOrFilterDefinition(String prefix, Class<T> servletClass, Provider<T> servlet, Map<String, String> params) {
-		this.prefix = prefix;
-		this.servletClass = servletClass;
+	public ServletOrFilterDefinition(Provider<T> servlet, Map<String, String> params, String[] patterns) {
+		this.patterns = patterns;
 		this.servlet = servlet;
 		this.params = params;
 	}
 
-	public String getPrefix() {
-		return prefix;
-	}
-
-	public Class<T> getProviderClass() {
-		return servletClass;
+	public String[] getPatterns() {
+		return patterns;
 	}
 
 	public Provider<T> getProvider() {

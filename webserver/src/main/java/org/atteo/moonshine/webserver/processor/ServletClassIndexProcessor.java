@@ -14,12 +14,13 @@
 package org.atteo.moonshine.webserver.processor;
 
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 
 import org.atteo.evo.classindex.processor.ClassIndexProcessor;
 
 public class ServletClassIndexProcessor extends ClassIndexProcessor {
 	public ServletClassIndexProcessor() {
-		super(WebServlet.class, WebFilter.class);
+		super(WebServlet.class, WebFilter.class, WebListener.class);
 	}
 }
