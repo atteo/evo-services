@@ -56,14 +56,18 @@ public class ServletContextHandlerConfig extends HandlerConfig implements Servic
 		handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
 			@Override
 			public void lifeCycleStarting(LifeCycle event) {
-				for (ServletContainerInitializer servletContainerInitializer : servletContainer.getInitializers()) {
+				handler.getServletContext().setExtendedListenerTypes(true);
+				Iterable<ServletContainerInitializer> initializers = servletContainer.getInitializers();
+				for (ServletContainerInitializer servletContainerInitializer : initializers) {
 					try {
-						servletContainerInitializer.onStartup(null, handler.getServletContext());
+						servletContainerInitializer.onStartup(Collections.<Class<?>>emptySet(),
+								handler.getServletContext());
 					} catch (ServletException ex) {
 						throw new RuntimeException(ex);
 					}
 				}
 				handler.addServlet(DefaultServlet.class, "/");
+				handler.getServletContext().setExtendedListenerTypes(false);
 			}
 		});
 		return handler;

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import static org.apache.catalina.LifecycleState.STARTED;
@@ -58,11 +59,11 @@ public class TomcatService extends WebServerService {
 
 	@XmlElementWrapper(name = "connectors")
 	@XmlElement(name = "connector")
-	private List<ConnectorConfig> connectors = new ArrayList<ConnectorConfig>() {
+	private List<TomcatConnectorConfig> connectors = new ArrayList<TomcatConnectorConfig>() {
 		private static final long serialVersionUID = 1L;
 
 		{
-			add(new ConnectorConfig());
+			add(new TomcatConnectorConfig());
 		}
 	};
 
@@ -139,7 +140,7 @@ public class TomcatService extends WebServerService {
 			}
 
 			for (ContextConfig contextConfig : hostConfig.getContexts()) {
-				Context context = tomcat.addWebapp(host, contextConfig.getPath(), contextConfig.getBaseDir());
+				Context context = tomcat.addContext(host, contextConfig.getPath(), contextConfig.getBaseDir());
 				contextConfig.configure(context);
 			}
 
@@ -147,7 +148,7 @@ public class TomcatService extends WebServerService {
 			tomcat.setHost(host);
 		}
 
-		for (ConnectorConfig connectorConfig : connectors) {
+		for (TomcatConnectorConfig connectorConfig : connectors) {
 			Connector connector = new Connector(connectorConfig.getProtocol());
 			connector.setPort(connectorConfig.getPort());
 
@@ -164,7 +165,12 @@ public class TomcatService extends WebServerService {
 		try {
 			tomcat.start();
 			if (tomcat.getConnector().getState() != STARTED) {
-				throw new RuntimeException("Cannot start Tomcat");
+				throw new RuntimeException("Cannot start Tomcat, check logs");
+			}
+			for (Container container : tomcat.getHost().findChildren()) {
+				if (container.getState() != STARTED) {
+					throw new RuntimeException("Cannot start Tomcat, check logs");
+				}
 			}
 		} catch (LifecycleException e) {
 			throw new RuntimeException(e);
@@ -183,7 +189,7 @@ public class TomcatService extends WebServerService {
 	@Override
 	public Iterable<? extends Service> getSubServices() {
 		List<Service> result = new ArrayList<>();
-		for (ConnectorConfig connector : connectors) {
+		for (TomcatConnectorConfig connector : connectors) {
 			if (connector instanceof Service) {
 				result.add((Service) connector);
 			}

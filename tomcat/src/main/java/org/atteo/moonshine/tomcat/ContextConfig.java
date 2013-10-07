@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 
 import org.apache.catalina.Context;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.servlets.DefaultServlet;
+import org.apache.catalina.startup.Tomcat;
 import org.atteo.evo.config.Configurable;
 import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.Service;
@@ -60,8 +63,12 @@ public class ContextConfig extends Configurable implements Service {
 
 	public void configure(Context context) {
 		for (ServletContainerInitializer servletContainerInitializer : servletContainer.getInitializers()) {
-			context.addServletContainerInitializer(servletContainerInitializer, null);
+			context.addServletContainerInitializer(servletContainerInitializer, Collections.<Class<?>>emptySet());
 		}
+		Wrapper wrapper = new Tomcat.ExistingStandardWrapper(new DefaultServlet());
+		wrapper.setName("default");
+		context.addChild(wrapper);
+		context.addServletMapping("/", "default");
 	}
 
 	@Override

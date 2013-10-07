@@ -13,30 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.tomcat;
 
-import javax.xml.bind.annotation.XmlElement;
+package org.atteo.moonshine.websocket.tomcat;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.websocket.WebSocketContainerServiceTest;
 
-public class ConnectorConfig extends Configurable {
-	/**
-	 * Port on which to listen.
-	 */
-	@XmlElement
-	private int port = 0;
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <tomcat/>"
+		+ "    <tomcat-websocket-container/>"
+		+ "</config>")
+public class TomcatWebSocketContainerServiceTest extends WebSocketContainerServiceTest {
 
-	/**
-	 * Coyote protocol.
-	 */
-	@XmlElement
-	private String protocol = "HTTP/1.1";
-
-	public int getPort() {
-		return port;
-	}
-
-	public String getProtocol() {
-		return protocol;
-	}
 }

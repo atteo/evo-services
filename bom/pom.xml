@@ -159,6 +159,21 @@
 				<artifactId>webserver</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>websocket</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>websocket-jetty</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>websocket-tomcat</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>
