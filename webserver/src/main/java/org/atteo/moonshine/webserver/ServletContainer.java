@@ -181,14 +181,20 @@ public class ServletContainer extends TopLevelService {
 	private class Initializer implements ServletContainerInitializer {
 		@Override
 		public void onStartup(Set<Class<?>> c, ServletContext context) throws ServletException {
+			int counter = 0;
 			for (ServletOrFilterDefinition<? extends Filter> filter : filters) {
-				FilterRegistration.Dynamic registration = context.addFilter("filter", filter.getProvider().get());
+				String name = "filter" + counter;
+				counter++;
+				FilterRegistration.Dynamic registration = context.addFilter(name, filter.getProvider().get());
 				registration.setInitParameters(filter.getParams());
 				registration.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, filter.getPatterns());
 			}
 
+			counter = 0;
 			for (ServletOrFilterDefinition<? extends Servlet> servlet : servlets) {
-				ServletRegistration.Dynamic registration = context.addServlet("servlet", servlet.getProvider().get());
+				String name = "servlet" + counter;
+				counter++;
+				ServletRegistration.Dynamic registration = context.addServlet(name, servlet.getProvider().get());
 				registration.setInitParameters(servlet.getParams());
 				registration.addMapping(servlet.getPatterns());
 			}

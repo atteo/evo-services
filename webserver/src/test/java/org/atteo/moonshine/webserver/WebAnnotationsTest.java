@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atteo.moonshine.jetty;
+package org.atteo.moonshine.webserver;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
-import org.atteo.moonshine.webserver.WebServerAddress;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
@@ -35,15 +34,8 @@ import com.google.common.io.CharStreams;
 		+ "<config>"
 		+ "    <servlet-container/>"
 		+ "    <web-annotations/>"
-		+ "    <jetty>"
-		+ "	       <connectors>"
-		+ "            <serverconnector>"
-		+ "                 <provideAddress>true</provideAddress>"
-		+ "            </serverconnector>"
-		+ "        </connectors>"
-		+ "    </jetty>"
 		+ "</config>")
-public class WebAnnotationsTest extends MoonshineTest {
+public abstract class WebAnnotationsTest extends MoonshineTest {
 	@Inject
 	private WebServerAddress webServerAddress;
 
@@ -62,6 +54,6 @@ public class WebAnnotationsTest extends MoonshineTest {
 
 	@Test
 	public void testListener() throws MalformedURLException, IOException {
-		assertThat(HelloListener.initializer);
+		assertThat(HelloListener.initialized);
 	}
 }
