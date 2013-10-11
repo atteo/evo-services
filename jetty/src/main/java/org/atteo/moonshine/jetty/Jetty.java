@@ -112,7 +112,7 @@ public class Jetty extends WebServerService {
 	}
 
 	@Override
-	public void close() {
+	public void stop() {
 		if (server == null) {
 			return;
 		}
