@@ -79,6 +79,7 @@ public class HibernateSearch extends HibernatePlugin {
 	public Map<String, Object> getProperties() {
 		Map<String, Object> map = new HashMap<>();
 		map.put(Environment.INDEXING_STRATEGY, indexing_strategy);
+		map.put("hibernate.search.autoregister_listeners", true);
 		map.put("hibernate.search.default." + Environment.INDEX_MANAGER_IMPL_NAME, indexmanager);
 		map.put("hibernate.search.default.directory_provider", directory_provider);
 		map.put("hibernate.search.default.indexBase", indexBase);

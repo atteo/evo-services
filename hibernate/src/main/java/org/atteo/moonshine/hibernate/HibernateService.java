@@ -229,6 +229,7 @@ public class HibernateService extends JpaService {
 			PersistenceProvider provider = new HibernatePersistence();
 
 			Map<String, Object> map = new HashMap<>();
+			map.put("hibernate.search.autoregister_listeners", false);
 			if (plugins != null) {
 				for (HibernatePlugin plugin : plugins) {
 					map.putAll(plugin.getProperties());
