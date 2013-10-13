@@ -34,14 +34,17 @@ public class TestEndpointsService extends TopLevelService {
 		return new PrivateModule() {
 			@Override
 			protected void configure() {
-				bind(EchoEndpoint.class);
-				websocketService.addEndpoint(EchoEndpoint.class)
-						.provider(getProvider(EchoEndpoint.class))
-						.pattern("/echo");
+				bind(AnnotatedEchoEndpoint.class);
+				websocketService.addAnnotatedEndpoint(AnnotatedEchoEndpoint.class,
+						getProvider(AnnotatedEchoEndpoint.class));
+				websocketService.addAnnotatedEndpoint(AnnotatedCustomTypeEndpoint.class);
+				bind(CustomTypeEndpoint.class);
 				websocketService.addEndpoint(CustomTypeEndpoint.class)
+						.provider(getProvider(CustomTypeEndpoint.class))
 						.pattern("/custom")
 						.addEncoder(CustomTypeEncoder.class)
-						.addDecoder(CustomTypeDecoder.class);
+						.addDecoder(CustomTypeDecoder.class)
+						.addUserProperty("prefix", "request was: ");
 			}
 		};
 	}

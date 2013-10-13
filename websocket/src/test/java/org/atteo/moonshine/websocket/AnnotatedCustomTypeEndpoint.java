@@ -19,11 +19,11 @@ package org.atteo.moonshine.websocket;
 import javax.websocket.OnMessage;
 import javax.websocket.server.ServerEndpoint;
 
-
-@ServerEndpoint("/echo")
-public class EchoEndpoint {
+@ServerEndpoint(value = "/annotated/custom", encoders = CustomTypeEncoder.class,
+		decoders = CustomTypeDecoder.class)
+public class AnnotatedCustomTypeEndpoint {
 	@OnMessage
-	public String ping(String message) {
-		return message;
+	public CustomType ping(CustomType custom) {
+		return new CustomType(custom.getMessage());
 	}
 }

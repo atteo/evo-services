@@ -16,15 +16,49 @@
 
 package org.atteo.moonshine.websocket;
 
-import javax.websocket.OnMessage;
-import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 
-@ServerEndpoint(value = "/custom", encoders = CustomTypeEncoder.class,
-		decoders = CustomTypeDecoder.class)
-public class CustomTypeEndpoint {
-	@OnMessage
-	public CustomType ping(CustomType custom) {
-		return new CustomType("request was: " + custom.getMessage());
+import javax.websocket.EncodeException;
+import javax.websocket.Endpoint;
+import javax.websocket.EndpointConfig;
+import javax.websocket.MessageHandler;
+import javax.websocket.RemoteEndpoint;
+import javax.websocket.Session;
+
+public class CustomTypeEndpoint extends Endpoint {
+	@Override
+	public void onOpen(Session session, final EndpointConfig config) {
+		final RemoteEndpoint.Basic remote = session.getBasicRemote();
+		session.addMessageHandler(new CustomMessageHandler(remote, config));
 	}
 
+	@Override
+	public void onError(Session session, Throwable thr) {
+		try {
+			session.getBasicRemote().sendText("Exception: " + thr.toString());
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+
+	public static class CustomMessageHandler implements MessageHandler.Whole<CustomType> {
+
+		private final RemoteEndpoint.Basic remote;
+		private final EndpointConfig config;
+
+		public CustomMessageHandler(RemoteEndpoint.Basic remote, EndpointConfig config) {
+			this.remote = remote;
+			this.config = config;
+		}
+
+		@Override
+		public void onMessage(CustomType message) {
+			try {
+				remote.sendObject(new CustomType(config.getUserProperties().get("prefix") + message.getMessage()));
+			} catch (IOException | EncodeException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+	}
 }

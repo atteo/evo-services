@@ -47,7 +47,8 @@ public abstract class WebSocketContainerServiceTest extends MoonshineTest {
 
 	private final TransferQueue<String> queue = new LinkedTransferQueue<>();
 
-	private void sendMessage(String path, final String message) throws URISyntaxException, DeploymentException, IOException {
+	private void sendMessage(String path, final String message) throws URISyntaxException, DeploymentException,
+			IOException {
 		URI uri =  new URI(webServerAddress.getUrl().replace("http://", "ws://") + path);
 		ClientEndpointConfig config = ClientEndpointConfig.Builder.create().build();
 
@@ -75,10 +76,10 @@ public abstract class WebSocketContainerServiceTest extends MoonshineTest {
 	}
 
 	@Test
-	public void shouldReceiveReplyUsingWebsocket() throws URISyntaxException, DeploymentException, IOException,
+	public void shouldSupportAnnotatedEndpoints() throws URISyntaxException, DeploymentException, IOException,
 			InterruptedException {
 		// given
-		sendMessage("/echo", "Hello World");
+		sendMessage("/annotated/echo", "Hello World");
 
 		// when
 		String message = queue.take();
@@ -88,15 +89,28 @@ public abstract class WebSocketContainerServiceTest extends MoonshineTest {
 	}
 
 	@Test
-	public void shouldSupportEncoders() throws URISyntaxException, DeploymentException, IOException,
-			InterruptedException {
+	public void shouldSupportAnnotatedEndpointsWithEncoders() throws URISyntaxException, DeploymentException,
+			IOException, InterruptedException {
 		// given
-		sendMessage("/custom", "request");
+		sendMessage("/annotated/custom", "Hello World!");
 
 		// when
 		String message = queue.take();
 
 		// then
-		assertThat(message).isEqualTo("request was: request");
+		assertThat(message).isEqualTo("Hello World!");
+	}
+
+	@Test
+	public void shouldSupportOrdinaryEndpoints() throws URISyntaxException, DeploymentException,
+			IOException, InterruptedException {
+		// given
+		sendMessage("/custom", "Hello World");
+
+		// when
+		String message = queue.take();
+
+		// then
+		assertThat(message).isEqualTo("request was: Hello World");
 	}
 }

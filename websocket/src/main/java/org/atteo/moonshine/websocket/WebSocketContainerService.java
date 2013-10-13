@@ -29,6 +29,7 @@ import javax.servlet.ServletContextListener;
 import javax.websocket.Decoder;
 import javax.websocket.DeploymentException;
 import javax.websocket.Encoder;
+import javax.websocket.Endpoint;
 import javax.websocket.Extension;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpointConfig;
@@ -51,15 +52,43 @@ public abstract class WebSocketContainerService extends TopLevelService {
 	@XmlElement
 	protected ServletContainer servletContainer;
 
-	protected final List<EndpointDefinition<?>> endpoints = new ArrayList<>();
+	private final List<EndpointDefinition<?>> endpoints = new ArrayList<>();
+
+	protected <T> EndpointDefinition<T> createEndpointDefinition(Class<T> klass) {
+		return new EndpointDefinition<>(klass);
+	}
 
 	/**
-	 * Adds given endpoint to the websocket servlet.
+	 * Adds ordinary endpoint.
 	 */
-	public <T> EndpointBuilder<T> addEndpoint(Class<T> klass) {
-		EndpointDefinition<T> definition = new EndpointDefinition<>(klass);
+	public <T extends Endpoint> EndpointBuilder<T> addEndpoint(Class<T> klass) {
+		EndpointDefinition<T> definition = createEndpointDefinition(klass);
 		endpoints.add(definition);
 		return definition;
+	}
+
+	/**
+	 * Adds annotated endpoint.
+	 * @param endpoint
+	 */
+	public void addAnnotatedEndpoint(Class<?> endpoint) {
+		EndpointDefinition<?> definition = createEndpointDefinition(endpoint);
+		endpoints.add(definition);
+	}
+
+	/**
+	 * Adds annotated endpoint.
+	 * @param endpoint
+	 */
+	public <T> void addAnnotatedEndpoint(Class<T> endpoint, Provider<? extends T> provider) {
+		addAnnotatedEndpointInternal(endpoint, provider);
+	}
+
+	private <T> void addAnnotatedEndpointInternal(Class<T> endpoint, Provider<? extends T> provider) {
+		@SuppressWarnings("unchecked")
+		EndpointDefinition<T> definition = createEndpointDefinition(endpoint);
+		definition.provider(provider);
+		endpoints.add(definition);
 	}
 
 	@Override
@@ -74,7 +103,7 @@ public abstract class WebSocketContainerService extends TopLevelService {
 
 	public static interface EndpointBuilder<T> {
 		EndpointBuilder<T> pattern(String pattern);
-		EndpointBuilder<T> provider(Provider<T> provider);
+		EndpointBuilder<T> provider(Provider<? extends T> provider);
 		EndpointBuilder<T> addEncoder(Class<? extends Encoder> encoder);
 		EndpointBuilder<T> addDecoder(Class<? extends Decoder> encoder);
 		EndpointBuilder<T> addUserProperty(String key, Object value);
@@ -101,7 +130,7 @@ public abstract class WebSocketContainerService extends TopLevelService {
 
 	public static class EndpointDefinition<T> implements ServerEndpointConfig, EndpointBuilder<T> {
 		private final Class<T> endpointClass;
-		private Provider<T> provider;
+		private Provider<? extends T> provider;
 		private String pattern;
 		private final List<Class<? extends Encoder>> encoders = new ArrayList<>();
 		private final List<Class<? extends Decoder>> decoders = new ArrayList<>();
@@ -118,7 +147,7 @@ public abstract class WebSocketContainerService extends TopLevelService {
 		}
 
 		@Override
-		public EndpointBuilder<T> provider(Provider<T> provider) {
+		public EndpointBuilder<T> provider(Provider<? extends T> provider) {
 			this.provider = provider;
 			return this;
 		}
