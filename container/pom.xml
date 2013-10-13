@@ -10,6 +10,11 @@
 	<name>Moonshine Container</name>
 	<dependencies>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>reflection-utils</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.atteo</groupId>
 			<artifactId>evo-config</artifactId>
 		</dependency>

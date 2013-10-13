@@ -30,6 +30,7 @@ import java.util.Set;
 import org.atteo.evo.urlhandlers.UrlHandlers;
 import org.atteo.moonshine.ConfigurationException;
 import org.atteo.moonshine.injection.InjectMembersModule;
+import org.atteo.moonshine.reflection.ReflectionUtils;
 import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;
 import org.atteo.moonshine.services.internal.ReflectionTools;
 import org.atteo.moonshine.services.internal.ServiceMetadata;
@@ -190,7 +191,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		logger.info("Starting services");
 		for (ServiceMetadata service : services) {
 			if (logger.isInfoEnabled()
-					&& ReflectionTools.isMethodOverriden(service.getService().getClass(), Service.class, "start")) {
+					&& ReflectionUtils.isMethodOverriden(service.getService().getClass(), Service.class, "start")) {
 				logger.info("Starting: {}", service.getName());
 			}
 			service.setStatus(STARTED);
@@ -304,9 +305,9 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 
 		for (ServiceMetadata metadata : servicesMetadata) {
-			for (Class<? super Service> serviceClass : ReflectionTools.getAncestors(metadata.getService().getClass())) {
-				metadata.setSingleton(ReflectionTools.isSingleton(serviceClass));
-				for (final Field field : serviceClass.getDeclaredFields()) {
+			for (Class<?> ancestorClass : ReflectionUtils.getAncestors(metadata.getService().getClass())) {
+				metadata.setSingleton(ReflectionTools.isSingleton(ancestorClass));
+				for (final Field field : ancestorClass.getDeclaredFields()) {
 					if (!field.isAnnotationPresent(ImportService.class)) {
 						continue;
 					}

@@ -55,6 +55,7 @@
 		<module>liquibase</module>
 		<module>metrics</module>
 		<module>perf4j</module>
+		<module>reflection-utils</module>
 		<module>shiro</module>
 		<module>shiro-database-realm</module>
 		<module>shiro-test-utils</module>

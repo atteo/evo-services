@@ -18,14 +18,17 @@ package org.atteo.moonshine.tests;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.services.Service;
-import org.atteo.moonshine.services.internal.ReflectionTools;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+
+import com.google.common.collect.Lists;
+import com.google.common.reflect.TypeToken;
 
 /**
  * Runs the tests with {@link Moonshine} container initialized.
@@ -52,7 +55,9 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	protected List<TestRule> classRules() {
-		Iterable<Class<?>> ancestors = ReflectionTools.getAncestorsWithInterfaces(getTestClass().getJavaClass());
+		@SuppressWarnings("unchecked")
+		Set<Class<?>> ancestorSet = (Set<Class<?>>) TypeToken.of(getTestClass().getJavaClass()).getTypes().rawTypes();
+		List<Class<?>> ancestors = Lists.reverse(new ArrayList<>(ancestorSet));
 
 		List<String> configs = new ArrayList<>();
 		List<MoonshineConfigurator> configurators = new ArrayList<>();
