@@ -38,6 +38,7 @@ public class TestEndpointsService extends TopLevelService {
 				websocketService.addAnnotatedEndpoint(AnnotatedEchoEndpoint.class,
 						getProvider(AnnotatedEchoEndpoint.class));
 				websocketService.addAnnotatedEndpoint(AnnotatedCustomTypeEndpoint.class);
+				bind(String.class).toInstance("Test message");
 				bind(CustomTypeEndpoint.class);
 				websocketService.addEndpoint(CustomTypeEndpoint.class)
 						.provider(getProvider(CustomTypeEndpoint.class))

@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package org.atteo.moonshine.websocket.jetty;
+package org.atteo.moonshine.websocket.jsonmessages;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.websocket.WebSocketContainerService;
-import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
+import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
 
 import com.google.inject.Module;
+import com.google.inject.PrivateModule;
 
-/**
- * Allows WebSocket endpoints registration.
- */
-@XmlRootElement(name = "jetty-websocket-container")
-public class JettyWebSocketContainerService extends WebSocketContainerService {
+@XmlRootElement(name = "test-handlers")
+public class TestHandlersService extends TopLevelService {
+	@ImportService
+	private JsonMessagesService jsonMessages;
+
 	@Override
 	public Module configure() {
-		servletContainer.addServletContainerInitializer(new WebSocketServerContainerInitializer());
-		return super.configure();
+		return new PrivateModule() {
+			@Override
+			protected void configure() {
+				bind(RequestHandler.class);
+
+				jsonMessages.addHandler(RequestHandler.class, getProvider(RequestHandler.class));
+			}
+		};
 	}
 }

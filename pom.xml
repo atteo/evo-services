@@ -65,6 +65,7 @@
 		<module>webserver</module>
 		<module>websocket</module>
 		<module>websocket-jetty</module>
+		<module>websocket-json-messages</module>
 		<module>websocket-tomcat</module>
 	</modules>
 	<scm>

@@ -18,6 +18,7 @@ package org.atteo.moonshine.websocket;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.websocket.EncodeException;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
@@ -26,6 +27,10 @@ import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 
 public class CustomTypeEndpoint extends Endpoint {
+	@Inject
+	public CustomTypeEndpoint(String message) {
+	}
+
 	@Override
 	public void onOpen(Session session, final EndpointConfig config) {
 		final RemoteEndpoint.Basic remote = session.getBasicRemote();
@@ -40,7 +45,6 @@ public class CustomTypeEndpoint extends Endpoint {
 			throw new RuntimeException(ex);
 		}
 	}
-
 
 	public static class CustomMessageHandler implements MessageHandler.Whole<CustomType> {
 
