@@ -87,12 +87,13 @@
 <span class="sourceLineNo">079</span>    public Map&lt;String, Object&gt; getProperties() {<a name="line.79"></a>
 <span class="sourceLineNo">080</span>        Map&lt;String, Object&gt; map = new HashMap&lt;&gt;();<a name="line.80"></a>
 <span class="sourceLineNo">081</span>        map.put(Environment.INDEXING_STRATEGY, indexing_strategy);<a name="line.81"></a>
-<span class="sourceLineNo">082</span>        map.put("hibernate.search.default." + Environment.INDEX_MANAGER_IMPL_NAME, indexmanager);<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        map.put("hibernate.search.default.directory_provider", directory_provider);<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        map.put("hibernate.search.default.indexBase", indexBase);<a name="line.84"></a>
-<span class="sourceLineNo">085</span>        return map;<a name="line.85"></a>
-<span class="sourceLineNo">086</span>    }<a name="line.86"></a>
-<span class="sourceLineNo">087</span>}<a name="line.87"></a>
+<span class="sourceLineNo">082</span>        map.put("hibernate.search.autoregister_listeners", true);<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        map.put("hibernate.search.default." + Environment.INDEX_MANAGER_IMPL_NAME, indexmanager);<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        map.put("hibernate.search.default.directory_provider", directory_provider);<a name="line.84"></a>
+<span class="sourceLineNo">085</span>        map.put("hibernate.search.default.indexBase", indexBase);<a name="line.85"></a>
+<span class="sourceLineNo">086</span>        return map;<a name="line.86"></a>
+<span class="sourceLineNo">087</span>    }<a name="line.87"></a>
+<span class="sourceLineNo">088</span>}<a name="line.88"></a>
 
 
 

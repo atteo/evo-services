@@ -32,26 +32,20 @@
 <h1>
 <a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h1>
 
-<p>Moonshine is an application framework based on <a href="https://code.google.com/p/google-guice/">Google Guice</a> dependency injection library.
-It provides infrastructure commonly found in application containers like JPA, JMS, JAX-RS, etc. But it is (by design) not compatible with J2EE
-specification.
-</p>
+<p>Moonshine is an application framework using <a href="https://code.google.com/p/google-guice/">Google Guice's</a> dependency injection as
+its foundation. It is based on the notion of <a href="http://moonshine.atteo.org/apidocs/org/atteo/moonshine/services/Service.html">Service</a>.
+Services implement some functionality, they can depend on each other and they can
+<a href="http://moonshine.atteo.org/apidocs/org/atteo/moonshine/services/Service.html#configure()">register</a>
+bindings in Guice</p>
 
-<p>Moonshine is based on the notion of <a href="http://moonshine.atteo.org/apidocs/org/atteo/moonshine/services/Service.html">Service</a>.
-Services implement some functionality
-and they can <a href="http://moonshine.atteo.org/apidocs/org/atteo/moonshine/services/Service.html#configure()">register</a>
-bindings in Guice to export this functionality to other services.</p>
-
-<p>Moonshine provides mechanisms for configuring the services, prepares the environment for executing them
-and gives you the utilities to test them.</p>
-
-<p>Out of the box Moonshine provides ready to use services for database support (H2, HSQLDB), JTA (Atomikos), servlets (Jetty),
-JPA (Hibernate), JMX, JAX-RS (Jersey), and many more.</p>
+<p>Moonshine provides mechanisms for configuring, executing and testing the services.
+It also comes out of the box with ready to use services for database access (H2, HSQLDB), servlets and web sockets (Jetty, Tomcat),
+JTA (Atomikos), JPA (Hibernate), Spring Data, JMX, JAX-RS (Jersey), and many more.</p>
 
 <h1>
 <a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Changes</h1>
 
-<p>1.0 Initial Moonshine revision, beta quality</p>
+<p>0.9 Initial Moonshine revision, beta quality</p>
 
 <h1>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>

@@ -34,29 +34,7 @@
 <span class="sourceLineNo">026</span>        return klass.isAnnotationPresent(Singleton.class)<a name="line.26"></a>
 <span class="sourceLineNo">027</span>                || klass.isAnnotationPresent(com.google.inject.Singleton.class);<a name="line.27"></a>
 <span class="sourceLineNo">028</span>    }<a name="line.28"></a>
-<span class="sourceLineNo">029</span><a name="line.29"></a>
-<span class="sourceLineNo">030</span>    /**<a name="line.30"></a>
-<span class="sourceLineNo">031</span>     * Checks if given method is overridden.<a name="line.31"></a>
-<span class="sourceLineNo">032</span>     * @param &lt;T&gt; klass type<a name="line.32"></a>
-<span class="sourceLineNo">033</span>     * @param klass class to check method on, should be child of parentClass<a name="line.33"></a>
-<span class="sourceLineNo">034</span>     * @param parentClass class which marks stop of the search<a name="line.34"></a>
-<span class="sourceLineNo">035</span>     * @param methodName name of the method to search<a name="line.35"></a>
-<span class="sourceLineNo">036</span>     * @return true, if method is overridden in klass, or any of its super classes up to (exclusive) parent class<a name="line.36"></a>
-<span class="sourceLineNo">037</span>     */<a name="line.37"></a>
-<span class="sourceLineNo">038</span>    public static &lt;T&gt; boolean isMethodOverriden(Class&lt;? extends T&gt; klass, Class&lt;T&gt; parentClass, String methodName) {<a name="line.38"></a>
-<span class="sourceLineNo">039</span>        Class&lt;?&gt; superClass = klass;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>        while (superClass != parentClass) {<a name="line.40"></a>
-<span class="sourceLineNo">041</span>            try {<a name="line.41"></a>
-<span class="sourceLineNo">042</span>                superClass.getDeclaredMethod(methodName);<a name="line.42"></a>
-<span class="sourceLineNo">043</span>            } catch (NoSuchMethodException e) {<a name="line.43"></a>
-<span class="sourceLineNo">044</span>                superClass = superClass.getSuperclass();<a name="line.44"></a>
-<span class="sourceLineNo">045</span>                continue;<a name="line.45"></a>
-<span class="sourceLineNo">046</span>            }<a name="line.46"></a>
-<span class="sourceLineNo">047</span>            return true;<a name="line.47"></a>
-<span class="sourceLineNo">048</span>        }<a name="line.48"></a>
-<span class="sourceLineNo">049</span>        return false;<a name="line.49"></a>
-<span class="sourceLineNo">050</span>    }<a name="line.50"></a>
-<span class="sourceLineNo">051</span>}<a name="line.51"></a>
+<span class="sourceLineNo">029</span>}<a name="line.29"></a>
 
 
 

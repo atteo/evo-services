@@ -23,244 +23,393 @@
 <span class="sourceLineNo">015</span> */<a name="line.15"></a>
 <span class="sourceLineNo">016</span>package org.atteo.moonshine.services;<a name="line.16"></a>
 <span class="sourceLineNo">017</span><a name="line.17"></a>
-<span class="sourceLineNo">018</span>import java.util.ArrayList;<a name="line.18"></a>
-<span class="sourceLineNo">019</span>import java.util.Collections;<a name="line.19"></a>
-<span class="sourceLineNo">020</span>import java.util.HashSet;<a name="line.20"></a>
-<span class="sourceLineNo">021</span>import java.util.IdentityHashMap;<a name="line.21"></a>
-<span class="sourceLineNo">022</span>import java.util.LinkedHashMap;<a name="line.22"></a>
-<span class="sourceLineNo">023</span>import java.util.List;<a name="line.23"></a>
-<span class="sourceLineNo">024</span>import java.util.Map;<a name="line.24"></a>
-<span class="sourceLineNo">025</span>import java.util.Set;<a name="line.25"></a>
-<span class="sourceLineNo">026</span><a name="line.26"></a>
-<span class="sourceLineNo">027</span>import org.atteo.evo.classindex.ClassIndex;<a name="line.27"></a>
-<span class="sourceLineNo">028</span>import org.atteo.evo.urlhandlers.UrlHandlers;<a name="line.28"></a>
-<span class="sourceLineNo">029</span>import org.atteo.moonshine.ConfigurationException;<a name="line.29"></a>
-<span class="sourceLineNo">030</span>import org.atteo.moonshine.injection.InjectMembersModule;<a name="line.30"></a>
-<span class="sourceLineNo">031</span>import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;<a name="line.31"></a>
-<span class="sourceLineNo">032</span>import org.atteo.moonshine.services.internal.ReflectionTools;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import org.atteo.moonshine.services.internal.ServiceModuleRewriter;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import org.slf4j.Logger;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import org.slf4j.LoggerFactory;<a name="line.35"></a>
-<span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>import com.google.common.base.Strings;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import com.google.inject.CreationException;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import com.google.inject.Guice;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import com.google.inject.Injector;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import com.google.inject.Module;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import com.google.inject.servlet.ServletModule;<a name="line.42"></a>
-<span class="sourceLineNo">043</span>import com.google.inject.spi.Element;<a name="line.43"></a>
-<span class="sourceLineNo">044</span>import com.google.inject.spi.Elements;<a name="line.44"></a>
-<span class="sourceLineNo">045</span><a name="line.45"></a>
-<span class="sourceLineNo">046</span>public class ServicesImplementation implements Services, Services.Builder {<a name="line.46"></a>
-<span class="sourceLineNo">047</span>    private final Logger logger = LoggerFactory.getLogger("Moonshine");<a name="line.47"></a>
-<span class="sourceLineNo">048</span>    private final List&lt;Module&gt; extraModules = new ArrayList&lt;&gt;();<a name="line.48"></a>
-<span class="sourceLineNo">049</span><a name="line.49"></a>
-<span class="sourceLineNo">050</span>    private Injector injector;<a name="line.50"></a>
-<span class="sourceLineNo">051</span>    private ServicesConfig config;<a name="line.51"></a>
-<span class="sourceLineNo">052</span>    private final List&lt;Service&gt; startedServices = new ArrayList&lt;&gt;();<a name="line.52"></a>
-<span class="sourceLineNo">053</span>    private final Map&lt;Service, String&gt; serviceNameMap = new IdentityHashMap&lt;&gt;();<a name="line.53"></a>
-<span class="sourceLineNo">054</span>    private final Map&lt;Service, List&lt;com.google.inject.spi.Element&gt;&gt; serviceElements = new LinkedHashMap&lt;&gt;();<a name="line.54"></a>
-<span class="sourceLineNo">055</span><a name="line.55"></a>
-<span class="sourceLineNo">056</span>    public ServicesImplementation() {<a name="line.56"></a>
-<span class="sourceLineNo">057</span>        UrlHandlers.registerAnnotatedHandlers();<a name="line.57"></a>
-<span class="sourceLineNo">058</span>    }<a name="line.58"></a>
-<span class="sourceLineNo">059</span><a name="line.59"></a>
-<span class="sourceLineNo">060</span>    @Override<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    public Builder addModule(Module module) {<a name="line.61"></a>
-<span class="sourceLineNo">062</span>        extraModules.add(module);<a name="line.62"></a>
-<span class="sourceLineNo">063</span>        return this;<a name="line.63"></a>
-<span class="sourceLineNo">064</span>    }<a name="line.64"></a>
-<span class="sourceLineNo">065</span><a name="line.65"></a>
-<span class="sourceLineNo">066</span>    @Override<a name="line.66"></a>
-<span class="sourceLineNo">067</span>    public Builder configuration(ServicesConfig config) {<a name="line.67"></a>
-<span class="sourceLineNo">068</span>        this.config = config;<a name="line.68"></a>
-<span class="sourceLineNo">069</span>        return this;<a name="line.69"></a>
-<span class="sourceLineNo">070</span>    }<a name="line.70"></a>
-<span class="sourceLineNo">071</span><a name="line.71"></a>
-<span class="sourceLineNo">072</span>    @Override<a name="line.72"></a>
-<span class="sourceLineNo">073</span>    public Services build() throws ConfigurationException {<a name="line.73"></a>
-<span class="sourceLineNo">074</span>        createInjector();<a name="line.74"></a>
-<span class="sourceLineNo">075</span>        return this;<a name="line.75"></a>
-<span class="sourceLineNo">076</span>    }<a name="line.76"></a>
-<span class="sourceLineNo">077</span><a name="line.77"></a>
-<span class="sourceLineNo">078</span>    private Injector buildInjector() {<a name="line.78"></a>
-<span class="sourceLineNo">079</span>        List&lt;Module&gt; modules = new ArrayList&lt;&gt;();<a name="line.79"></a>
-<span class="sourceLineNo">080</span>        DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();<a name="line.80"></a>
-<span class="sourceLineNo">081</span><a name="line.81"></a>
-<span class="sourceLineNo">082</span>        // Use ServletModule specifically so @RequestScoped annotation will be always bound<a name="line.82"></a>
-<span class="sourceLineNo">083</span>        Module servletsModule = duplicateDetection.wrap(new ServletModule() {<a name="line.83"></a>
-<span class="sourceLineNo">084</span>            @Override<a name="line.84"></a>
-<span class="sourceLineNo">085</span>            public void configureServlets() {<a name="line.85"></a>
-<span class="sourceLineNo">086</span>                binder().requireExplicitBindings();<a name="line.86"></a>
-<span class="sourceLineNo">087</span>            }<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        });<a name="line.88"></a>
-<span class="sourceLineNo">089</span><a name="line.89"></a>
-<span class="sourceLineNo">090</span>        // important magic below:<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        // Every ServletModule instance tries to install InternalServletModule. The trick is used, because Guice<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        // installs modules only the first time and ignores any subsequent execution of install method<a name="line.92"></a>
-<span class="sourceLineNo">093</span>        // with the same module (by comparing them using equals() method).<a name="line.93"></a>
-<span class="sourceLineNo">094</span>        // We need to make sure InternalServletModule is installed in the top level module,<a name="line.94"></a>
-<span class="sourceLineNo">095</span>        // because when it is installed from some private module it doesn't have an access to all<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        // registered servlets and filters.<a name="line.96"></a>
-<span class="sourceLineNo">097</span>        //<a name="line.97"></a>
-<span class="sourceLineNo">098</span>        // The line below makes sure first instance of ServletModule is rewritten in global scope<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        modules.add(Elements.getModule(Elements.getElements(servletsModule)));<a name="line.99"></a>
-<span class="sourceLineNo">100</span><a name="line.100"></a>
-<span class="sourceLineNo">101</span>        for (Module module : extraModules) {<a name="line.101"></a>
-<span class="sourceLineNo">102</span>            modules.add(duplicateDetection.wrap(module));<a name="line.102"></a>
-<span class="sourceLineNo">103</span>        }<a name="line.103"></a>
-<span class="sourceLineNo">104</span><a name="line.104"></a>
-<span class="sourceLineNo">105</span>        for (Service service : config.getSubServices()) {<a name="line.105"></a>
-<span class="sourceLineNo">106</span>            logger.info("Configuring: {}", serviceNameMap.get(service));<a name="line.106"></a>
-<span class="sourceLineNo">107</span>            Module module = service.configure();<a name="line.107"></a>
-<span class="sourceLineNo">108</span>            if (module != null) {<a name="line.108"></a>
-<span class="sourceLineNo">109</span>                serviceElements.put(service, Elements.getElements(duplicateDetection.wrap(module)));<a name="line.109"></a>
-<span class="sourceLineNo">110</span>            } else {<a name="line.110"></a>
-<span class="sourceLineNo">111</span>                serviceElements.put(service, Collections.&lt;com.google.inject.spi.Element&gt;emptyList());<a name="line.111"></a>
-<span class="sourceLineNo">112</span>            }<a name="line.112"></a>
-<span class="sourceLineNo">113</span>        }<a name="line.113"></a>
-<span class="sourceLineNo">114</span><a name="line.114"></a>
-<span class="sourceLineNo">115</span>        for (Map.Entry&lt;Service, List&lt;com.google.inject.spi.Element&gt;&gt; entry : serviceElements.entrySet()) {<a name="line.115"></a>
-<span class="sourceLineNo">116</span>            Service service = entry.getKey();<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            List&lt;com.google.inject.spi.Element&gt; elements = entry.getValue();<a name="line.117"></a>
+<span class="sourceLineNo">018</span>import java.lang.annotation.Annotation;<a name="line.18"></a>
+<span class="sourceLineNo">019</span>import java.lang.reflect.Field;<a name="line.19"></a>
+<span class="sourceLineNo">020</span>import java.security.AccessController;<a name="line.20"></a>
+<span class="sourceLineNo">021</span>import java.security.PrivilegedAction;<a name="line.21"></a>
+<span class="sourceLineNo">022</span>import java.util.ArrayList;<a name="line.22"></a>
+<span class="sourceLineNo">023</span>import java.util.Collections;<a name="line.23"></a>
+<span class="sourceLineNo">024</span>import java.util.HashSet;<a name="line.24"></a>
+<span class="sourceLineNo">025</span>import java.util.IdentityHashMap;<a name="line.25"></a>
+<span class="sourceLineNo">026</span>import java.util.List;<a name="line.26"></a>
+<span class="sourceLineNo">027</span>import java.util.Map;<a name="line.27"></a>
+<span class="sourceLineNo">028</span>import java.util.Set;<a name="line.28"></a>
+<span class="sourceLineNo">029</span><a name="line.29"></a>
+<span class="sourceLineNo">030</span>import org.atteo.evo.urlhandlers.UrlHandlers;<a name="line.30"></a>
+<span class="sourceLineNo">031</span>import org.atteo.moonshine.ConfigurationException;<a name="line.31"></a>
+<span class="sourceLineNo">032</span>import org.atteo.moonshine.injection.InjectMembersModule;<a name="line.32"></a>
+<span class="sourceLineNo">033</span>import org.atteo.moonshine.reflection.ReflectionUtils;<a name="line.33"></a>
+<span class="sourceLineNo">034</span>import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import org.atteo.moonshine.services.internal.ReflectionTools;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import org.atteo.moonshine.services.internal.ServiceMetadata;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import org.atteo.moonshine.services.internal.ServiceMetadata.Status;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import static org.atteo.moonshine.services.internal.ServiceMetadata.Status.STARTED;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import org.atteo.moonshine.services.internal.ServiceModuleRewriter;<a name="line.39"></a>
+<span class="sourceLineNo">040</span>import org.slf4j.Logger;<a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.slf4j.LoggerFactory;<a name="line.41"></a>
+<span class="sourceLineNo">042</span><a name="line.42"></a>
+<span class="sourceLineNo">043</span>import com.google.common.base.Strings;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import com.google.inject.Binding;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import com.google.inject.BindingAnnotation;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import com.google.inject.CreationException;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import com.google.inject.Guice;<a name="line.47"></a>
+<span class="sourceLineNo">048</span>import com.google.inject.Injector;<a name="line.48"></a>
+<span class="sourceLineNo">049</span>import com.google.inject.Key;<a name="line.49"></a>
+<span class="sourceLineNo">050</span>import com.google.inject.Module;<a name="line.50"></a>
+<span class="sourceLineNo">051</span>import com.google.inject.servlet.ServletModule;<a name="line.51"></a>
+<span class="sourceLineNo">052</span>import com.google.inject.spi.DefaultElementVisitor;<a name="line.52"></a>
+<span class="sourceLineNo">053</span>import com.google.inject.spi.Element;<a name="line.53"></a>
+<span class="sourceLineNo">054</span>import com.google.inject.spi.Elements;<a name="line.54"></a>
+<span class="sourceLineNo">055</span>import com.google.inject.spi.PrivateElements;<a name="line.55"></a>
+<span class="sourceLineNo">056</span><a name="line.56"></a>
+<span class="sourceLineNo">057</span>public class ServicesImplementation implements Services, Services.Builder {<a name="line.57"></a>
+<span class="sourceLineNo">058</span>    private final Logger logger = LoggerFactory.getLogger("Moonshine");<a name="line.58"></a>
+<span class="sourceLineNo">059</span>    private final List&lt;Module&gt; extraModules = new ArrayList&lt;&gt;();<a name="line.59"></a>
+<span class="sourceLineNo">060</span><a name="line.60"></a>
+<span class="sourceLineNo">061</span>    private Injector injector;<a name="line.61"></a>
+<span class="sourceLineNo">062</span>    private Service config;<a name="line.62"></a>
+<span class="sourceLineNo">063</span>    private List&lt;ServiceMetadata&gt; services;<a name="line.63"></a>
+<span class="sourceLineNo">064</span><a name="line.64"></a>
+<span class="sourceLineNo">065</span>    public ServicesImplementation() {<a name="line.65"></a>
+<span class="sourceLineNo">066</span>        UrlHandlers.registerAnnotatedHandlers();<a name="line.66"></a>
+<span class="sourceLineNo">067</span>    }<a name="line.67"></a>
+<span class="sourceLineNo">068</span><a name="line.68"></a>
+<span class="sourceLineNo">069</span>    @Override<a name="line.69"></a>
+<span class="sourceLineNo">070</span>    public Builder addModule(Module module) {<a name="line.70"></a>
+<span class="sourceLineNo">071</span>        extraModules.add(module);<a name="line.71"></a>
+<span class="sourceLineNo">072</span>        return this;<a name="line.72"></a>
+<span class="sourceLineNo">073</span>    }<a name="line.73"></a>
+<span class="sourceLineNo">074</span><a name="line.74"></a>
+<span class="sourceLineNo">075</span>    @Override<a name="line.75"></a>
+<span class="sourceLineNo">076</span>    public Builder configuration(Service config) {<a name="line.76"></a>
+<span class="sourceLineNo">077</span>        this.config = config;<a name="line.77"></a>
+<span class="sourceLineNo">078</span>        return this;<a name="line.78"></a>
+<span class="sourceLineNo">079</span>    }<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>    @Override<a name="line.81"></a>
+<span class="sourceLineNo">082</span>    public Services build() throws ConfigurationException {<a name="line.82"></a>
+<span class="sourceLineNo">083</span>        createInjector();<a name="line.83"></a>
+<span class="sourceLineNo">084</span>        return this;<a name="line.84"></a>
+<span class="sourceLineNo">085</span>    }<a name="line.85"></a>
+<span class="sourceLineNo">086</span><a name="line.86"></a>
+<span class="sourceLineNo">087</span>    private Injector buildInjector() throws ConfigurationException {<a name="line.87"></a>
+<span class="sourceLineNo">088</span>        List&lt;Module&gt; modules = new ArrayList&lt;&gt;();<a name="line.88"></a>
+<span class="sourceLineNo">089</span>        DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();<a name="line.89"></a>
+<span class="sourceLineNo">090</span><a name="line.90"></a>
+<span class="sourceLineNo">091</span>        // Use ServletModule specifically so @RequestScoped annotation will be always bound<a name="line.91"></a>
+<span class="sourceLineNo">092</span>        Module servletsModule = duplicateDetection.wrap(new ServletModule() {<a name="line.92"></a>
+<span class="sourceLineNo">093</span>            @Override<a name="line.93"></a>
+<span class="sourceLineNo">094</span>            public void configureServlets() {<a name="line.94"></a>
+<span class="sourceLineNo">095</span>                binder().requireExplicitBindings();<a name="line.95"></a>
+<span class="sourceLineNo">096</span>            }<a name="line.96"></a>
+<span class="sourceLineNo">097</span>        });<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>        // important magic below:<a name="line.99"></a>
+<span class="sourceLineNo">100</span>        // Every ServletModule instance tries to install InternalServletModule. The trick is used, because Guice<a name="line.100"></a>
+<span class="sourceLineNo">101</span>        // installs modules only the first time and ignores any subsequent execution of install method<a name="line.101"></a>
+<span class="sourceLineNo">102</span>        // with the same module (by comparing them using equals() method).<a name="line.102"></a>
+<span class="sourceLineNo">103</span>        // We need to make sure InternalServletModule is installed in the top level module,<a name="line.103"></a>
+<span class="sourceLineNo">104</span>        // because when it is installed from some private module it doesn't have an access to all<a name="line.104"></a>
+<span class="sourceLineNo">105</span>        // registered servlets and filters.<a name="line.105"></a>
+<span class="sourceLineNo">106</span>        //<a name="line.106"></a>
+<span class="sourceLineNo">107</span>        // The line below makes sure first instance of ServletModule is rewritten in global scope<a name="line.107"></a>
+<span class="sourceLineNo">108</span>        modules.add(Elements.getModule(Elements.getElements(servletsModule)));<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>        for (Module module : extraModules) {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>            modules.add(duplicateDetection.wrap(module));<a name="line.111"></a>
+<span class="sourceLineNo">112</span>        }<a name="line.112"></a>
+<span class="sourceLineNo">113</span><a name="line.113"></a>
+<span class="sourceLineNo">114</span>        services = readServiceMetadata(retrieveServicesRecursively(config.getSubServices()));<a name="line.114"></a>
+<span class="sourceLineNo">115</span>        verifySingletonServicesAreUnique(services);<a name="line.115"></a>
+<span class="sourceLineNo">116</span><a name="line.116"></a>
+<span class="sourceLineNo">117</span>        List&lt;String&gt; hints = new ArrayList&lt;&gt;();<a name="line.117"></a>
 <span class="sourceLineNo">118</span><a name="line.118"></a>
-<span class="sourceLineNo">119</span>            serviceElements.put(service, ServiceModuleRewriter.annotateExposedWithId(elements, service));<a name="line.119"></a>
-<span class="sourceLineNo">120</span>        }<a name="line.120"></a>
-<span class="sourceLineNo">121</span><a name="line.121"></a>
-<span class="sourceLineNo">122</span>        List&lt;String&gt; hints = new ArrayList&lt;&gt;();<a name="line.122"></a>
-<span class="sourceLineNo">123</span><a name="line.123"></a>
-<span class="sourceLineNo">124</span>        for (Map.Entry&lt;Service, List&lt;com.google.inject.spi.Element&gt;&gt; entry : serviceElements.entrySet()) {<a name="line.124"></a>
-<span class="sourceLineNo">125</span>            Service service = entry.getKey();<a name="line.125"></a>
-<span class="sourceLineNo">126</span>            List&lt;com.google.inject.spi.Element&gt; elements = entry.getValue();<a name="line.126"></a>
-<span class="sourceLineNo">127</span><a name="line.127"></a>
-<span class="sourceLineNo">128</span>            serviceElements.put(service, ServiceModuleRewriter.importBindings(elements, service, serviceElements,<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                    hints));<a name="line.129"></a>
-<span class="sourceLineNo">130</span>        }<a name="line.130"></a>
-<span class="sourceLineNo">131</span><a name="line.131"></a>
-<span class="sourceLineNo">132</span>        for (Map.Entry&lt;Service, List&lt;com.google.inject.spi.Element&gt;&gt; entry : serviceElements.entrySet()) {<a name="line.132"></a>
-<span class="sourceLineNo">133</span>            List&lt;com.google.inject.spi.Element&gt; elements = entry.getValue();<a name="line.133"></a>
-<span class="sourceLineNo">134</span>            modules.add(Elements.getModule(elements));<a name="line.134"></a>
-<span class="sourceLineNo">135</span>        }<a name="line.135"></a>
-<span class="sourceLineNo">136</span><a name="line.136"></a>
-<span class="sourceLineNo">137</span>        modules.add(new InjectMembersModule());<a name="line.137"></a>
+<span class="sourceLineNo">119</span>        try {<a name="line.119"></a>
+<span class="sourceLineNo">120</span>            for (ServiceMetadata service : services) {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>                logger.info("Configuring: {}", service.getName());<a name="line.121"></a>
+<span class="sourceLineNo">122</span>                Module module = service.getService().configure();<a name="line.122"></a>
+<span class="sourceLineNo">123</span>                if (module != null) {<a name="line.123"></a>
+<span class="sourceLineNo">124</span>                    service.setElements(Elements.getElements(duplicateDetection.wrap(module)));<a name="line.124"></a>
+<span class="sourceLineNo">125</span>                } else {<a name="line.125"></a>
+<span class="sourceLineNo">126</span>                    service.setElements(Collections.&lt;com.google.inject.spi.Element&gt;emptyList());<a name="line.126"></a>
+<span class="sourceLineNo">127</span>                }<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            }<a name="line.128"></a>
+<span class="sourceLineNo">129</span><a name="line.129"></a>
+<span class="sourceLineNo">130</span>            for (ServiceMetadata service : services) {<a name="line.130"></a>
+<span class="sourceLineNo">131</span>                checkOnlySingletonBindWithoutAnnotation(service);<a name="line.131"></a>
+<span class="sourceLineNo">132</span>            }<a name="line.132"></a>
+<span class="sourceLineNo">133</span><a name="line.133"></a>
+<span class="sourceLineNo">134</span>            for (ServiceMetadata service : services) {<a name="line.134"></a>
+<span class="sourceLineNo">135</span>                service.setElements(ServiceModuleRewriter.annotateExposedWithId(service.getElements(),<a name="line.135"></a>
+<span class="sourceLineNo">136</span>                        service.getService()));<a name="line.136"></a>
+<span class="sourceLineNo">137</span>            }<a name="line.137"></a>
 <span class="sourceLineNo">138</span><a name="line.138"></a>
-<span class="sourceLineNo">139</span>        try {<a name="line.139"></a>
-<span class="sourceLineNo">140</span>            return Guice.createInjector(modules);<a name="line.140"></a>
-<span class="sourceLineNo">141</span>        } catch (CreationException e) {<a name="line.141"></a>
-<span class="sourceLineNo">142</span>            if (!hints.isEmpty()) {<a name="line.142"></a>
-<span class="sourceLineNo">143</span>                logger.warn("Problem detected while creating Guice injector, possible causes:");<a name="line.143"></a>
-<span class="sourceLineNo">144</span>                for (String hint : hints) {<a name="line.144"></a>
-<span class="sourceLineNo">145</span>                    logger.warn(" -&gt; " + hint);<a name="line.145"></a>
-<span class="sourceLineNo">146</span>                }<a name="line.146"></a>
-<span class="sourceLineNo">147</span>            }<a name="line.147"></a>
-<span class="sourceLineNo">148</span>            throw e;<a name="line.148"></a>
-<span class="sourceLineNo">149</span>        }<a name="line.149"></a>
-<span class="sourceLineNo">150</span>    }<a name="line.150"></a>
-<span class="sourceLineNo">151</span><a name="line.151"></a>
-<span class="sourceLineNo">152</span>    private void createInjector() throws ConfigurationException {<a name="line.152"></a>
-<span class="sourceLineNo">153</span>        logger.info("Building Guice injector hierarchy");<a name="line.153"></a>
-<span class="sourceLineNo">154</span><a name="line.154"></a>
-<span class="sourceLineNo">155</span>        if (config == null) {<a name="line.155"></a>
-<span class="sourceLineNo">156</span>            config = new ServicesConfig();<a name="line.156"></a>
-<span class="sourceLineNo">157</span>        }<a name="line.157"></a>
-<span class="sourceLineNo">158</span><a name="line.158"></a>
-<span class="sourceLineNo">159</span>        buildServiceNameMap(config.getSubServices());<a name="line.159"></a>
-<span class="sourceLineNo">160</span>        verifySingletonServicesAreUnique(config.getSubServices());<a name="line.160"></a>
-<span class="sourceLineNo">161</span>        injector = buildInjector();<a name="line.161"></a>
-<span class="sourceLineNo">162</span>    }<a name="line.162"></a>
-<span class="sourceLineNo">163</span><a name="line.163"></a>
-<span class="sourceLineNo">164</span>    @Override<a name="line.164"></a>
-<span class="sourceLineNo">165</span>    public Injector getGlobalInjector() {<a name="line.165"></a>
-<span class="sourceLineNo">166</span>        return injector;<a name="line.166"></a>
-<span class="sourceLineNo">167</span>    }<a name="line.167"></a>
-<span class="sourceLineNo">168</span><a name="line.168"></a>
-<span class="sourceLineNo">169</span>    @Override<a name="line.169"></a>
-<span class="sourceLineNo">170</span>    public void start() {<a name="line.170"></a>
-<span class="sourceLineNo">171</span>        logger.info("Starting services");<a name="line.171"></a>
-<span class="sourceLineNo">172</span>        for (Service service : config.getSubServices()) {<a name="line.172"></a>
-<span class="sourceLineNo">173</span>            if (logger.isInfoEnabled()<a name="line.173"></a>
-<span class="sourceLineNo">174</span>                    &amp;&amp; ReflectionTools.isMethodOverriden(service.getClass(), Service.class, "start")) {<a name="line.174"></a>
-<span class="sourceLineNo">175</span>                logger.info("Starting: {}", serviceNameMap.get(service));<a name="line.175"></a>
-<span class="sourceLineNo">176</span>            }<a name="line.176"></a>
-<span class="sourceLineNo">177</span>            startedServices.add(service);<a name="line.177"></a>
-<span class="sourceLineNo">178</span>            service.start();<a name="line.178"></a>
+<span class="sourceLineNo">139</span>            for (ServiceMetadata service : services) {<a name="line.139"></a>
+<span class="sourceLineNo">140</span>                service.setElements(ServiceModuleRewriter.importBindings(service, services, hints));<a name="line.140"></a>
+<span class="sourceLineNo">141</span>            }<a name="line.141"></a>
+<span class="sourceLineNo">142</span><a name="line.142"></a>
+<span class="sourceLineNo">143</span>            for (ServiceMetadata service : services) {<a name="line.143"></a>
+<span class="sourceLineNo">144</span>                modules.add(Elements.getModule(service.getElements()));<a name="line.144"></a>
+<span class="sourceLineNo">145</span>            }<a name="line.145"></a>
+<span class="sourceLineNo">146</span><a name="line.146"></a>
+<span class="sourceLineNo">147</span>            modules.add(new InjectMembersModule());<a name="line.147"></a>
+<span class="sourceLineNo">148</span><a name="line.148"></a>
+<span class="sourceLineNo">149</span>            return Guice.createInjector(modules);<a name="line.149"></a>
+<span class="sourceLineNo">150</span>        } catch (CreationException e) {<a name="line.150"></a>
+<span class="sourceLineNo">151</span>            if (!hints.isEmpty()) {<a name="line.151"></a>
+<span class="sourceLineNo">152</span>                logger.warn("Problem detected while creating Guice injector, possible causes:");<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                for (String hint : hints) {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>                    logger.warn(" -&gt; " + hint);<a name="line.154"></a>
+<span class="sourceLineNo">155</span>                }<a name="line.155"></a>
+<span class="sourceLineNo">156</span>            }<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            try {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                close();<a name="line.158"></a>
+<span class="sourceLineNo">159</span>            } catch (Exception f) {<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                e.addSuppressed(f);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            }<a name="line.161"></a>
+<span class="sourceLineNo">162</span>            throw e;<a name="line.162"></a>
+<span class="sourceLineNo">163</span>        } catch (RuntimeException e) {<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            try {<a name="line.164"></a>
+<span class="sourceLineNo">165</span>                close();<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            } catch (Exception f) {<a name="line.166"></a>
+<span class="sourceLineNo">167</span>                e.addSuppressed(f);<a name="line.167"></a>
+<span class="sourceLineNo">168</span>            }<a name="line.168"></a>
+<span class="sourceLineNo">169</span>            throw e;<a name="line.169"></a>
+<span class="sourceLineNo">170</span>        }<a name="line.170"></a>
+<span class="sourceLineNo">171</span>    }<a name="line.171"></a>
+<span class="sourceLineNo">172</span><a name="line.172"></a>
+<span class="sourceLineNo">173</span>    private void createInjector() throws ConfigurationException {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>        logger.info("Building Guice injector hierarchy");<a name="line.174"></a>
+<span class="sourceLineNo">175</span><a name="line.175"></a>
+<span class="sourceLineNo">176</span>        if (config == null) {<a name="line.176"></a>
+<span class="sourceLineNo">177</span>            config = new AbstractService() {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>            };<a name="line.178"></a>
 <span class="sourceLineNo">179</span>        }<a name="line.179"></a>
-<span class="sourceLineNo">180</span>        logger.info("All services started");<a name="line.180"></a>
-<span class="sourceLineNo">181</span>    }<a name="line.181"></a>
-<span class="sourceLineNo">182</span><a name="line.182"></a>
-<span class="sourceLineNo">183</span>    @Override<a name="line.183"></a>
-<span class="sourceLineNo">184</span>    public void stop() {<a name="line.184"></a>
-<span class="sourceLineNo">185</span>        if (config == null) {<a name="line.185"></a>
-<span class="sourceLineNo">186</span>            return;<a name="line.186"></a>
-<span class="sourceLineNo">187</span>        }<a name="line.187"></a>
+<span class="sourceLineNo">180</span><a name="line.180"></a>
+<span class="sourceLineNo">181</span>        injector = buildInjector();<a name="line.181"></a>
+<span class="sourceLineNo">182</span>    }<a name="line.182"></a>
+<span class="sourceLineNo">183</span><a name="line.183"></a>
+<span class="sourceLineNo">184</span>    @Override<a name="line.184"></a>
+<span class="sourceLineNo">185</span>    public Injector getGlobalInjector() {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>        return injector;<a name="line.186"></a>
+<span class="sourceLineNo">187</span>    }<a name="line.187"></a>
 <span class="sourceLineNo">188</span><a name="line.188"></a>
-<span class="sourceLineNo">189</span>        for (Service service : startedServices) {<a name="line.189"></a>
-<span class="sourceLineNo">190</span>            String name = serviceNameMap.get(service);<a name="line.190"></a>
-<span class="sourceLineNo">191</span>            if (name == null) {<a name="line.191"></a>
-<span class="sourceLineNo">192</span>                name = service.getClass().getSimpleName();<a name="line.192"></a>
-<span class="sourceLineNo">193</span>            }<a name="line.193"></a>
-<span class="sourceLineNo">194</span>            logger.info("Stopping: {}", name);<a name="line.194"></a>
-<span class="sourceLineNo">195</span>            service.stop();<a name="line.195"></a>
-<span class="sourceLineNo">196</span>        }<a name="line.196"></a>
-<span class="sourceLineNo">197</span>    }<a name="line.197"></a>
-<span class="sourceLineNo">198</span><a name="line.198"></a>
-<span class="sourceLineNo">199</span>    @Override<a name="line.199"></a>
-<span class="sourceLineNo">200</span>    public void close() {<a name="line.200"></a>
-<span class="sourceLineNo">201</span>        stop();<a name="line.201"></a>
-<span class="sourceLineNo">202</span>        for (Service service : config.getSubServices()) {<a name="line.202"></a>
-<span class="sourceLineNo">203</span>            service.close();<a name="line.203"></a>
-<span class="sourceLineNo">204</span>        }<a name="line.204"></a>
-<span class="sourceLineNo">205</span>        if (logger != null) {<a name="line.205"></a>
-<span class="sourceLineNo">206</span>            logger.info("All services stopped");<a name="line.206"></a>
+<span class="sourceLineNo">189</span>    @Override<a name="line.189"></a>
+<span class="sourceLineNo">190</span>    public void start() {<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        logger.info("Starting services");<a name="line.191"></a>
+<span class="sourceLineNo">192</span>        for (ServiceMetadata service : services) {<a name="line.192"></a>
+<span class="sourceLineNo">193</span>            if (logger.isInfoEnabled()<a name="line.193"></a>
+<span class="sourceLineNo">194</span>                    &amp;&amp; ReflectionUtils.isMethodOverriden(service.getService().getClass(), Service.class, "start")) {<a name="line.194"></a>
+<span class="sourceLineNo">195</span>                logger.info("Starting: {}", service.getName());<a name="line.195"></a>
+<span class="sourceLineNo">196</span>            }<a name="line.196"></a>
+<span class="sourceLineNo">197</span>            service.setStatus(STARTED);<a name="line.197"></a>
+<span class="sourceLineNo">198</span>            service.getService().start();<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        }<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        logger.info("All services started");<a name="line.200"></a>
+<span class="sourceLineNo">201</span>    }<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>    @Override<a name="line.203"></a>
+<span class="sourceLineNo">204</span>    public void stop() {<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        if (config == null) {<a name="line.205"></a>
+<span class="sourceLineNo">206</span>            return;<a name="line.206"></a>
 <span class="sourceLineNo">207</span>        }<a name="line.207"></a>
-<span class="sourceLineNo">208</span>        injector = null;<a name="line.208"></a>
-<span class="sourceLineNo">209</span>    }<a name="line.209"></a>
-<span class="sourceLineNo">210</span><a name="line.210"></a>
-<span class="sourceLineNo">211</span>    @Override<a name="line.211"></a>
-<span class="sourceLineNo">212</span>    public Map&lt;Service, List&lt;Element&gt;&gt; getServiceElements() {<a name="line.212"></a>
-<span class="sourceLineNo">213</span>        return serviceElements;<a name="line.213"></a>
-<span class="sourceLineNo">214</span>    }<a name="line.214"></a>
-<span class="sourceLineNo">215</span><a name="line.215"></a>
-<span class="sourceLineNo">216</span>    private void verifySingletonServicesAreUnique(List&lt;Service&gt; services) throws ConfigurationException {<a name="line.216"></a>
-<span class="sourceLineNo">217</span>        Set&lt;Class&lt;?&gt;&gt; set = new HashSet&lt;&gt;();<a name="line.217"></a>
-<span class="sourceLineNo">218</span>        for (Service service : services) {<a name="line.218"></a>
-<span class="sourceLineNo">219</span>            Class&lt;?&gt; klass = service.getClass();<a name="line.219"></a>
-<span class="sourceLineNo">220</span>            if (ReflectionTools.isSingleton(klass)) {<a name="line.220"></a>
-<span class="sourceLineNo">221</span>                if (set.contains(klass)) {<a name="line.221"></a>
-<span class="sourceLineNo">222</span>                    throw new ConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"<a name="line.222"></a>
-<span class="sourceLineNo">223</span>                            + " as singleton, but is declared more than once in configuration file");<a name="line.223"></a>
-<span class="sourceLineNo">224</span>                }<a name="line.224"></a>
-<span class="sourceLineNo">225</span>                set.add(klass);<a name="line.225"></a>
-<span class="sourceLineNo">226</span><a name="line.226"></a>
-<span class="sourceLineNo">227</span>                if (!Strings.isNullOrEmpty(service.getId())) {<a name="line.227"></a>
-<span class="sourceLineNo">228</span>                    throw new ConfigurationException("Service '" + klass.getCanonicalName() + "' is marked"<a name="line.228"></a>
-<span class="sourceLineNo">229</span>                            + " as singleton, but has an id specified");<a name="line.229"></a>
-<span class="sourceLineNo">230</span>                }<a name="line.230"></a>
-<span class="sourceLineNo">231</span>            }<a name="line.231"></a>
-<span class="sourceLineNo">232</span>        }<a name="line.232"></a>
+<span class="sourceLineNo">208</span><a name="line.208"></a>
+<span class="sourceLineNo">209</span>        for (ServiceMetadata service : services) {<a name="line.209"></a>
+<span class="sourceLineNo">210</span>            if (service.getStatus() != Status.STARTED) {<a name="line.210"></a>
+<span class="sourceLineNo">211</span>                continue;<a name="line.211"></a>
+<span class="sourceLineNo">212</span>            }<a name="line.212"></a>
+<span class="sourceLineNo">213</span>            String name = service.getName();<a name="line.213"></a>
+<span class="sourceLineNo">214</span>            if (name == null) {<a name="line.214"></a>
+<span class="sourceLineNo">215</span>                name = service.getClass().getSimpleName();<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            }<a name="line.216"></a>
+<span class="sourceLineNo">217</span>            logger.info("Stopping: {}", name);<a name="line.217"></a>
+<span class="sourceLineNo">218</span>            service.getService().stop();<a name="line.218"></a>
+<span class="sourceLineNo">219</span>            service.setStatus(Status.READY);<a name="line.219"></a>
+<span class="sourceLineNo">220</span>        }<a name="line.220"></a>
+<span class="sourceLineNo">221</span>    }<a name="line.221"></a>
+<span class="sourceLineNo">222</span><a name="line.222"></a>
+<span class="sourceLineNo">223</span>    @Override<a name="line.223"></a>
+<span class="sourceLineNo">224</span>    public void close() {<a name="line.224"></a>
+<span class="sourceLineNo">225</span>        stop();<a name="line.225"></a>
+<span class="sourceLineNo">226</span>        for (ServiceMetadata service : services) {<a name="line.226"></a>
+<span class="sourceLineNo">227</span>            service.getService().close();<a name="line.227"></a>
+<span class="sourceLineNo">228</span>        }<a name="line.228"></a>
+<span class="sourceLineNo">229</span>        if (logger != null) {<a name="line.229"></a>
+<span class="sourceLineNo">230</span>            logger.info("All services stopped");<a name="line.230"></a>
+<span class="sourceLineNo">231</span>        }<a name="line.231"></a>
+<span class="sourceLineNo">232</span>        injector = null;<a name="line.232"></a>
 <span class="sourceLineNo">233</span>    }<a name="line.233"></a>
 <span class="sourceLineNo">234</span><a name="line.234"></a>
-<span class="sourceLineNo">235</span>    private void buildServiceNameMap(List&lt;Service&gt; services) {<a name="line.235"></a>
-<span class="sourceLineNo">236</span>        for (Service service : services) {<a name="line.236"></a>
-<span class="sourceLineNo">237</span>            StringBuilder builder = new StringBuilder();<a name="line.237"></a>
-<span class="sourceLineNo">238</span><a name="line.238"></a>
-<span class="sourceLineNo">239</span>            if (service.getId() != null) {<a name="line.239"></a>
-<span class="sourceLineNo">240</span>                builder.append("\"");<a name="line.240"></a>
-<span class="sourceLineNo">241</span>                builder.append(service.getId());<a name="line.241"></a>
-<span class="sourceLineNo">242</span>                builder.append("\" ");<a name="line.242"></a>
-<span class="sourceLineNo">243</span>            }<a name="line.243"></a>
-<span class="sourceLineNo">244</span><a name="line.244"></a>
-<span class="sourceLineNo">245</span>            String summary = ClassIndex.getClassSummary(service.getClass());<a name="line.245"></a>
-<span class="sourceLineNo">246</span>            builder.append(service.getClass().getSimpleName());<a name="line.246"></a>
-<span class="sourceLineNo">247</span>            if (summary != null) {<a name="line.247"></a>
-<span class="sourceLineNo">248</span>                builder.append(" (");<a name="line.248"></a>
-<span class="sourceLineNo">249</span>                builder.append(summary);<a name="line.249"></a>
-<span class="sourceLineNo">250</span>                builder.append(")");<a name="line.250"></a>
-<span class="sourceLineNo">251</span>            }<a name="line.251"></a>
-<span class="sourceLineNo">252</span>            serviceNameMap.put(service, builder.toString());<a name="line.252"></a>
-<span class="sourceLineNo">253</span>        }<a name="line.253"></a>
-<span class="sourceLineNo">254</span>    }<a name="line.254"></a>
-<span class="sourceLineNo">255</span>}<a name="line.255"></a>
+<span class="sourceLineNo">235</span>    @Override<a name="line.235"></a>
+<span class="sourceLineNo">236</span>    public List&lt;ServiceMetadata&gt; getServiceElements() {<a name="line.236"></a>
+<span class="sourceLineNo">237</span>        return services;<a name="line.237"></a>
+<span class="sourceLineNo">238</span>    }<a name="line.238"></a>
+<span class="sourceLineNo">239</span><a name="line.239"></a>
+<span class="sourceLineNo">240</span>    private void verifySingletonServicesAreUnique(List&lt;ServiceMetadata&gt; services) throws ConfigurationException {<a name="line.240"></a>
+<span class="sourceLineNo">241</span>        Set&lt;Class&lt;?&gt;&gt; set = new HashSet&lt;&gt;();<a name="line.241"></a>
+<span class="sourceLineNo">242</span>        for (ServiceMetadata service : services) {<a name="line.242"></a>
+<span class="sourceLineNo">243</span>            Class&lt;?&gt; klass = service.getService().getClass();<a name="line.243"></a>
+<span class="sourceLineNo">244</span>            if (service.isSingleton()) {<a name="line.244"></a>
+<span class="sourceLineNo">245</span>                if (set.contains(klass)) {<a name="line.245"></a>
+<span class="sourceLineNo">246</span>                    throw new ConfigurationException("Service '" + service.getName() + "' is marked"<a name="line.246"></a>
+<span class="sourceLineNo">247</span>                            + " as singleton, but is declared more than once in configuration file");<a name="line.247"></a>
+<span class="sourceLineNo">248</span>                }<a name="line.248"></a>
+<span class="sourceLineNo">249</span>                set.add(klass);<a name="line.249"></a>
+<span class="sourceLineNo">250</span><a name="line.250"></a>
+<span class="sourceLineNo">251</span>                if (!Strings.isNullOrEmpty(service.getService().getId())) {<a name="line.251"></a>
+<span class="sourceLineNo">252</span>                    throw new ConfigurationException("Service '" + service.getName() + "' is marked"<a name="line.252"></a>
+<span class="sourceLineNo">253</span>                            + " as singleton, but has an id specified");<a name="line.253"></a>
+<span class="sourceLineNo">254</span>                }<a name="line.254"></a>
+<span class="sourceLineNo">255</span>            }<a name="line.255"></a>
+<span class="sourceLineNo">256</span>        }<a name="line.256"></a>
+<span class="sourceLineNo">257</span>    }<a name="line.257"></a>
+<span class="sourceLineNo">258</span><a name="line.258"></a>
+<span class="sourceLineNo">259</span>    private static void ensureBindsWithoutAnnotation(Element element, final ServiceMetadata service) {<a name="line.259"></a>
+<span class="sourceLineNo">260</span>            element.acceptVisitor(new DefaultElementVisitor&lt;Void&gt;() {<a name="line.260"></a>
+<span class="sourceLineNo">261</span>                @Override<a name="line.261"></a>
+<span class="sourceLineNo">262</span>                public &lt;T&gt; Void visit(Binding&lt;T&gt; binding) {<a name="line.262"></a>
+<span class="sourceLineNo">263</span>                    if (binding.getKey().getAnnotation() != null) {<a name="line.263"></a>
+<span class="sourceLineNo">264</span>                        throw new IllegalStateException("Non singleton service " + service.getName()<a name="line.264"></a>
+<span class="sourceLineNo">265</span>                                + " cannot bind " + binding.toString() + ". Only services marked with @Singleton"<a name="line.265"></a>
+<span class="sourceLineNo">266</span>                                + " can bind with annotation.");<a name="line.266"></a>
+<span class="sourceLineNo">267</span>                    }<a name="line.267"></a>
+<span class="sourceLineNo">268</span>                    return null;<a name="line.268"></a>
+<span class="sourceLineNo">269</span>                }<a name="line.269"></a>
+<span class="sourceLineNo">270</span><a name="line.270"></a>
+<span class="sourceLineNo">271</span>                @Override<a name="line.271"></a>
+<span class="sourceLineNo">272</span>                public Void visit(PrivateElements privateElements) {<a name="line.272"></a>
+<span class="sourceLineNo">273</span>                    for (Key&lt;?&gt; key : privateElements.getExposedKeys()) {<a name="line.273"></a>
+<span class="sourceLineNo">274</span>                        if (key.getAnnotation() != null) {<a name="line.274"></a>
+<span class="sourceLineNo">275</span>                            throw new IllegalStateException("Non singleton service " + service.getName()<a name="line.275"></a>
+<span class="sourceLineNo">276</span>                                    + " cannot expose " + key.toString() + ". Only services marked with @Singleton"<a name="line.276"></a>
+<span class="sourceLineNo">277</span>                                    + " can expose bindings with annotation.");<a name="line.277"></a>
+<span class="sourceLineNo">278</span>                        }<a name="line.278"></a>
+<span class="sourceLineNo">279</span>                    }<a name="line.279"></a>
+<span class="sourceLineNo">280</span><a name="line.280"></a>
+<span class="sourceLineNo">281</span>                    return null;<a name="line.281"></a>
+<span class="sourceLineNo">282</span>                }<a name="line.282"></a>
+<span class="sourceLineNo">283</span>            });<a name="line.283"></a>
+<span class="sourceLineNo">284</span>    }<a name="line.284"></a>
+<span class="sourceLineNo">285</span><a name="line.285"></a>
+<span class="sourceLineNo">286</span>    private static void checkOnlySingletonBindWithoutAnnotation(final ServiceMetadata service) {<a name="line.286"></a>
+<span class="sourceLineNo">287</span>        if (service.isSingleton()) {<a name="line.287"></a>
+<span class="sourceLineNo">288</span>            return;<a name="line.288"></a>
+<span class="sourceLineNo">289</span>        }<a name="line.289"></a>
+<span class="sourceLineNo">290</span>        for (Element element : service.getElements()) {<a name="line.290"></a>
+<span class="sourceLineNo">291</span>            ensureBindsWithoutAnnotation(element, service);<a name="line.291"></a>
+<span class="sourceLineNo">292</span>        }<a name="line.292"></a>
+<span class="sourceLineNo">293</span>    }<a name="line.293"></a>
+<span class="sourceLineNo">294</span><a name="line.294"></a>
+<span class="sourceLineNo">295</span>    /**<a name="line.295"></a>
+<span class="sourceLineNo">296</span>     * Finds dependencies between services.<a name="line.296"></a>
+<span class="sourceLineNo">297</span>     */<a name="line.297"></a>
+<span class="sourceLineNo">298</span>    private List&lt;ServiceMetadata&gt; readServiceMetadata(List&lt;Service&gt; services) throws ConfigurationException {<a name="line.298"></a>
+<span class="sourceLineNo">299</span>        List&lt;ServiceMetadata&gt; servicesMetadata = new ArrayList&lt;&gt;();<a name="line.299"></a>
+<span class="sourceLineNo">300</span>        Map&lt;Service, ServiceMetadata&gt; map = new IdentityHashMap&lt;&gt;();<a name="line.300"></a>
+<span class="sourceLineNo">301</span>        for (Service service : services) {<a name="line.301"></a>
+<span class="sourceLineNo">302</span>            ServiceMetadata metadata = new ServiceMetadata(service);<a name="line.302"></a>
+<span class="sourceLineNo">303</span>            servicesMetadata.add(metadata);<a name="line.303"></a>
+<span class="sourceLineNo">304</span>            map.put(service, metadata);<a name="line.304"></a>
+<span class="sourceLineNo">305</span>        }<a name="line.305"></a>
+<span class="sourceLineNo">306</span><a name="line.306"></a>
+<span class="sourceLineNo">307</span>        for (ServiceMetadata metadata : servicesMetadata) {<a name="line.307"></a>
+<span class="sourceLineNo">308</span>            for (Class&lt;?&gt; ancestorClass : ReflectionUtils.getAncestors(metadata.getService().getClass())) {<a name="line.308"></a>
+<span class="sourceLineNo">309</span>                metadata.setSingleton(ReflectionTools.isSingleton(ancestorClass));<a name="line.309"></a>
+<span class="sourceLineNo">310</span>                for (final Field field : ancestorClass.getDeclaredFields()) {<a name="line.310"></a>
+<span class="sourceLineNo">311</span>                    if (!field.isAnnotationPresent(ImportService.class)) {<a name="line.311"></a>
+<span class="sourceLineNo">312</span>                        continue;<a name="line.312"></a>
+<span class="sourceLineNo">313</span>                    }<a name="line.313"></a>
+<span class="sourceLineNo">314</span><a name="line.314"></a>
+<span class="sourceLineNo">315</span>                    if (!Service.class.isAssignableFrom(field.getType())) {<a name="line.315"></a>
+<span class="sourceLineNo">316</span>                        throw new RuntimeException("@" + ImportService.class.getSimpleName() + " annotation can only"<a name="line.316"></a>
+<span class="sourceLineNo">317</span>                                + " be specified on a field of type " + Service.class.getSimpleName());<a name="line.317"></a>
+<span class="sourceLineNo">318</span>                    }<a name="line.318"></a>
+<span class="sourceLineNo">319</span><a name="line.319"></a>
+<span class="sourceLineNo">320</span>                    AccessController.doPrivileged(new PrivilegedAction&lt;Void&gt;() {<a name="line.320"></a>
+<span class="sourceLineNo">321</span>                        @Override<a name="line.321"></a>
+<span class="sourceLineNo">322</span>                        public Void run() {<a name="line.322"></a>
+<span class="sourceLineNo">323</span>                            field.setAccessible(true);<a name="line.323"></a>
+<span class="sourceLineNo">324</span>                            return null;<a name="line.324"></a>
+<span class="sourceLineNo">325</span>                        }<a name="line.325"></a>
+<span class="sourceLineNo">326</span>                    });<a name="line.326"></a>
+<span class="sourceLineNo">327</span>                    Service importedService;<a name="line.327"></a>
+<span class="sourceLineNo">328</span>                    try {<a name="line.328"></a>
+<span class="sourceLineNo">329</span>                        importedService = (Service) field.get(metadata.getService());<a name="line.329"></a>
+<span class="sourceLineNo">330</span>                        ServiceMetadata importedServiceMetadata;<a name="line.330"></a>
+<span class="sourceLineNo">331</span>                        if (importedService == null) {<a name="line.331"></a>
+<span class="sourceLineNo">332</span>                            importedServiceMetadata = findDefaultService(servicesMetadata, field.getType());<a name="line.332"></a>
+<span class="sourceLineNo">333</span>                            if (importedServiceMetadata == null) {<a name="line.333"></a>
+<span class="sourceLineNo">334</span>                                throw new ConfigurationException("Service '" + metadata.getName()<a name="line.334"></a>
+<span class="sourceLineNo">335</span>                                        + "' requires '" + field.getType().getName() + "' which was not found."<a name="line.335"></a>
+<span class="sourceLineNo">336</span>                                        + " Please check your configuration files.");<a name="line.336"></a>
+<span class="sourceLineNo">337</span>                            }<a name="line.337"></a>
+<span class="sourceLineNo">338</span><a name="line.338"></a>
+<span class="sourceLineNo">339</span>                            field.set(metadata.getService(), importedServiceMetadata.getService());<a name="line.339"></a>
+<span class="sourceLineNo">340</span>                        } else {<a name="line.340"></a>
+<span class="sourceLineNo">341</span>                            importedServiceMetadata = map.get(importedService);<a name="line.341"></a>
+<span class="sourceLineNo">342</span>                            if (importedServiceMetadata == null) {<a name="line.342"></a>
+<span class="sourceLineNo">343</span>                                throw new RuntimeException("Unknown service imported");<a name="line.343"></a>
+<span class="sourceLineNo">344</span>                            }<a name="line.344"></a>
+<span class="sourceLineNo">345</span>                        }<a name="line.345"></a>
+<span class="sourceLineNo">346</span>                        Annotation annotation = findBindingAnnotation(field);<a name="line.346"></a>
+<span class="sourceLineNo">347</span>                        metadata.addDependency(importedServiceMetadata, annotation);<a name="line.347"></a>
+<span class="sourceLineNo">348</span>                    } catch (IllegalAccessException| IllegalArgumentException e) {<a name="line.348"></a>
+<span class="sourceLineNo">349</span>                        throw new RuntimeException("Cannot access field", e);<a name="line.349"></a>
+<span class="sourceLineNo">350</span>                    }<a name="line.350"></a>
+<span class="sourceLineNo">351</span>                }<a name="line.351"></a>
+<span class="sourceLineNo">352</span>            }<a name="line.352"></a>
+<span class="sourceLineNo">353</span>        }<a name="line.353"></a>
+<span class="sourceLineNo">354</span>        return servicesMetadata;<a name="line.354"></a>
+<span class="sourceLineNo">355</span>    }<a name="line.355"></a>
+<span class="sourceLineNo">356</span><a name="line.356"></a>
+<span class="sourceLineNo">357</span>    /**<a name="line.357"></a>
+<span class="sourceLineNo">358</span>     * Find the default service which can be assigned for given type.<a name="line.358"></a>
+<span class="sourceLineNo">359</span>     */<a name="line.359"></a>
+<span class="sourceLineNo">360</span>    private static ServiceMetadata findDefaultService(List&lt;ServiceMetadata&gt; services, Class&lt;?&gt; type) {<a name="line.360"></a>
+<span class="sourceLineNo">361</span>        ServiceMetadata result = null;<a name="line.361"></a>
+<span class="sourceLineNo">362</span>        for (ServiceMetadata service : services) {<a name="line.362"></a>
+<span class="sourceLineNo">363</span>            if (type.isAssignableFrom(service.getService().getClass())) {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>                if (result != null) {<a name="line.364"></a>
+<span class="sourceLineNo">365</span>                    throw new RuntimeException("Could not find unique service of type: " + type);<a name="line.365"></a>
+<span class="sourceLineNo">366</span>                }<a name="line.366"></a>
+<span class="sourceLineNo">367</span>                result = service;<a name="line.367"></a>
+<span class="sourceLineNo">368</span>            }<a name="line.368"></a>
+<span class="sourceLineNo">369</span>        }<a name="line.369"></a>
+<span class="sourceLineNo">370</span>        return result;<a name="line.370"></a>
+<span class="sourceLineNo">371</span>    }<a name="line.371"></a>
+<span class="sourceLineNo">372</span><a name="line.372"></a>
+<span class="sourceLineNo">373</span>    /**<a name="line.373"></a>
+<span class="sourceLineNo">374</span>     * Find annotation on the field which is itself annotated with {@link BindingAnnotation}.<a name="line.374"></a>
+<span class="sourceLineNo">375</span>     * @param field field with {@link Field#setAccessible(boolean)} already called<a name="line.375"></a>
+<span class="sourceLineNo">376</span>     * @return binding annotation or null, if not found<a name="line.376"></a>
+<span class="sourceLineNo">377</span>     */<a name="line.377"></a>
+<span class="sourceLineNo">378</span>    private static Annotation findBindingAnnotation(Field field) {<a name="line.378"></a>
+<span class="sourceLineNo">379</span>        Annotation result = null;<a name="line.379"></a>
+<span class="sourceLineNo">380</span>        for (Annotation annotation : field.getAnnotations()) {<a name="line.380"></a>
+<span class="sourceLineNo">381</span>            if (annotation.annotationType().isAnnotationPresent(BindingAnnotation.class)) {<a name="line.381"></a>
+<span class="sourceLineNo">382</span>                if (result == null) {<a name="line.382"></a>
+<span class="sourceLineNo">383</span>                    result = annotation;<a name="line.383"></a>
+<span class="sourceLineNo">384</span>                } else {<a name="line.384"></a>
+<span class="sourceLineNo">385</span>                    throw new RuntimeException("More than one binding annotation specified");<a name="line.385"></a>
+<span class="sourceLineNo">386</span>                }<a name="line.386"></a>
+<span class="sourceLineNo">387</span>            }<a name="line.387"></a>
+<span class="sourceLineNo">388</span>        }<a name="line.388"></a>
+<span class="sourceLineNo">389</span>        return result;<a name="line.389"></a>
+<span class="sourceLineNo">390</span>    }<a name="line.390"></a>
+<span class="sourceLineNo">391</span><a name="line.391"></a>
+<span class="sourceLineNo">392</span>    private static List&lt;Service&gt; retrieveServicesRecursively(Iterable&lt;? extends Service&gt; services) {<a name="line.392"></a>
+<span class="sourceLineNo">393</span>        List&lt;Service&gt; result = new ArrayList&lt;&gt;();<a name="line.393"></a>
+<span class="sourceLineNo">394</span>        addServicesRecursively(result, services);<a name="line.394"></a>
+<span class="sourceLineNo">395</span>        return result;<a name="line.395"></a>
+<span class="sourceLineNo">396</span>    }<a name="line.396"></a>
+<span class="sourceLineNo">397</span><a name="line.397"></a>
+<span class="sourceLineNo">398</span>    private static void addServicesRecursively(List&lt;Service&gt; result, Iterable&lt;? extends Service&gt; services) {<a name="line.398"></a>
+<span class="sourceLineNo">399</span>        for (Service service : services) {<a name="line.399"></a>
+<span class="sourceLineNo">400</span>            result.add(service);<a name="line.400"></a>
+<span class="sourceLineNo">401</span>            addServicesRecursively(result, service.getSubServices());<a name="line.401"></a>
+<span class="sourceLineNo">402</span>        }<a name="line.402"></a>
+<span class="sourceLineNo">403</span>    }<a name="line.403"></a>
+<span class="sourceLineNo">404</span>}<a name="line.404"></a>
 
 
 
