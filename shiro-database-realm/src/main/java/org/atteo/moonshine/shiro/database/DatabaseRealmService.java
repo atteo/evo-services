@@ -62,7 +62,6 @@ public class DatabaseRealmService extends RealmService {
 			}
 		});
 
-
 		return new PrivateModule() {
 			@Override
 			protected void configure() {

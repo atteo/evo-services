@@ -74,9 +74,7 @@ public class JsonMessagesServiceTest extends MoonshineTest {
 		factory.addHandler(new Handler());
 		SenderProvider<Sender> senderProvider = factory.addSender(Sender.class);
 
-		String path = "/json-messages";
-		URI uri =  new URI(webServerAddress.getUrl().replace("http://", "ws://") + path);
-		Session session = factory.connect(uri);
+		Session session = factory.connect(webServerAddress);
 
 		Sender sender = senderProvider.get(session);
 		sender.sendRequest(new RequestMessage("Hello World"));
