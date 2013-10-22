@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo</groupId>
-		<version>1.5</version>
+		<version>1.6</version>
 		<relativePath />
 	</parent>
 	<groupId>org.atteo.moonshine</groupId>
@@ -147,11 +147,6 @@
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-websocket</artifactId>
 				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.sonatype.sisu.inject</groupId>
-				<artifactId>cglib</artifactId>
-				<version>3.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
