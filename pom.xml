@@ -69,8 +69,8 @@
 		<module>websocket-tomcat</module>
 	</modules>
 	<scm>
-		<connection>https://github.com/atteo/services</connection>
-		<url>https://github.com/atteo/services</url>
+		<connection>https://github.com/atteo/moonshine</connection>
+		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
 		<jetty.version>9.1.0.RC0</jetty.version>

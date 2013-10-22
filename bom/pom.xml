@@ -7,6 +7,10 @@
 	<packaging>pom</packaging>
 	<name>Moonshine versions</name>
 	<description>Moonshine artifacts versions</description>
+	<scm>
+		<connection>https://github.com/atteo/moonshine</connection>
+		<url>https://github.com/atteo/moonshine</url>
+	</scm>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
