@@ -16,10 +16,14 @@
 package org.atteo.moonshine.services;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import org.atteo.evo.classindex.IndexSubclasses;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 
 /**
  * Basic configurable component which can be {@link #configure() configured}, {@link #start() started}

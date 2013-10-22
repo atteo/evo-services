@@ -37,6 +37,7 @@ import org.atteo.moonshine.services.ImportService;
 
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
+import com.google.inject.servlet.ServletModule;
 
 /**
  * Registers annotated servlets and filters.
@@ -104,6 +105,7 @@ public class WebAnnotationsService extends TopLevelService {
 								+ WebListener.class.getSimpleName() + " must implement "
 								+ EventListener.class.getName() + " interface");
 					}
+					@SuppressWarnings("unchecked")
 					Class<? extends EventListener> eventListenerClass = (Class<? extends EventListener>) klass;
 
 					bind(klass).in(Singleton.class);

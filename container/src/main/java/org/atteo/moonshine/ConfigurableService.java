@@ -16,12 +16,22 @@ package org.atteo.moonshine;
 import java.util.Collections;
 
 import javax.annotation.Nonnull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.Configurable;
 import org.atteo.moonshine.services.Service;
 
 import com.google.inject.Module;
 
+/**
+ * Service which can be configured from XML configuration file.
+ * <p>
+ * Each service must define the name of the tag under which it can be referenced
+ * in the configuration file using {@literal @}{@link XmlRootElement} annotation.
+ * If you want your Service to be directly under the root tag in the configuration file it should
+ * extend {@link TopLevelService}.
+ * </p>
+ */
 public abstract class ConfigurableService extends Configurable implements Service {
 	@Override
 	public Module configure() {

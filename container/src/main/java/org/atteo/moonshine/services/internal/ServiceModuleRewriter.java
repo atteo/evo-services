@@ -109,9 +109,8 @@ public class ServiceModuleRewriter {
 	/**
 	 * Create a module with all provided elements and also with bindings imported
 	 * with {@link ImportService} annotation.
-	 * @param elements elements to include in the module
 	 * @param service service to scan for {@link ImportService} annotation
-	 * @param serviceElements map with elements for all services
+	 * @param services list of all services
 	 * @param hints list where hints will be stored
 	 * @return provided elements with bindings imported from given service
 	 */

@@ -47,6 +47,7 @@ public class Perf4JServiceTest extends MoonshineTest {
 		// given
 		Logger logger = (Logger) LoggerFactory.getLogger(StopWatch.DEFAULT_LOGGER_NAME);
 
+		@SuppressWarnings("unchecked")
 		final Appender<ILoggingEvent> mockAppender = Mockito.mock(Appender.class);
 		Mockito.when(mockAppender.getName()).thenReturn("MOCK");
 		logger.addAppender(mockAppender);

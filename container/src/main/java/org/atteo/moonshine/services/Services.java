@@ -16,7 +16,6 @@ package org.atteo.moonshine.services;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.ConfigurationException;
 
@@ -30,11 +29,7 @@ import com.google.inject.Module;
  * Each of the Services should extend {@link Service}. This interface defines
  * {@link Service#configure() configure()} method which allows to register Guice {@link Module},
  * {@link Service#start() start()} and {@link Service#stop() stop()} methods to execute some logic
- * upon start and stop of the application. If you want your Service to be directly
- * under the root directory in the configuration file it should extend {@link TopLevelService}.
- * Additionally each service must define the name of the tag under which it can be referenced
- * in the configuration file using {@literal @}{@link XmlRootElement} annotation.
- * </p>
+ * upon start and stop of the application. </p>
  */
 public interface Services extends AutoCloseable {
 

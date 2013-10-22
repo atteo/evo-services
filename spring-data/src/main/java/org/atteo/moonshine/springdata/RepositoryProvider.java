@@ -26,7 +26,7 @@ import com.google.inject.Provider;
  * Provides repository of given class.
  *
  * <p>
- * Requires {@link RepositoryFactorySupport} and {@link DatabaseInitializer}.
+ * Requires {@link RepositoryFactorySupport}.
  * </p>
  */
 public class RepositoryProvider<T> implements Provider<T> {

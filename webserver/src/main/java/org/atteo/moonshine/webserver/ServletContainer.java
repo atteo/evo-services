@@ -125,7 +125,6 @@ public class ServletContainer extends TopLevelService {
 	/**
 	 * Register filter.
 	 * @param patterns URL pattern to register filter onto
-	 * @param filterClass filter class
 	 * @param filter filter
 	 * @param params filter init parameters
 	 */
