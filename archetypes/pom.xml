@@ -11,6 +11,7 @@
 	<packaging>pom</packaging>
 	<name>Moonshine Archetypes</name>
 	<modules>
+		<module>service</module>
 		<module>standalone</module>
 	</modules>
 </project>

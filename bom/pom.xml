@@ -24,8 +24,8 @@
 	<artifactId>bom</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Moonshine versions</name>
-	<description>Moonshine artifacts versions</description>
+	<name>Moonshine BOM</name>
+	<description>Moonshine Bill of Materials POM</description>
 	<url>http://atteo.org/static/moonshine</url>
 	<organization>
 		<name>Atteo</name>

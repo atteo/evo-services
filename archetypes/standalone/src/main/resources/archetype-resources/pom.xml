@@ -7,8 +7,9 @@
 	<packaging>pom</packaging>
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<distribution>repo</distribution>
+			<name>Commercial</name>
+			<url>atteo.com</url>
+			<distribution>manual</distribution>
 		</license>
 	</licenses>
 	<dependencyManagement>
@@ -23,7 +24,7 @@
 		</dependencies>
 	</dependencyManagement>
 	<modules>
-		<module>application</module>
-		<module>package</module>
+		<module>service</module>
+		<module>distribution</module>
 	</modules>
 </project>
