@@ -209,6 +209,10 @@ ol li {
   padding-left: 20px;
 }
 
+ol li ol li {
+	list-style: lower-alpha inside;
+}
+
 dl dt {
   font-weight: bold;
 }

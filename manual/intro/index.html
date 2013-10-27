@@ -1,0 +1,57 @@
+---
+layout: minimal
+---
+
+<section id="main_content" style="padding-left:100px; padding-right:100px">
+<h1>
+	<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>Introduction to Moonshine
+</h1>
+<hr>
+
+<h3 id="overview">Overview</h3>
+<p>
+Moonshine is a Java application framework. It is lightweight, but at the same it integrates technologies and libraries
+needed for modern application development. Whether you are developing console program, web application or enterprise-ready
+backend service, modular architecture of Moonshine allows you to built solution that matches complexity of your problem.
+</p>
+
+<h3 id="service">Service</h3>
+<p>
+Moonshine is based around the notion of a <a href="/apidocs/org/atteo/moonshine/services/Service.html">Service</a> - a distinct component
+of functionality - and forces you to also modularize your application in the same way. Services can then be created and configured
+at runtime using flexible configuration file.
+</p>
+<p>
+Moonshine out of the box provides services to start and configure
+<a href="/apidocs/org/atteo/moonshine/jta/JtaService.html">transactions</a>,
+<a href="/apidocs/org/atteo/moonshine/database/DatabaseService.html">database access</a> with
+<a href="/apidocs/org/atteo/moonshine/liquibase/LiquibaseService.html">migrations</a>, persistence using
+<a href="/apidocs/org/atteo/moonshine/hibernate/HibernateService.html">Hibernate</a> and 
+<a href="/apidocs/org/atteo/moonshine/springdata/SpringData.html">Spring Data</a>, two HTTP engines
+<a href="/apidocs/org/atteo/moonshine/jetty/JettyService.html">Jetty</a> and
+<a href="/apidocs/org/atteo/moonshine/tomcat/TomcatService.html">Tomcat</a>,
+<a href="/apidocs/org/atteo/moonshine/webserver/ServletContainer.html">servlets</a>,
+<a href="/apidocs/org/atteo/moonshine/websocket/WebSocketContainerService.html">websockets</a> and
+<a href="/apidocs/org/atteo/moonshine/jersey/Jersey.html">REST services</a>. Additionally Moonshine contains
+services which allows to <a href="/apidocs/org/atteo/moonshine/perf4j/Perf4JService.html">profile</a> your application and retrieve
+<a href="/apidocs/org/moonshine/metrics/Metrics.html">metrics</a> from it using
+<a href="/apidocs/org/atteo/moonshine/jmx/JMX.html">JMX</a> directly or through the provided
+<a href="/apidocs/org/atteo/moonshine/jolokia/JolokiaService.html">REST wrapper</a> or 
+<a href="/apidocs/org/atteo/moonshine/jminix/JMinix.html">web console</a>.
+</p>
+
+<h3 id="testing">Testing</h3>
+
+<p>
+Moonshine is built from the ground up with the high focus on testability and test-driven development. Special support for JUnit allows your tests
+<a href="/apidocs/org/atteo/moonshine/tests/MoonshineTest.html">to be executed inside Moonshine container</a>. Network services were carefully written
+to always start on random port, so you can safely execute your tests in parallel. There is also support for
+<a href="/apidocs/org/atteo/moonshine/tests/MockAndBind.html">mocking</a> and
+<a href="/apidocs/org/atteo/moonshine/webdriver/WebDriverService.html">testing web applications</a>.
+</p>
+
+<hr>
+Next learn more about <a href="../fundamentals">Service Fundamentals</a>.
+</section>
+
+
