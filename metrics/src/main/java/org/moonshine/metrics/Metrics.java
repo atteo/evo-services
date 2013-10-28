@@ -36,6 +36,27 @@ import com.palominolabs.metrics.guice.InstrumentationModule;
 
 /**
  * Metrics.
+ *
+ * <p>
+ * Binds {@link MetricRegistry} which you can use to register your metrics
+ * which then will be accessible through the JMX.
+ *
+ * Example:
+ * <pre>
+ * &#064;Inject
+ * private MetricRegistry metrics;
+ *
+ * ...
+ *
+ * final String metricName = MetricRegistry.name(SomeClass.class, "constant");
+ * metrics.register(metricName, new Gauge<Long>() {
+ *     &#064;Override
+ *     public Long getValue() {
+ *         return 3l;
+ *     }
+ * });
+ * </pre>
+ * </p>
  */
 @XmlRootElement(name = "metrics")
 public class Metrics extends TopLevelService {

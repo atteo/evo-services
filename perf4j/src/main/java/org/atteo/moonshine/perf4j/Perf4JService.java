@@ -31,7 +31,10 @@ import com.google.inject.Module;
 import com.google.inject.matcher.Matchers;
 
 /**
- * Adds support for {@link Profiled} annotation.
+ * Profiling using Perf4J.
+ * <p>
+ * Adds support for {@link Profiled}. Results can be obtained through JMX.
+ * </p>
  */
 @Singleton
 @XmlRootElement(name = "perf4j")

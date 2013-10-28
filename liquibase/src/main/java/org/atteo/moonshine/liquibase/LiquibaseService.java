@@ -17,9 +17,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.database.DatabaseMigration;
 import org.atteo.moonshine.database.DatabaseService;
 import org.atteo.moonshine.services.ImportService;
-import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -31,10 +32,8 @@ import com.google.inject.Scopes;
  * Binds {@link LiquibaseFacade} with the specified database.
  * </p>
  * <p>
- * Usually it is better to create {@link LiquibaseFacade} manually and use it to execute migration:
- * <pre>
- * new LiquibaseFacade(datasource).migrate("/migrations/migration01.xml");
- * </pre>
+ * The preferred way it to use {@link LiquibaseFacade} manually and use it to register migration
+ * using {@link DatabaseService#registerMigration(DatabaseMigration)}.
  * </p>
  */
 @XmlRootElement(name = "liquibase")

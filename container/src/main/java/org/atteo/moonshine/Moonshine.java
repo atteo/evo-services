@@ -40,14 +40,15 @@ import com.google.inject.Module;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 
 /**
- * Moonshine framework starting class.
+ * Moonshine container starting class.
  * <h3>The following operations are performed:</h3>
  * <p>
  * <ul>
  * <li>first, 'Bootstrapping Moonshine' message is logged through SLF4J, this should trigger
  * logging framework initialization, by default Moonshine is configured to use {@link Logback}
  * and also provides the default logback.xml file which logs WARN and ERROR messages to the console</li>
- * <li>shutdown hook is registered, so Moonshine will shutdown cleanly before virtual machine stops</li>
+ * <li>{@link Runtime#addShutdownHook(Thread) shutdown hook} is registered, so Moonshine can shutdown
+ * cleanly before virtual machine stops</li>
  * <li>{@link Logging#earlyBootstrap()} is called, the default implementation for Logback redirects
  * JUL logs through SLF4J and also initializes {@link LevelChangePropagator}</li>
  * <li>command line parameters are parsed</li>
@@ -228,8 +229,8 @@ public interface Moonshine extends AutoCloseable {
 		 * Builds Moonshine based on this builder parameters.
 		 * <p>
 		 * Can return null, if based on provided configuration Moonshine container
-		 * is not supposed to be built. For instance, when '--help' command line parameter
-		 * is provided Moonshine logs help message and exits immediately.
+		 * is not supposed to be started. For instance, when '--help' command line parameter
+		 * was specified help message should be logged and program should exit immediately.
 		 * </p>
 		 * @return created Moonshine container, or null if intended behavior is to skip container creation
 		 * @throws IOException when configuration could not be accessed
@@ -264,6 +265,11 @@ public interface Moonshine extends AutoCloseable {
 	 * Starts all configured services.
 	 */
 	void start();
+
+	/**
+	 * Stops all configured services.
+	 */
+	void stop();
 
 	/**
 	 * Returns the global injector of the Moonshine.

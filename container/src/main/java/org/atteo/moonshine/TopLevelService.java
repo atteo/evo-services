@@ -13,10 +13,8 @@
  */
 package org.atteo.moonshine;
 
-import org.atteo.moonshine.services.Service;
-
 /**
- * Top-level {@link Service} in the {@link Config}.
+ * Service which can be instantiated as the direct child of the root XML tag in the configuration file.
  */
 public abstract class TopLevelService extends ConfigurableService {
 }

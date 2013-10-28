@@ -16,17 +16,16 @@ package org.atteo.moonshine.services;
 
 import java.util.List;
 
-
 import org.atteo.moonshine.ConfigurationException;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Configures and starts Moonshine {@link Service services}.
+ * Configures and starts {@link Service services}.
  *
  * <p>
- * Each of the Services should extend {@link Service}. This interface defines
+ * Each service should implement {@link Service}. This interface defines
  * {@link Service#configure() configure()} method which allows to register Guice {@link Module},
  * {@link Service#start() start()} and {@link Service#stop() stop()} methods to execute some logic
  * upon start and stop of the application. </p>

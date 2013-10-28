@@ -18,8 +18,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.mockito.Mockito;
+
 /**
- * Any field in test class marked with this annotation will be mocked
+ * Any field in test class marked with this annotation will be mocked with {@link Mockito}
  * and the type registered in Guice.
  */
 @Target({ ElementType.FIELD })

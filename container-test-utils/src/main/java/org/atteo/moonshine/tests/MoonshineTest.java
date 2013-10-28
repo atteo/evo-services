@@ -18,7 +18,15 @@ package org.atteo.moonshine.tests;
 import org.junit.runner.RunWith;
 
 /**
- * Executes the test class with {@link MoonshineRunner}.
+ * Executed the test class inside Moonshine container.
+ *
+ * <p>
+ * You can configure the container by annotating the class with {@link MoonshineConfiguration}.
+ * </p>
+ * <p>
+ * If you don't want to extend this class you can equivalently annotate your class with
+ * &#064;RunWith({@link MoonshineRunner}.class).
+ * </p>
  */
 @RunWith(MoonshineRunner.class)
 public class MoonshineTest {

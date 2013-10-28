@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.atteo.moonshine.Moonshine;
-import org.atteo.moonshine.services.Service;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -31,14 +30,13 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 
 /**
- * Runs the tests with {@link Moonshine} container initialized.
+ * Runs the tests inside {@link Moonshine} container.
  *
  * <p>
- * The {@link Moonshine} engine will be initialized with the specified configuration
- * file. All {@link Service services} will be started.
+ * You can configure the container by annotating the class with {@link MoonshineConfiguration}.
  * </p>
  * <p>
- * The test class will be instantiated using created Guice injector.
+ * The test class will be instantiated using global Guice injector of the Moonshine container.
  * </p>
  */
 public class MoonshineRunner extends BlockJUnit4ClassRunner {

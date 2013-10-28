@@ -31,7 +31,17 @@ import liquibase.resource.ResourceAccessor;
  * <p>
  * Usage:
  * <pre>
- * new LiquibaseFacade(datasource).migrate("/migrations/migration01.xml");
+ * &#64;ImportService
+ * private DatabaseService database;
+ *
+ * ...
+ *
+ * database.registerMigration(new DatabaseMigration() {
+ *     &#64;Override
+ *     public void execute(DataSource dataSource) {
+ *         new LiquibaseFacade(datasource).migrate("/migrations/migration01.xml");
+ *     }
+ * }
  * </pre>
  * </p>
  */

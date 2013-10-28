@@ -298,6 +298,11 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	}
 
 	@Override
+	public void stop() {
+		services.stop();
+	}
+
+	@Override
 	public void close() {
 		logger.info("Shutting down {}", applicationName != null ? applicationName : "Moonshine");
 		try {

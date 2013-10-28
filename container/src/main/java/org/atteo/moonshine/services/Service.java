@@ -26,11 +26,13 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 
 /**
- * Basic configurable component which can be {@link #configure() configured}, {@link #start() started}
- * and {@link #stop() stopped}.
- *
+ * Fundamental Moonshine component encapsulating some functionality.
  * <p>
- * Services are instantiated by {@link Services} according to the provided configuration file.
+ * Service can {@link #configure() register bindings}, can be repeatedly {@link #start() started}
+ * and {@link #stop() stopped} and finally {@link #close() closed}.
+ * </p>
+ * <p>
+ * Services are instantiated by {@link Services} according to the provided configuration.
  * Most of the logic which configures the Service should be put in {@link #configure()} method,
  * so it can be lazily initialized by {@link Guice} which knows about dependencies between services.
  * </p>
@@ -60,8 +62,9 @@ public interface Service extends AutoCloseable {
 	 * All fields marked with {@link Inject} will be injected before execution of this method.
 	 * </p>
 	 * <p>
-	 * Every functionality that is exported to other services should be started in {@link #configure()} method
-	 * or in registered {@link Provider}. Here you can start functionalities which are used outside this application.
+	 * This method should be used to start functionalities which are used outside this application.
+	 * Functionality that is exported to other services should be started in {@link #configure()} method
+	 * or from {@link Provider} to correctly handle dependencies between services.
 	 * </p>
 	 */
 	void start();
