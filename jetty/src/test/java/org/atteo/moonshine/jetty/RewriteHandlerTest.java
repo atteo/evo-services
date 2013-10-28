@@ -49,13 +49,13 @@ public class RewriteHandlerTest extends MoonshineTest {
 		request.setURI("/alias/");
 		ByteBuffer responseString = localConnector.getResponses(request.generate());
 		Response response = HttpTester.parseResponse(responseString);
-		assertEquals("hello\n", response.getContent());
+		assertEquals("hello", response.getContent());
 
 		// test rewriteRegex
 		request.setURI("/alias2/");
 		responseString = localConnector.getResponses(request.generate());
 		response = HttpTester.parseResponse(responseString);
-		assertEquals("hello2\n", response.getContent());
+		assertEquals("hello2", response.getContent());
 
 		// test redirectPattern
 		request.setURI("/redirection/");
@@ -76,7 +76,7 @@ public class RewriteHandlerTest extends MoonshineTest {
 		request.setURI("http://virtual/virtual/");
 		responseString = localConnector.getResponses(request.generate());
 		response = HttpTester.parseResponse(responseString);
-		assertEquals("hello\n", response.getContent());
+		assertEquals("hello", response.getContent());
 
 		request.setURI("http://other/virtual/");
 		responseString = localConnector.getResponses(request.generate());

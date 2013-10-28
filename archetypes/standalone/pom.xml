@@ -37,6 +37,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
+			<artifactId>bom</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo.moonshine</groupId>
 			<artifactId>container-test-utils</artifactId>
 			<version>${project.version}</version>
 		</dependency>

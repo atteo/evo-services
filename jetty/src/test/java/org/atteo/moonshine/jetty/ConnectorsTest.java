@@ -79,7 +79,7 @@ public class ConnectorsTest extends MoonshineTest {
 
 		Response response = HttpTester.parseResponse(responses);
 
-		assertEquals("Hello World\nfirst\n", response.getContent());
+		assertEquals("Hello Worldfirst", response.getContent());
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class ConnectorsTest extends MoonshineTest {
 		URL url = new URL(webServerAddress.getUrl() + "/first/");
 		try (InputStream stream = url.openStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
-			assertEquals("Hello World\nfirst\n", result);
+			assertEquals("Hello Worldfirst", result);
 		}
 	}
 
@@ -107,7 +107,7 @@ public class ConnectorsTest extends MoonshineTest {
 
 		try (InputStream stream = sslConnection.getInputStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
-			assertEquals("Hello World\nfirst\n", result);
+			assertEquals("Hello Worldfirst", result);
 		}
 	}
 }
