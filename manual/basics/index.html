@@ -1,0 +1,274 @@
+---
+layout: minimal
+---
+
+<section id="main_content" style="padding-left:100px; padding-right:100px">
+<h1>
+	<span class="octicon octicon-link"></span></a>Moonshine Container Basics
+</h1>
+<hr>
+
+<h3 id="overview">Overview</h3>
+<p>
+Moonshine container configures the <a href="/apidocs/org/atteo/moonshine/services/Service.html">services</a>, manages dependencies
+between them and provides the environment for their execution.
+</p>
+<h3 id="bootstrapping">Bootstrapping the Container</h3>
+<p>
+Below you can find the basic code needed to bootstrap Moonshine container.
+{% highlight java %}
+import org.atteo.moonshine.Moonshine;
+import org.atteo.moonshine.MoonshineException;
+
+public class Main {
+	public static void main(String[] args) throws IOException, MoonshineException {
+		Moonshine moonshine = Moonshine.Factory.builder()
+				.arguments(args)
+				.build();
+		if (moonshine != null) {
+			moonshine.start();
+		}
+	}
+}
+{% endhighlight %}
+The <a href="/apidocs/org/atteo/moonshine/Moonshine.Builder.html">builder</a> allows to customize the container by specifying
+additional configuration files, changing default directory names, adding command line parameters processor, etc.
+<a href="https://github.com/atteo/moonshine-examples/blob/master/basics/07_custom_startup/src/main/java/org/atteo/moonshine/example/Main.java">
+Here you can find the example project with the Moonshine startup customizations</a>.
+</p>
+<p>
+Note that the builder <a href="/apidocs/org/atteo/moonshine/Moonshine.Builder.html#build()">build()</a> method can actually return null.
+This is correct behavior when according to the provided command line arguments, the application is not supposed to be started.
+This is true when, for instance, '--help' switch was specified.
+<br>
+</p>
+
+<p>
+If you don't want to alter any startup options, you can use the default Main class provided with the Moonshine:
+{% highlight java %}
+org.atteo.moonshine.Main
+{% endhighlight %}
+<a href="https://github.com/atteo/moonshine-examples/tree/master/basics/00_trivial">Here you can find the example which uses
+the default Main class for startup</a>.
+<!--
+Note: if you have <a href="http://mop.fusesource.org/">MOP</a> installed you can test this class by executing
+'mop run org.atteo.moonshine:container:0.9 org.atteo.moonshine.Main'.
+-->
+</p>
+
+<p>
+You will also need Moonshine container library itself to execute the project:
+{% highlight xml %}
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.atteo.moonshine</groupId>
+			<artifactId>bom</artifactId>
+			<version>0.9</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+<dependencies>
+	<dependency>
+		<groupId>org.atteo.moonshine</groupId>
+		<artifactId>container</artifactId>
+	</dependency>
+</dependencies>
+{% endhighlight %}
+</p>
+
+<h3 id="service">Service Definition Class</h3>
+<p>
+Service is a basic component of Moonshine application. Services are instantiated from the XML configuration files. They can
+<a href="/apidocs/org/atteo/moonshine/services/Service.html#configure()">register</a> bindings
+in Google Guice, can be <a href="/apidocs/org/atteo/moonshine/services/Service.html#start()">started</a> and
+<a href="/apidocs/org/atteo/moonshine/services/Service.html#stop()">stopped</a> repeatedly and are finally
+<a href="/apidocs/org/atteo/moonshine/services/Service.html#close()">closed</a> on container shut down.
+</p>
+
+<p>
+Let's see how a basic Service looks like:
+{% highlight java %}
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.atteo.moonshine.TopLevelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Service with simple start/stop logic.
+ */
+@XmlRootElement(name = "printer")
+public class PrinterService extends TopLevelService {
+	private static final Logger logger = LoggerFactory.getLogger(PrinterService.class);
+
+	@Override
+	public void start() {
+		logger.warn("Basic service start() method called");
+	}
+
+	@Override
+	public void stop() {
+		logger.warn("Basic service stop() method called");
+	}
+}
+{% endhighlight %}
+</p>
+<p>
+A lot of things happen here behind the scenes, so let's go through them one by one.
+<ul>
+	<li>First of all our service is marked with
+	<a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/bind/annotation/XmlRootElement.html">@XmlRootElement</a> annotation.
+	Its <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/bind/annotation/XmlRootElement.html#name()">name</a> attribute declares
+	the XML tag which will trigger this service instantiation when specified in the XML configuration file.</li>
+	<li>The service extends <a href="/apidocs/org/atteo/moonshine/TopLevelService.html">TopLevelService</a> which means in can be declared
+	just under the root tag in the XML configuration file.
+	</li>
+	<li>First sentence of the javadoc of the service class will be used as a service description.</li>
+</ul>
+</p>
+
+<h3 id="instantiation">Service instantiation</h3>
+<p>
+Services are instantiated by declaring their associated name in the configuration file.
+The configuration files are read:
+<ul>
+	<li>classpath resources named '/default-config.xml'</li>
+	<li>'config.xml' file the 'config' directory of the application</li>
+	<li>additional configuration files can be specified while configuring Moonshine using
+	<a href="/apidocs/org/atteo/moonshine/Moonshine.Builder.html#addConfigurationFromString(java.lang.String)">method</a>.
+</ul>
+</p>
+<p>
+Below you can see the XML file which will trigger instantiation of the PrinterService defined above:
+{% highlight xml %}
+<config>
+	<printer/>
+</config>
+{% endhighlight %}
+You can instantiate the service multiple times, but in this case you need to provide an unique ID to both services to differentiate them:
+{% highlight xml %}
+<config>
+	<printer id='first'/>
+	<printer id='second'/>
+</config>
+{% endhighlight %}
+</p>
+<p>
+<a href="https://github.com/atteo/moonshine-examples/tree/master/basics/01_simple_service">You can download the code of PrinterService example
+	from here.</a>
+</p>
+<p>
+The project from the example also contains POM configuration for <a href="http://mojo.codehaus.org/exec-maven-plugin/">exec-maven-plugin</a>
+which allows to start Moonshine Service directly from the source code project.
+To do that execute:
+{% highlight bash %}
+mvn clean install exec:java
+{% endhighlight %}
+<div class="highlight">
+	<pre>
+...
+[INFO] --- exec-maven-plugin:1.2.1:java (default-cli) @ 01_simple_service ---
+15:43:23.853 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Bootstrapping Moonshine
+15:43:24.604 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Building Guice injector hierarchy
+15:43:24.711 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Configuring: "first" PrinterService (Service with simple start/stop logic)
+15:43:24.712 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Configuring: "second" PrinterService (Service with simple start/stop logic)
+15:43:24.835 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Starting services
+15:43:24.835 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Starting: "first" PrinterService (Service with simple start/stop logic)
+15:43:24.835 [org.atteo.moonshine.Main.main()] WARN  o.a.moonshine.example.PrinterService - Basic service start() method called
+15:43:24.835 [org.atteo.moonshine.Main.main()] INFO  Moonshine - Starting: "second" PrinterService (Service with simple start/stop logic)
+15:43:24.835 [org.atteo.moonshine.Main.main()] WARN  o.a.moonshine.example.PrinterService - Basic service start() method called
+15:43:24.835 [org.atteo.moonshine.Main.main()] INFO  Moonshine - All services started
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 5.078s (Wall Clock)
+[INFO] Finished at: Mon Oct 28 15:43:24 CET 2013
+[INFO] Final Memory: 23M/217M
+[INFO] ------------------------------------------------------------------------
+15:43:24.970 [Thread-3] INFO  Moonshine - Shutting down moonshine
+15:43:24.972 [Thread-3] INFO  Moonshine - Stopping: "first" PrinterService (Service with simple start/stop logic)
+15:43:24.972 [Thread-3] WARN  o.a.moonshine.example.PrinterService - Basic service stop() method called
+15:43:24.972 [Thread-3] INFO  Moonshine - Stopping: "second" PrinterService (Service with simple start/stop logic)
+15:43:24.972 [Thread-3] WARN  o.a.moonshine.example.PrinterService - Basic service stop() method called
+15:43:24.972 [Thread-3] INFO  Moonshine - All services stopped
+	</pre>
+</div>
+As you can see the Moonshine configures, starts and stops each each service. Each time it prints service ID inside quotation marks,
+service class name and service description in parentheses.
+</p>
+
+<h3 id="testing">Service Testing</h3>
+<p>
+There is also an easy way to start Moonshine container from JUnit tests.
+Just extend your test class from <a href="/apidocs/org/atteo/moonshine/tests/MoonshineTest.html">MoonshineTest</a>.
+This will initialize and start Moonshine container once before execution of all test methods and then shutdown it after the tests are done.
+<a href="https://github.com/atteo/moonshine-examples/tree/master/basics/02_testing">You can find an example project with simple test here.</a>
+</p>
+<p>
+If you want to customize Moonshine container execution for the tests, annotate your test class with
+<a href="/apidocs/org/atteo/moonshine/tests/MoonshineConfiguration.html">@MoonshineConfiguration</a> annotation.
+You can, for instance, skip loading of '/default-config.xml' file and provide your own configuration in-place like that:
+{% highlight java %}
+@MoonshineConfiguration(skipDefault = true, fromString = ""
+	+ "<config>"
+	+ "    <printer/>"
+	+ "</config>")
+public class PrinterServiceTest extends MoonshineTest {
+	@Test
+	public void shouldStartMoonshine() {
+	}
+}
+{% endhighlight %}
+</p>
+<h3 id="provided-services">Services Bundled With Moonshine</h3>
+<p>
+Moonshine, out of the box, provides services to start and configure
+<a href="/apidocs/org/atteo/moonshine/jta/JtaService.html">transactions</a>,
+<a href="/apidocs/org/atteo/moonshine/database/DatabaseService.html">database access</a> with
+<a href="/apidocs/org/atteo/moonshine/liquibase/LiquibaseService.html">migrations</a>, persistence using
+<a href="/apidocs/org/atteo/moonshine/hibernate/HibernateService.html">Hibernate</a> and
+<a href="/apidocs/org/atteo/moonshine/springdata/SpringData.html">Spring Data</a>, two HTTP engines:
+<a href="/apidocs/org/atteo/moonshine/jetty/JettyService.html">Jetty</a> and
+<a href="/apidocs/org/atteo/moonshine/tomcat/TomcatService.html">Tomcat</a>,
+<a href="/apidocs/org/atteo/moonshine/webserver/ServletContainer.html">servlets</a>,
+<a href="/apidocs/org/atteo/moonshine/websocket/WebSocketContainerService.html">websockets</a> and
+<a href="/apidocs/org/atteo/moonshine/jersey/Jersey.html">REST services</a>. Additionally Moonshine contains
+services which allow to <a href="/apidocs/org/atteo/moonshine/perf4j/Perf4JService.html">profile</a> your application and collect
+<a href="/apidocs/org/moonshine/metrics/Metrics.html">metrics</a> which can be retrieved directly using
+<a href="/apidocs/org/atteo/moonshine/jmx/JMX.html">JMX</a> or through the provided
+<a href="/apidocs/org/atteo/moonshine/jolokia/JolokiaService.html">REST wrapper</a> or
+<a href="/apidocs/org/atteo/moonshine/jminix/JMinix.html">web console</a>.
+</p>
+<p>
+For instance let modify our test class to measure execution time of a test method. We will use
+<a href="/apidocs/org/atteo/moonshine/perf4j/Perf4JService.html">Perf4J</a> service for that. It provides
+<a href="http://perf4j.codehaus.org/apidocs/org/perf4j/aop/Profiled.html">@Profiled</a> annotation which logs the execution time
+of the annotated method.
+
+{% highlight java %}
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <perf4j/>"
+		+ "</config>")
+public class PrinterServiceTest extends MoonshineTest {
+	@Test
+	@Profiled
+	public void shouldLogExecutionTime() {
+	}
+}
+{% endhighlight %}
+After test execution in the log file located in 'target/test-home/logs/PrinterServiceTest.log' there will be a log entry
+with information about when and how long the execution of the method took:
+<div class="highlight">
+	<pre>
+18:59:07.921 [main] INFO  org.perf4j.TimingLogger - start[1382983147918] time[2] tag[shouldLogExecutionTime]
+	</pre>
+</div>
+
+</p>
+<hr>
+Next: <a href="../services">Writing Services</a>.
+</section>

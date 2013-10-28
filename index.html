@@ -8,16 +8,36 @@ layout: default
 
 <h1>
 	<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h1>
-
-<p>Moonshine is an application framework using <a href="https://code.google.com/p/google-guice/">Google Guice's</a> dependency injection as
-its foundation. It is based on the notion of <a href="/apidocs/org/atteo/moonshine/services/Service.html">Service</a>.
-Services implement some functionality, they can depend on each other and they can
+<p>
+Moonshine is a Java application framework. It integrates many technologies and libraries needed for modern application development.
+Whether you are developing console program, web application or enterprise-ready backend service,
+modular architecture of Moonshine allows you to build a solution that matches the complexity of your problem.
+</p>
+<p>Moonshine is based on the notion of a <a href="/apidocs/org/atteo/moonshine/services/Service.html">Service</a>.
+Service is a distinct component implementing a certain functionality. Services can depend on each other and they can
 <a href="/apidocs/org/atteo/moonshine/services/Service.html#configure()">register</a>
-bindings in Guice</p>
+bindings in <a href="https://code.google.com/p/google-guice/">Google Guice</a>. Moonshine provides mechanisms for configuring, executing and testing
+services.
+</p>
 
-<p>Moonshine provides mechanisms for configuring, executing and testing the services.
-It also comes out of the box with ready to use services for database access (H2, HSQLDB), servlets and web sockets (Jetty, Tomcat),
-JTA (Atomikos), JPA (Hibernate), Spring Data, JMX, JAX-RS (Jersey), and many more.</p>
+<p>
+Moonshine, out of the box, provides services to start and configure
+<a href="/apidocs/org/atteo/moonshine/jta/JtaService.html">transactions</a>,
+<a href="/apidocs/org/atteo/moonshine/database/DatabaseService.html">database access</a> with
+<a href="/apidocs/org/atteo/moonshine/liquibase/LiquibaseService.html">migrations</a>, persistence using
+<a href="/apidocs/org/atteo/moonshine/hibernate/HibernateService.html">Hibernate</a> and
+<a href="/apidocs/org/atteo/moonshine/springdata/SpringData.html">Spring Data</a>, two HTTP engines:
+<a href="/apidocs/org/atteo/moonshine/jetty/JettyService.html">Jetty</a> and
+<a href="/apidocs/org/atteo/moonshine/tomcat/TomcatService.html">Tomcat</a>,
+<a href="/apidocs/org/atteo/moonshine/webserver/ServletContainer.html">servlets</a>,
+<a href="/apidocs/org/atteo/moonshine/websocket/WebSocketContainerService.html">websockets</a> and
+<a href="/apidocs/org/atteo/moonshine/jersey/Jersey.html">REST services</a>. Additionally Moonshine contains
+services which allow to <a href="/apidocs/org/atteo/moonshine/perf4j/Perf4JService.html">profile</a> your application and collect
+<a href="/apidocs/org/moonshine/metrics/Metrics.html">metrics</a> which can be retrieved directly using
+<a href="/apidocs/org/atteo/moonshine/jmx/JMX.html">JMX</a> or through the provided
+<a href="/apidocs/org/atteo/moonshine/jolokia/JolokiaService.html">REST wrapper</a> or
+<a href="/apidocs/org/atteo/moonshine/jminix/JMinix.html">web console</a>.
+</p>
 
 <h1>
 	<a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Changes</h1>
@@ -33,5 +53,6 @@ JTA (Atomikos), JPA (Hibernate), Spring Data, JMX, JAX-RS (Jersey), and many mor
 	<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
 <ul>
 	<li><a href="/apidocs">Javadoc</a></li>
+	<li><a href="/manual">Manual</a></li>
 </ul>
 </section>
