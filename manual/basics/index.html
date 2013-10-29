@@ -15,7 +15,7 @@ between them and provides the environment for their execution.
 </p>
 <h3 id="bootstrapping">Bootstrapping the Container</h3>
 <p>
-Below you can find the basic code needed to bootstrap Moonshine container.
+Below you can find the basic code needed to bootstrap a Moonshine container.
 {% highlight java %}
 import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.MoonshineException;
@@ -32,7 +32,7 @@ public class Main {
 }
 {% endhighlight %}
 The <a href="/apidocs/org/atteo/moonshine/Moonshine.Builder.html">builder</a> allows to customize the container by specifying
-additional configuration files, changing default directory names, adding command line parameters processor, etc.
+additional configuration files, changing default directory names, adding command line parameters processors, etc.
 <a href="https://github.com/atteo/moonshine-examples/blob/master/basics/07_custom_startup/src/main/java/org/atteo/moonshine/example/Main.java">
 Here you can find the example project with the Moonshine startup customizations</a>.
 </p>
@@ -261,7 +261,7 @@ public class PrinterServiceTest extends MoonshineTest {
 }
 {% endhighlight %}
 After test execution in the log file located in 'target/test-home/logs/PrinterServiceTest.log' there will be a log entry
-with information about when and how long the execution of the method took:
+with information about when the method was executed and how long the execution took:
 <div class="highlight">
 	<pre>
 18:59:07.921 [main] INFO  org.perf4j.TimingLogger - start[1382983147918] time[2] tag[shouldLogExecutionTime]

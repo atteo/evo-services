@@ -1,4 +1,3 @@
-liquibase.ext.slf4jlogging
 org.atteo.moonshine
 org.atteo.moonshine.atomikos
 org.atteo.moonshine.database
