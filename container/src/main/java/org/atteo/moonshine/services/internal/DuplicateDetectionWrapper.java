@@ -26,6 +26,7 @@ import com.google.inject.Module;
 import com.google.inject.PrivateBinder;
 import com.google.inject.PrivateModule;
 import com.google.inject.internal.ProviderMethodsModule;
+import com.google.inject.spi.Elements;
 
 /**
  * Allows to enhance the module with the logic to skip duplicate modules installation.
@@ -35,6 +36,10 @@ public class DuplicateDetectionWrapper {
 
 	/**
 	 * Wraps the module into another one which skips any modules which are already installed.
+	 *
+	 * <p>
+	 * Note: does not work for modules rewritten using {@link Elements#getModule(Iterable)}.
+	 * </p>
 	 */
 	public Module wrap(final Module module) {
 		if (module instanceof PrivateModule) {
