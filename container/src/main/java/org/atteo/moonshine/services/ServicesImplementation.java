@@ -327,13 +327,23 @@ public class ServicesImplementation implements Services, Services.Builder {
 					Service importedService;
 					try {
 						importedService = (Service) field.get(metadata.getService());
-						ServiceMetadata importedServiceMetadata;
+						ServiceMetadata importedServiceMetadata = null;
+
 						if (importedService == null) {
-							importedServiceMetadata = findDefaultService(servicesMetadata, field.getType());
+							try {
+								importedServiceMetadata = findDefaultService(servicesMetadata,
+								    field.getType());
+							} catch (ConfigurationException ex) {
+								throw new ConfigurationException("Service '" + metadata.getName()
+								    + "' requires '" + field.getType().getName() + "' which is"
+								    + " defined more than once. Please specify an ID in your"
+								    + " configuration files.", ex);
+							}
+
 							if (importedServiceMetadata == null) {
 								throw new ConfigurationException("Service '" + metadata.getName()
-										+ "' requires '" + field.getType().getName() + "' which was not found."
-										+ " Please check your configuration files.");
+								    + "' requires '" + field.getType().getName() + "' which was"
+								    + " not found. Please check your configuration files.");
 							}
 
 							field.set(metadata.getService(), importedServiceMetadata.getService());
@@ -345,7 +355,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 						}
 						Annotation annotation = findBindingAnnotation(field);
 						metadata.addDependency(importedServiceMetadata, annotation);
-					} catch (IllegalAccessException| IllegalArgumentException e) {
+					} catch (IllegalAccessException | IllegalArgumentException e) {
 						throw new RuntimeException("Cannot access field", e);
 					}
 				}
@@ -357,12 +367,12 @@ public class ServicesImplementation implements Services, Services.Builder {
 	/**
 	 * Find the default service which can be assigned for given type.
 	 */
-	private static ServiceMetadata findDefaultService(List<ServiceMetadata> services, Class<?> type) {
+	private static ServiceMetadata findDefaultService(List<ServiceMetadata> services, Class<?> type) throws ConfigurationException {
 		ServiceMetadata result = null;
 		for (ServiceMetadata service : services) {
 			if (type.isAssignableFrom(service.getService().getClass())) {
 				if (result != null) {
-					throw new RuntimeException("Could not find unique service of type: " + type);
+					throw new ConfigurationException("Service of type '" + type + "' is not unique");
 				}
 				result = service;
 			}
