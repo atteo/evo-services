@@ -32,6 +32,7 @@
 		</developer>
 	</developers>
 	<modules>
+        <module>activiti</module>
 		<module>archetypes</module>
 		<module>atomikos</module>
 		<module>bom</module>
