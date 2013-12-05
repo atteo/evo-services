@@ -35,6 +35,7 @@
         <module>activiti</module>
 		<module>archetypes</module>
 		<module>atomikos</module>
+		<module>blueprints</module>
 		<module>bom</module>
 		<module>container</module>
 		<module>container-test-utils</module>
@@ -77,6 +78,7 @@
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
+		<blueprints.version>2.4.0</blueprints.version>
 		<jetty.version>9.1.0.RC0</jetty.version>
 		<tomcat.version>8.0.0-RC3</tomcat.version>
 	</properties>
@@ -151,6 +153,11 @@
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-websocket</artifactId>
 				<version>${tomcat.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.tinkerpop.blueprints</groupId>
+				<artifactId>blueprints-core</artifactId>
+				<version>${blueprints.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
