@@ -304,6 +304,8 @@ public class ServicesImplementation implements Services, Services.Builder {
 			map.put(service, metadata);
 		}
 
+		List<String> configurationErrors = new ArrayList<>();
+
 		for (ServiceMetadata metadata : servicesMetadata) {
 			for (Class<?> ancestorClass : ReflectionUtils.getAncestors(metadata.getService().getClass())) {
 				metadata.setSingleton(ReflectionTools.isSingleton(ancestorClass));
@@ -334,16 +336,20 @@ public class ServicesImplementation implements Services, Services.Builder {
 								importedServiceMetadata = findDefaultService(servicesMetadata,
 								    field.getType());
 							} catch (ConfigurationException ex) {
-								throw new ConfigurationException("Service '" + metadata.getName()
+								configurationErrors.add("Service '" + metadata.getName()
 								    + "' requires '" + field.getType().getName() + "' which is"
 								    + " defined more than once. Please specify an ID in your"
-								    + " configuration files.", ex);
+								    + " configuration files.");
+
+								continue;
 							}
 
 							if (importedServiceMetadata == null) {
-								throw new ConfigurationException("Service '" + metadata.getName()
+								configurationErrors.add("Service '" + metadata.getName()
 								    + "' requires '" + field.getType().getName() + "' which was"
 								    + " not found. Please check your configuration files.");
+
+								continue;
 							}
 
 							field.set(metadata.getService(), importedServiceMetadata.getService());
@@ -361,6 +367,19 @@ public class ServicesImplementation implements Services, Services.Builder {
 				}
 			}
 		}
+
+		if (!configurationErrors.isEmpty()) {
+			if (configurationErrors.size() == 1) {
+				throw new ConfigurationException(configurationErrors.get(0));
+			} else {
+				for (String error : configurationErrors) {
+					logger.error(error);
+				}
+
+				throw new ConfigurationException("Multiple configuration errors");
+			}
+		}
+
 		return servicesMetadata;
 	}
 
