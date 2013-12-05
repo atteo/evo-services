@@ -59,6 +59,7 @@
 		<module>neo4j</module>
 		<module>perf4j</module>
 		<module>reflection-utils</module>
+        <module>resteasy</module>
 		<module>shiro</module>
 		<module>shiro-database-realm</module>
 		<module>shiro-test-utils</module>
