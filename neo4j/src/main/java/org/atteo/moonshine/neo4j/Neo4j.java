@@ -15,33 +15,40 @@
  */
 package org.atteo.moonshine.neo4j;
 
+import java.util.Map;
+
+import javax.sql.DataSource;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
+import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Provider;
+import com.google.inject.Scopes;
 import com.google.inject.Singleton;
+import com.tinkerpop.blueprints.Graph;
+import com.tinkerpop.blueprints.impls.neo4j.Neo4jGraph;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.atteo.evo.config.XmlDefaultValue;
-import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.blueprints.BlueprintsService;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseBuilder;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSetting;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Neo4j Graph DB Service.
  */
 @XmlRootElement(name = "neo4j")
-public class Neo4j extends TopLevelService {
+public class Neo4j extends BlueprintsService {
     /***
      * The type of the database persistence
-     *
+     * 
      * Can be embedded or impermanent
      */
     @XmlElement
@@ -65,11 +72,21 @@ public class Neo4j extends TopLevelService {
         }
     }
 
+    private class BlueprintsGraphProvider implements Provider<Graph> {
+        @Inject
+        GraphDatabaseService graphDb;
+
+        @Override
+        public Graph get() {
+            return new Neo4jGraph(graphDb);
+        }
+    }
+
     @Override
     public Module configure() {
-        return new Module() {
+        return new AbstractModule() {
             @Override
-            public void configure(Binder binder) {
+            protected void configure() {
                 checkNotNull(type, "Type must be set.");
 
                 if (type.equalsIgnoreCase("impermanent")) {
@@ -82,7 +99,8 @@ public class Neo4j extends TopLevelService {
                 }
 
                 checkNotNull(builder, "Could not create a builder for the specified type [%s]", type);
-                binder.bind(GraphDatabaseService.class).toProvider(new GraphDatabaseServiceProvider()).in(Singleton.class);
+                bind(GraphDatabaseService.class).toProvider(new GraphDatabaseServiceProvider()).in(Scopes.SINGLETON);
+                bind(Graph.class).toProvider(new BlueprintsGraphProvider()).in(Scopes.SINGLETON);
             }
         };
     }

@@ -17,7 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
-import org.atteo.moonshine.tests.MoonshineTest;
+import org.atteo.moonshine.blueprints.BlueprintsTest;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -33,16 +33,16 @@ import static org.junit.Assert.assertTrue;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-        + "     <neo4j id=\"db1\">"
+        + "     <neo4j id=\"default\">"
         + "         <type>impermanent</type>"
         + "     </neo4j>"
         + "     <neo4j id=\"db2\">"
         + "         <type>impermanent</type>"
         + "     </neo4j>"
 		+ "</config>")
-public class Neo4jTest extends MoonshineTest {
+public class Neo4jTest extends BlueprintsTest {
     @Inject
-    @Named("db1")
+    @Named("default")
     GraphDatabaseService db1;
 
     @Inject
