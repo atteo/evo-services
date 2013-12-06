@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.google.common.collect.Lists;
+import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.filtering.PropertiesPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
@@ -282,7 +284,27 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		return this;
 	}
 
-	@Override
+    @Override
+    public Builder registerAppModules() {
+        for (Class<?> moduleClass : ClassIndex.getAnnotated(AppModule.class)) {
+            if (Module.class.isAssignableFrom(moduleClass)) {
+                logger.trace("Found @AppModule [{}].", moduleClass.getName());
+                try {
+                    Module module = (Module)moduleClass.newInstance();
+                    modules.add(module);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Could not instantiate AppModule {}" + moduleClass.getName(), e);
+                }
+            } else {
+                throw new IllegalStateException("Class " + moduleClass.getName()
+                        + " is annotated as @AppModule but doesn't implement com.google.inject.Module");
+            }
+        }
+
+        return this;
+    }
+
+    @Override
 	public Builder addPropertyResolver(PropertyResolver propertyResolver) {
 		propertyResolvers.add(propertyResolver);
 		return this;
