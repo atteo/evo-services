@@ -10,7 +10,7 @@
 	<name>Activiti Workflow Engine</name>
 
 	<properties>
-		<activiti.version>5.12</activiti.version>
+		<activiti.version>5.14</activiti.version>
 	</properties>
 	<dependencies>
 		<dependency>
