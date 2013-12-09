@@ -85,7 +85,7 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 			}
 
 			if (annotation.skipDefault() || !annotation.fromString().isEmpty()
-					|| annotation.arguments().length != 0) {
+					|| annotation.arguments().length != 0 || annotation.registerAppModules()) {
 				MoonshineConfigurator configurator = new MoonshineConfigurator() {
 					@Override
 					public void configureMoonshine(Moonshine.Builder builder) {
@@ -95,6 +95,10 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 						if (!annotation.fromString().isEmpty()) {
 							builder.addConfigurationFromString(annotation.fromString());
 						}
+
+                        if (annotation.registerAppModules()) {
+                            builder.registerAppModules();
+                        }
 
 						builder.arguments(annotation.arguments());
 					}
