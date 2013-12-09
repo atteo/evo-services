@@ -65,11 +65,21 @@
 	</distributionManagement>
 	<dependencyManagement>
 		<dependencies>
+            <dependency>
+                <groupId>org.atteo.moonshine</groupId>
+                <artifactId>activiti</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>atomikos</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.atteo.moonshine</groupId>
+                <artifactId>blueprints</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>container</artifactId>
@@ -110,6 +120,11 @@
 				<artifactId>metrics</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.atteo.moonshine</groupId>
+                <artifactId>neo4j</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>hibernate</artifactId>
@@ -180,6 +195,16 @@
 				<artifactId>perf4j</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.atteo.moonshine</groupId>
+                <artifactId>reflection-utils</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.atteo.moonshine</groupId>
+                <artifactId>resteasy</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>shiro</artifactId>
@@ -228,11 +253,6 @@
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>websocket-tomcat</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.moonshine</groupId>
-				<artifactId>reflection-utils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
