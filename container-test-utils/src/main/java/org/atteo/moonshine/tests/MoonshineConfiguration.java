@@ -29,6 +29,11 @@ public @interface MoonshineConfiguration {
 	 */
 	boolean skipDefault() default false;
 
+    /**
+     * if true app modules will be auto registered
+     */
+    boolean registerAppModules() default false;
+
 	/**
 	 * Command line arguments.
 	 */
