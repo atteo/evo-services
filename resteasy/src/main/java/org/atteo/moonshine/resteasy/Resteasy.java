@@ -26,12 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Singleton;
-import com.google.inject.servlet.ServletModule;
-
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
@@ -41,6 +35,12 @@ import org.jboss.resteasy.plugins.server.servlet.FilterDispatcher;
 import org.jboss.resteasy.spi.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Singleton;
+import com.google.inject.servlet.ServletModule;
 
 /**
  * Starts RESTEasy JAX-RS implementation.
@@ -76,15 +76,15 @@ public class Resteasy extends TopLevelService {
     private Injector injector;
 
 
-    private List<ResourceFactory> resourceFactories = new ArrayList<ResourceFactory>();
-    private List<com.google.inject.Provider<?>> restProviders = new ArrayList<com.google.inject.Provider<?>>();
+    private final List<ResourceFactory> resourceFactories = new ArrayList<>();
+    private final List<com.google.inject.Provider<?>> restProviders = new ArrayList<>();
 
     @Override
     public Module configure() {
         ServletModule servletModule = new ServletModule() {
             @Override
             protected void configureServlets() {
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("resteasy.servlet.mapping.prefix", prefix);
 
                 bind(FilterDispatcher.class).in(Singleton.class);

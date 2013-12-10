@@ -8,6 +8,9 @@
 	</parent>
 	<artifactId>atomikos</artifactId>
 	<name>JTA Atomikos</name>
+	<properties>
+		<atomikos.version>3.8.0</atomikos.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -22,14 +25,17 @@
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jta</artifactId>
+			<version>${atomikos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jdbc</artifactId>
+			<version>${atomikos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jms</artifactId>
+			<version>${atomikos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -44,3 +50,4 @@
 		</dependency>
 	</dependencies>
 </project>
+

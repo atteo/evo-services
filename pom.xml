@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo</groupId>
-		<version>1.6</version>
+		<version>1.7</version>
 		<relativePath />
 	</parent>
 	<groupId>org.atteo.moonshine</groupId>
@@ -32,7 +32,7 @@
 		</developer>
 	</developers>
 	<modules>
-        <module>activiti</module>
+		<module>activiti</module>
 		<module>archetypes</module>
 		<module>atomikos</module>
 		<module>blueprints</module>
@@ -60,7 +60,7 @@
 		<module>neo4j</module>
 		<module>perf4j</module>
 		<module>reflection-utils</module>
-        <module>resteasy</module>
+		<module>resteasy</module>
 		<module>shiro</module>
 		<module>shiro-database-realm</module>
 		<module>shiro-test-utils</module>
@@ -79,8 +79,9 @@
 	</scm>
 	<properties>
 		<blueprints.version>2.4.0</blueprints.version>
-		<jetty.version>9.1.0.RC0</jetty.version>
-		<tomcat.version>8.0.0-RC3</tomcat.version>
+		<jetty.version>9.1.0.v20131115</jetty.version>
+		<shiro.version>1.2.2</shiro.version>
+		<tomcat.version>8.0.0-RC5</tomcat.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -135,6 +136,26 @@
 				<version>${jetty.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>org.hibernate.javax.persistence</groupId>
+				<artifactId>hibernate-jpa-2.0-api</artifactId>
+				<version>1.0.1.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-web</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-guice</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-catalina</artifactId>
 				<version>${tomcat.version}</version>
@@ -162,18 +183,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.14</version>
-					<configuration>
-						<useFile>false</useFile>
-						<trimStackTrace>false</trimStackTrace>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-enforcer-plugin</artifactId>
@@ -189,7 +198,6 @@
 									<searchTransitive>true</searchTransitive>
 									<excludes>
 										<exclude>asm:asm</exclude>
-										<exclude>cglib:cglib-nodep</exclude>
 									</excludes>
 								</bannedDependencies>
 							</rules>

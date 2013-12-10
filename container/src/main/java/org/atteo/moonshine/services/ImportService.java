@@ -29,7 +29,7 @@ import com.google.inject.PrivateModule;
  *
  * <p>
  * The annotation can be used in your service class on a field of {@link Service} type.
- * This will make all the bindings {@link PrivateModule#expose exposed} by the annotated service
+ * This will make all the bindings {@link PrivateModule#expose(Class) exposed} by the annotated service
  * available in this service {@link Module module} as private bindings.
  * </p>
  * <p>

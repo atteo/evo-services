@@ -17,52 +17,52 @@
 			<artifactId>container</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>webserver</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>webserver</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
-            <version>${resteasy.version}</version>
+			<version>${resteasy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>
-            <version>${resteasy.version}</version>
+			<version>${resteasy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-guice</artifactId>
-            <version>${resteasy.version}</version>
+			<version>${resteasy.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxb-provider</artifactId>
-            <version>${resteasy.version}</version>
+			<version>${resteasy.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-jackson-provider</artifactId>
-            <version>${resteasy.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.stream</groupId>
-                    <artifactId>stax-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-multipart-provider</artifactId>
-            <version>${resteasy.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>4.2.0.Final</version>
-        </dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jackson-provider</artifactId>
+			<version>${resteasy.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>stax-api</artifactId>
+					<groupId>javax.xml.stream</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-multipart-provider</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.2.0.Final</version>
+		</dependency>
 		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
 			<artifactId>container-test-utils</artifactId>

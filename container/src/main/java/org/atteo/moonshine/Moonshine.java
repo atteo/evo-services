@@ -139,10 +139,10 @@ public interface Moonshine extends AutoCloseable {
 		 */
 		RestrictedBuilder addModule(Module module);
 
-        /**
-         * Auto register application modules that are annotated with {@link AppModule}
-         */
-        RestrictedBuilder registerAppModules();
+		/**
+		 * Auto register application modules that are annotated with {@link AppModule}
+		 */
+		RestrictedBuilder registerAppModules();
 
 		/**
 		 * Adds configuration from given string.

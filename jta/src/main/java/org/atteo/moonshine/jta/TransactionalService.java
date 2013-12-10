@@ -19,15 +19,15 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.XmlDefaultValue;
-import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
 
 import com.google.inject.Module;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.ServletModule;
 
 /**
- * Adds support for {@link Transactional} annotation.
+ * Adds support for @Transactional annotation.
  * <p>
  * Provides support for &#064;{@link Transactional} annotation,
  * {@link Transaction} helper and optionally registers web filter which wraps servlet request
