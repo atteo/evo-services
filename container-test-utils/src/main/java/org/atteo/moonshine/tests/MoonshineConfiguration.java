@@ -34,6 +34,12 @@ public @interface MoonshineConfiguration {
      */
     boolean registerAppModules() default false;
 
+    /**
+     * If true, a request (scope) per entire test class will be created,
+     * default means that a request is created per method.
+     */
+    boolean oneRequestPerClass() default false;
+
 	/**
 	 * Command line arguments.
 	 */

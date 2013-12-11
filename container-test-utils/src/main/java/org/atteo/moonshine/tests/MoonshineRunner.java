@@ -41,6 +41,7 @@ import com.google.common.reflect.TypeToken;
  */
 public class MoonshineRunner extends BlockJUnit4ClassRunner {
 	private MoonshineRule moonshineRule = null;
+    private boolean requestPerClass = false;
 
 	public MoonshineRunner(Class<?> klass) throws InitializationError {
 		super(klass);
@@ -100,6 +101,10 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
                             builder.registerAppModules();
                         }
 
+                        if (annotation.oneRequestPerClass()) {
+                            requestPerClass = annotation.oneRequestPerClass();
+                        }
+
 						builder.arguments(annotation.arguments());
 					}
 				};
@@ -110,6 +115,9 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 		moonshineRule = new MoonshineRule(configurators, configs.toArray(new String[configs.size()]));
 
 		List<TestRule> rules = super.classRules();
+        if (requestPerClass)
+            rules.add(new RequestRule());
+
 		rules.add(moonshineRule);
 		return rules;
 	}
@@ -117,7 +125,8 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 	@Override
 	protected List<TestRule> getTestRules(Object target) {
 		List<TestRule> rules = super.getTestRules(target);
-		rules.add(new RequestRule());
+        if (!requestPerClass)
+            rules.add(new RequestRule());
 		return rules;
 	}
 
