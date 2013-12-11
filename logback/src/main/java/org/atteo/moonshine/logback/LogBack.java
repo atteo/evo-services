@@ -13,6 +13,15 @@
  */
 package org.atteo.moonshine.logback;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.jmx.JMXConfigurator;
+import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
+import com.google.inject.Module;
+import com.google.inject.matcher.Matchers;
+import org.atteo.moonshine.TopLevelService;
+import org.slf4j.LoggerFactory;
+
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -21,55 +30,58 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.TopLevelService;
-import org.slf4j.LoggerFactory;
-
-import com.google.inject.Inject;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.jmx.JMXConfigurator;
-
 /**
- * LogBack JMX support.
- *
+ * LogBack injection and JMX support.
+ * <p/>
  * <p>
- * LogBack MBeans allow you to change logging levels in running application.
+ * LogBack MBeans allow you to change logging levels in running application and provides logger injection via @Log
+ * annotation with an appropriate logger name configured based on the class name the logger is injected to.
  * </p>
  */
 @XmlRootElement(name = "logback")
 public class LogBack extends TopLevelService {
-	@Inject
-	private MBeanServer mbeanServer;
+    @Inject
+    private MBeanServer mbeanServer;
 
-	@Override
-	public void start() {
-		configureJMX();
-	}
+    @Override
+    public void start() {
+        configureJMX();
+    }
 
-	@Override
-	public void close() {
-		deconfigureJMX();
-	}
+    @Override
+    public void close() {
+        deconfigureJMX();
+    }
 
-	private JMXConfigurator jmxConfigurator;
+    private JMXConfigurator jmxConfigurator;
 
-	private void configureJMX() throws RuntimeException {
-		LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-		try {
-			ObjectName name = ObjectName.getInstance(JMXConfigurator.class.getPackage().getName()
-					+ ":type=" + JMXConfigurator.class.getSimpleName());
-			jmxConfigurator = new JMXConfigurator(context, mbeanServer, name);
-			if (!mbeanServer.isRegistered(name)) {
-				mbeanServer.registerMBean(jmxConfigurator, name);
-			}
-		} catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
-				| NotCompliantMBeanException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @Override
+    public Module configure() {
+        return new AbstractModule() {
+            @Override
+            protected void configure() {
+                bindListener(Matchers.any(), new SLF4JTypeListener());
+            }
+        };
+    }
 
-	private void deconfigureJMX() {
-		// force JMXConfigurator to deregister itself from MBean server
-		jmxConfigurator.onStop(null);
-	}
+    private void configureJMX() throws RuntimeException {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        try {
+            ObjectName name = ObjectName.getInstance(JMXConfigurator.class.getPackage().getName()
+                    + ":type=" + JMXConfigurator.class.getSimpleName());
+            jmxConfigurator = new JMXConfigurator(context, mbeanServer, name);
+            if (!mbeanServer.isRegistered(name)) {
+                mbeanServer.registerMBean(jmxConfigurator, name);
+            }
+        } catch (MalformedObjectNameException | InstanceAlreadyExistsException | MBeanRegistrationException
+                | NotCompliantMBeanException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void deconfigureJMX() {
+        // force JMXConfigurator to deregister itself from MBean server
+        jmxConfigurator.onStop(null);
+    }
 }
