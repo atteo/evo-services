@@ -62,5 +62,4 @@ public class ResteasyTest extends MoonshineTest {
 	public void test() throws Exception {
 		request("/rest/resource");
 	}
-
 }

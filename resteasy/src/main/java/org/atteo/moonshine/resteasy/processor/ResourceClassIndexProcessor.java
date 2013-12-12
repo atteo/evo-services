@@ -19,9 +19,7 @@ import javax.ws.rs.ext.Provider;
 import org.atteo.evo.classindex.processor.ClassIndexProcessor;
 
 public class ResourceClassIndexProcessor extends ClassIndexProcessor {
-
 	public ResourceClassIndexProcessor() {
 		super(Path.class, Provider.class);
 	}
-
 }

@@ -18,7 +18,7 @@ package org.atteo.moonshine;
 import javax.inject.Inject;
 
 public class Robot {
-	private Leg leftLeg;
+	private final Leg leftLeg;
 
 	@Inject
 	public Robot(@Left Leg leftLeg, @Right Leg rightLeg, @Left Hand leftHand, @Right Hand rightHand, Head head) {

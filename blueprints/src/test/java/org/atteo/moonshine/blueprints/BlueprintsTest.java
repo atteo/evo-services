@@ -16,25 +16,26 @@ package org.atteo.moonshine.blueprints;
 import java.sql.SQLException;
 
 import javax.inject.Inject;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.tests.MoonshineTest;
+import org.junit.Test;
 
 import com.google.inject.name.Named;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
-import org.atteo.moonshine.tests.MoonshineConfiguration;
-import org.atteo.moonshine.tests.MoonshineTest;
-import org.junit.Test;
 
 
 @MoonshineConfiguration(fromString = ""
-        + "<config>"
-        + "</config>")
+		+ "<config>"
+		+ "</config>")
 public abstract class BlueprintsTest extends MoonshineTest {
 	@Inject
-    //This is because we want to let implementations (see Neo4j service for example) to perform tests on multiple
-    //instances and same service defined multiple time is forbidden with none ID.
-    @Named("default")
+	//This is because we want to let implementations (see Neo4j service for example) to perform tests on multiple
+	//instances and same service defined multiple time is forbidden with none ID.
+	@Named("default")
 	private Graph graph;
 
 	@Test
@@ -44,12 +45,13 @@ public abstract class BlueprintsTest extends MoonshineTest {
 
 	@Test
 	public void shouldPerformBasicOperationsOnGraph() throws SQLException {
-        Vertex v = graph.addVertex(null);
-        assertThat(v).isNotNull();
-        assertThat(graph.getVertex(v.getId())).isEqualTo(v);
-        graph.removeVertex(v);
-        if (graph instanceof TransactionalGraph)
-            ((TransactionalGraph)graph).commit();
-        assertThat(graph.getVertex(v.getId())).isNull();
-    }
+		Vertex v = graph.addVertex(null);
+		assertThat(v).isNotNull();
+		assertThat(graph.getVertex(v.getId())).isEqualTo(v);
+		graph.removeVertex(v);
+		if (graph instanceof TransactionalGraph) {
+			((TransactionalGraph)graph).commit();
+		}
+		assertThat(graph.getVertex(v.getId())).isNull();
+	}
 }

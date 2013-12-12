@@ -28,5 +28,8 @@ public interface ServiceInfo {
 	 */
 	List<Element> getElements();
 
+	/**
+	 * Returns service name with associated id, if present.
+	 */
 	String getName();
 }

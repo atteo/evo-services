@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -112,6 +113,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 
 		services = readServiceMetadata(retrieveServicesRecursively(config.getSubServices()));
+		//services = sortTopologically(services);
 		verifySingletonServicesAreUnique(services);
 
 		List<String> hints = new ArrayList<>();
@@ -237,7 +239,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		return services;
 	}
 
-	private void verifySingletonServicesAreUnique(List<ServiceMetadata> services) throws ConfigurationException {
+	private static void verifySingletonServicesAreUnique(List<ServiceMetadata> services) throws ConfigurationException {
 		Set<Class<?>> set = new HashSet<>();
 		for (ServiceMetadata service : services) {
 			Class<?> klass = service.getService().getClass();
@@ -429,5 +431,30 @@ public class ServicesImplementation implements Services, Services.Builder {
 			result.add(service);
 			addServicesRecursively(result, service.getSubServices());
 		}
+	}
+
+	private static void addService(ServiceMetadata service, Set<ServiceMetadata> set, List<ServiceMetadata> sorted) {
+		if (!set.contains(service)) {
+			return;
+		}
+		for (ServiceMetadata.Dependency dependency : service.getDependencies()) {
+			addService(dependency.getService(), set, sorted);
+		}
+		if (!set.remove(service)) {
+			throw new RuntimeException("Service " + service.getName() + " contains cyclic dependency on itself");
+		}
+		sorted.add(service);
+	}
+
+	private static List<ServiceMetadata> sortTopologically(List<ServiceMetadata> services) {
+		List<ServiceMetadata> sorted = new ArrayList<>();
+
+		Set<ServiceMetadata> set = new LinkedHashSet<>(services);
+
+		while (!set.isEmpty()) {
+			ServiceMetadata service = set.iterator().next();
+			addService(service, set, sorted);
+		}
+		return sorted;
 	}
 }

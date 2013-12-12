@@ -13,7 +13,10 @@
  */
 package org.atteo.moonshine.activiti;
 
-import com.google.inject.Inject;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
@@ -21,92 +24,89 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import com.google.inject.Inject;
 
 @MoonshineConfiguration(fromString = ""
-        + "<config>"
-        + "    <activiti/>"
-        + "    <transactional/>"
-        + "    <atomikos>"
-        + "        <transactionTimeout>5</transactionTimeout>"
-        + "    </atomikos>"
-        + "    <h2/>"
-        + "</config>")
+		+ "<config>"
+		+ "    <activiti/>"
+		+ "    <transactional/>"
+		+ "    <atomikos>"
+		+ "        <transactionTimeout>5</transactionTimeout>"
+		+ "    </atomikos>"
+		+ "    <h2/>"
+		+ "</config>")
 public class ActivitiTest extends MoonshineTest {
-    @Inject
-    ProcessEngine processEngine;
+	@Inject
+	ProcessEngine processEngine;
 
-    @Test
-    public void vacationRequestFlowTest() {
-        assertThat(processEngine).isNotNull();
-        RepositoryService repositoryService = processEngine.getRepositoryService();
-        repositoryService.createDeployment().addClasspathResource("vacation_request-bpmn20.xml").deploy();
-        assertThat(repositoryService.createProcessDefinitionQuery().count()).isEqualTo(1);
+	@Test
+	public void vacationRequestFlowTest() {
+		assertThat(processEngine).isNotNull();
+		RepositoryService repositoryService = processEngine.getRepositoryService();
+		repositoryService.createDeployment().addClasspathResource("vacation_request-bpmn20.xml").deploy();
+		assertThat(repositoryService.createProcessDefinitionQuery().count()).isEqualTo(1);
 
-        Map<String, Object> variables = new HashMap<String, Object>();
-        variables.put("employeeName", "Kermit");
-        variables.put("numberOfDays", new Integer(4));
-        variables.put("vacationMotivation", "I'm really tired!");
-        RuntimeService runtimeService = processEngine.getRuntimeService();
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("vacationRequest", variables);
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("employeeName", "Kermit");
+		variables.put("numberOfDays", new Integer(4));
+		variables.put("vacationMotivation", "I'm really tired!");
+		RuntimeService runtimeService = processEngine.getRuntimeService();
+		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("vacationRequest", variables);
 
-        // Fetch all tasks for the management group
-        TaskService taskService = processEngine.getTaskService();
-        List<Task> mTasks = taskService.createTaskQuery().taskCandidateGroup("management").list();
-        List<Task> kermitTasks = taskService.createTaskQuery().taskAssignee("Kermit").list();
-        assertThat(mTasks).hasSize(1);
-        assertThat(kermitTasks).hasSize(0);
+		// Fetch all tasks for the management group
+		TaskService taskService = processEngine.getTaskService();
+		List<Task> mTasks = taskService.createTaskQuery().taskCandidateGroup("management").list();
+		List<Task> kermitTasks = taskService.createTaskQuery().taskAssignee("Kermit").list();
+		assertThat(mTasks).hasSize(1);
+		assertThat(kermitTasks).hasSize(0);
 
-        for (Task task : mTasks) {
-            assertThat(task.getName()).isEqualTo("Handle vacation request");
-        }
+		for (Task task : mTasks) {
+			assertThat(task.getName()).isEqualTo("Handle vacation request");
+		}
 
-        // signal the task
-        Task task = mTasks.get(0);
-        Map<String, Object> taskVariables = new HashMap<String, Object>();
-        taskVariables.put("vacationApproved", "false");
-        taskVariables.put("managerMotivation", "We have a tight deadline!");
-        taskService.complete(task.getId(), taskVariables);
+		// signal the task
+		Task task = mTasks.get(0);
+		Map<String, Object> taskVariables = new HashMap<>();
+		taskVariables.put("vacationApproved", "false");
+		taskVariables.put("managerMotivation", "We have a tight deadline!");
+		taskService.complete(task.getId(), taskVariables);
 
-        kermitTasks = taskService.createTaskQuery().taskAssignee("Kermit").list();
-        assertThat(kermitTasks).hasSize(1);
+		kermitTasks = taskService.createTaskQuery().taskAssignee("Kermit").list();
+		assertThat(kermitTasks).hasSize(1);
 
-        for (Task kt : kermitTasks) {
-            assertThat(kt.getName()).isEqualTo("Adjust vacation request");
-        }
+		for (Task kt : kermitTasks) {
+			assertThat(kt.getName()).isEqualTo("Adjust vacation request");
+		}
 
-        // process should exist because it's still active
-        assertThat(runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId())
-                .singleResult()).isNotNull();
-        // and exist in historic too
-        HistoryService historicService = processEngine.getHistoryService();
-        assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
-                .singleResult()).isNotNull();
-        assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
-                .singleResult().getEndTime()).isNull();
+		// process should exist because it's still active
+		assertThat(runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId())
+				.singleResult()).isNotNull();
+		// and exist in historic too
+		HistoryService historicService = processEngine.getHistoryService();
+		assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
+				.singleResult()).isNotNull();
+		assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
+				.singleResult().getEndTime()).isNull();
 
-        assertThat(processInstance.isEnded()).isEqualTo(false);
-        task = kermitTasks.get(0);
-        taskVariables = new HashMap<String, Object>();
-        taskVariables.put("resendRequest", "false");
-        taskService.complete(task.getId(), taskVariables);
+		assertThat(processInstance.isEnded()).isEqualTo(false);
+		task = kermitTasks.get(0);
+		taskVariables = new HashMap<>();
+		taskVariables.put("resendRequest", "false");
+		taskService.complete(task.getId(), taskVariables);
 
-        // process should not exist because it's not active
-        assertThat(runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).suspended()
-                .singleResult()).isNull();
+		// process should not exist because it's not active
+		assertThat(runtimeService.createProcessInstanceQuery().processInstanceId(processInstance.getId()).suspended()
+				.singleResult()).isNull();
 
-        // process should exist in historic service
-        assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
-                .singleResult()).isNotNull();
-        assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
-                .singleResult().getEndTime()).isNotNull();
-    }
+		// process should exist in historic service
+		assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
+				.singleResult()).isNotNull();
+		assertThat(historicService.createHistoricProcessInstanceQuery().processInstanceId(processInstance.getId())
+				.singleResult().getEndTime()).isNotNull();
+	}
 }
