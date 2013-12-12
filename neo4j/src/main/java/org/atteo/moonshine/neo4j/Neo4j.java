@@ -59,7 +59,7 @@ public class Neo4j extends BlueprintsService {
      * The path where DB files are stored.
      */
     @XmlElement
-    @XmlDefaultValue("${dataHome}")
+    @XmlDefaultValue("${dataHome}/neo4j")
     private String path;
 
     private GraphDatabaseBuilder builder;
