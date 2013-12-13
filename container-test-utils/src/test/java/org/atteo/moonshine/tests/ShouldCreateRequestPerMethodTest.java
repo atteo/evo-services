@@ -28,8 +28,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provider;
 import com.google.inject.servlet.RequestScoped;
 
-@MoonshineConfiguration(configurator = MoonshineConfiguratorTest.Configurator.class)
-public class ShouldCreateRequestPerMethod extends MoonshineTest {
+@MoonshineConfiguration(configurator = ShouldCreateRequestPerMethodTest.Configurator.class)
+public class ShouldCreateRequestPerMethodTest extends MoonshineTest {
 	public static class Configurator implements MoonshineConfigurator {
 		@Override
 		public void configureMoonshine(Moonshine.Builder builder) {

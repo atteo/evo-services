@@ -22,8 +22,8 @@ import javax.inject.Provider;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
-@MoonshineConfiguration(oneRequestPerClass = true, configurator = ShouldCreateRequestPerMethod.Configurator.class)
-public class ShouldCreateRequestPerClass extends MoonshineTest {
+@MoonshineConfiguration(oneRequestPerClass = true, configurator = ShouldCreateRequestPerMethodTest.Configurator.class)
+public class ShouldCreateRequestPerClassTest extends MoonshineTest {
 	@Inject
 	private Provider<Integer> value;
 
