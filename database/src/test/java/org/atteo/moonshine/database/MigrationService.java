@@ -22,9 +22,8 @@ import java.sql.Statement;
 import javax.sql.DataSource;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.jta.Transaction;
-import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
 
 import com.google.inject.Module;
 
@@ -38,18 +37,13 @@ public class MigrationService extends TopLevelService {
 		database.registerMigration(new DatabaseMigration() {
 			@Override
 			public void execute(final DataSource dataSource) {
-				Transaction.require(new Transaction.Runnable() {
-					@Override
-					public void run() {
-						try (final Connection connection = dataSource.getConnection();
-								final Statement statement = connection.createStatement()) {
-							statement.execute("create table users (name varchar(256))");
-							statement.execute("insert into users(name) values ('John')");
-						} catch (SQLException ex) {
-							throw new RuntimeException(ex);
-						}
-					}
-				});
+				try (final Connection connection = dataSource.getConnection();
+						final Statement statement = connection.createStatement()) {
+					statement.execute("create table users (name varchar(256))");
+					statement.execute("insert into users(name) values ('John')");
+				} catch (SQLException ex) {
+					throw new RuntimeException(ex);
+				}
 			}
 		});
 		return null;
