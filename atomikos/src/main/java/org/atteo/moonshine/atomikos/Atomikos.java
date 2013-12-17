@@ -38,8 +38,9 @@ import com.atomikos.icatch.jta.UserTransactionManager;
 import com.atomikos.icatch.standalone.UserTransactionServiceFactory;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.atomikos.jms.AtomikosConnectionFactoryBean;
-import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.PrivateModule;
+import com.google.inject.Provider;
 
 /**
  * Atomikos JTA implementation.
@@ -76,7 +77,48 @@ public class Atomikos extends JtaService {
 	private UserTransactionManager manager;
 	private UserTransactionServiceImp service;
 
-	@Singleton
+	public class ManagerProvider implements Provider<UserTransactionManager> {
+		@Override
+		public UserTransactionManager get() {
+			System.setProperty(UserTransactionServiceImp.NO_FILE_PROPERTY_NAME, "true");
+			System.setProperty(UserTransactionServiceImp.HIDE_INIT_FILE_PATH_PROPERTY_NAME,
+					"true");
+			System.setProperty("com.atomikos.icatch.service",
+					UserTransactionServiceFactory.class.getCanonicalName());
+
+			Properties properties = new Properties();
+			properties.setProperty(AbstractUserTransactionServiceFactory.MAX_ACTIVES_PROPERTY_NAME,
+					Integer.toString(maxActiveTransactions));
+			properties.setProperty(AbstractUserTransactionServiceFactory.TM_UNIQUE_NAME_PROPERTY_NAME,
+					"TM_" + ManagementFactory.getRuntimeMXBean().getName());
+			properties.setProperty(AbstractUserTransactionServiceFactory.LOG_BASE_NAME_PROPERTY_NAME,
+					"log_");
+			properties.setProperty(AbstractUserTransactionServiceFactory.LOG_BASE_DIR_PROPERTY_NAME,
+					logDirectory);
+			properties.setProperty(AbstractUserTransactionServiceFactory.OUTPUT_DIR_PROPERTY_NAME,
+					consoleOutputDirectory);
+			properties.setProperty(AbstractUserTransactionServiceFactory.THREADED_2PC_PROPERTY_NAME,
+					"false");
+			properties.setProperty(AbstractUserTransactionServiceFactory.DEFAULT_JTA_TIMEOUT_PROPERTY_NAME,
+					Integer.toString(transactionTimeout * 1000));
+			service = new UserTransactionServiceImp(properties);
+			try {
+				service.init();
+			} catch (SysException e) {
+				throw new RuntimeException(e.getErrors().pop().toString(), e);
+			}
+
+			manager = new UserTransactionManager();
+			manager.setStartupTransactionService(false);
+			try {
+				manager.init();
+			} catch (SystemException e) {
+				throw new RuntimeException(e);
+			}
+			return manager;
+		}
+	}
+
 	private static class AtomikosDataSourceWrapper implements JtaDataSourceWrapper {
 		@Override
 		public DataSource wrap(String name, XADataSource xaDataSource, PoolOptions poolOptions, String testQuery) {
@@ -110,7 +152,6 @@ public class Atomikos extends JtaService {
 		}
 	}
 
-	@Singleton
 	private static class AtomikosConnectionFactoryWrapper implements JtaConnectionFactoryWrapper {
 		@Override
 		public ConnectionFactory wrap(String name, XAConnectionFactory xaFactory,
@@ -146,55 +187,29 @@ public class Atomikos extends JtaService {
 
 	@Override
 	public Module configure() {
-		return new AbstractModule() {
+		return new PrivateModule() {
 			@Override
 			protected void configure() {
-				System.setProperty(UserTransactionServiceImp.NO_FILE_PROPERTY_NAME, "true");
-				System.setProperty(UserTransactionServiceImp.HIDE_INIT_FILE_PATH_PROPERTY_NAME,
-						"true");
-				System.setProperty("com.atomikos.icatch.service",
-						UserTransactionServiceFactory.class.getCanonicalName());
-
-				Properties properties = new Properties();
-				properties.setProperty(AbstractUserTransactionServiceFactory.MAX_ACTIVES_PROPERTY_NAME,
-						Integer.toString(maxActiveTransactions));
-				properties.setProperty(AbstractUserTransactionServiceFactory.TM_UNIQUE_NAME_PROPERTY_NAME,
-						"TM_" + ManagementFactory.getRuntimeMXBean().getName());
-				properties.setProperty(AbstractUserTransactionServiceFactory.LOG_BASE_NAME_PROPERTY_NAME,
-						"log_");
-				properties.setProperty(AbstractUserTransactionServiceFactory.LOG_BASE_DIR_PROPERTY_NAME,
-						logDirectory);
-				properties.setProperty(AbstractUserTransactionServiceFactory.OUTPUT_DIR_PROPERTY_NAME,
-						consoleOutputDirectory);
-				properties.setProperty(AbstractUserTransactionServiceFactory.THREADED_2PC_PROPERTY_NAME,
-						"false");
-				properties.setProperty(AbstractUserTransactionServiceFactory.DEFAULT_JTA_TIMEOUT_PROPERTY_NAME,
-						Integer.toString(transactionTimeout * 1000));
-				service = new UserTransactionServiceImp(properties);
-				try {
-					service.init();
-				} catch (SysException e) {
-					throw new RuntimeException(e.getErrors().pop().toString(), e);
-				}
-
-				manager = new UserTransactionManager();
-				manager.setStartupTransactionService(false);
-				try {
-					manager.init();
-				} catch (SystemException e) {
-					throw new RuntimeException(e);
-				}
-				bind(TransactionManager.class).toInstance(manager);
-				bind(UserTransaction.class).toInstance(manager);
-				bind(JtaDataSourceWrapper.class).to(AtomikosDataSourceWrapper.class);
-				bind(JtaConnectionFactoryWrapper.class).to(AtomikosConnectionFactoryWrapper.class);
+				bind(UserTransactionManager.class).toProvider(new ManagerProvider()).in(Singleton.class);
+				bind(TransactionManager.class).to(UserTransactionManager.class);
+				expose(TransactionManager.class);
+				bind(UserTransaction.class).to(UserTransactionManager.class);
+				expose(UserTransaction.class);
+				bind(JtaDataSourceWrapper.class).to(AtomikosDataSourceWrapper.class).in(Singleton.class);
+				expose(JtaDataSourceWrapper.class);
+				bind(JtaConnectionFactoryWrapper.class).to(AtomikosConnectionFactoryWrapper.class).in(Singleton.class);
+				expose(JtaConnectionFactoryWrapper.class);
 			}
 		};
 	}
 
 	@Override
 	public void close() {
-		manager.close();
-		service.shutdownWait();
+		if (manager != null) {
+			manager.close();
+		}
+		if (service != null) {
+			service.shutdownWait();
+		}
 	}
 }
