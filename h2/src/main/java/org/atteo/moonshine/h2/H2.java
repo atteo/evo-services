@@ -115,7 +115,7 @@ public class H2 extends DatabaseService {
 
 	@Override
 	public void close() {
-		if (wrapper != null) {
+		if (dataSource != null) {
 			wrapper.close(dataSource);
 		}
 	}
