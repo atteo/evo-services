@@ -71,6 +71,10 @@ public class DatabaseRealm extends AuthenticatingRealm {
 		String principal = (String) token.getPrincipal();
 		Account loginAccount = accountRepository.findOne(principal);
 
+		if (loginAccount == null) {
+			return null;
+		}
+
 		SimplePrincipalCollection principalCollection = new SimplePrincipalCollection(
 				loginAccount.getLogin(), getName());
 

@@ -21,6 +21,7 @@ import javax.transaction.SystemException;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.atteo.moonshine.jta.Transactional;
 import org.atteo.moonshine.liquibase.LiquibaseFacade;
@@ -71,6 +72,12 @@ public class DatabaseRealmServiceTest extends MoonshineTest {
 	public void login() throws NotSupportedException, SystemException {
 		SecurityUtils.getSubject().login(new UsernamePasswordToken("joey", "how you doin?"));
 		assertTrue(SecurityUtils.getSubject().isAuthenticated());
+	}
+
+	@Test(expected = UnknownAccountException.class)
+	@Transactional
+	public void invalidUsername() {
+		SecurityUtils.getSubject().login(new UsernamePasswordToken("invalidusername", "wrong password"));
 	}
 
 	@Test(expected = AuthenticationException.class)
