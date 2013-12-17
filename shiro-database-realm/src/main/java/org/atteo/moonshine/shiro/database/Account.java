@@ -19,15 +19,20 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 @Entity
 public class Account {
 	@Id
+	@NotBlank
 	private String login;
 
 	@Column(nullable = false)
+	@NotBlank
 	private String hashedPassword;
 
 	@Column(length = 256, nullable = false)
+	@NotBlank
 	private String salt;
 
 	public String getLogin() {

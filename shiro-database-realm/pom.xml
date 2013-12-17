@@ -16,11 +16,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>spring-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -32,6 +27,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>liquibase</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
