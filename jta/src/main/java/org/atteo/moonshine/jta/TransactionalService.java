@@ -14,24 +14,20 @@
 package org.atteo.moonshine.jta;
 
 import javax.inject.Singleton;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.matcher.Matchers;
-import com.google.inject.servlet.ServletModule;
 
 /**
  * Adds support for @Transactional annotation.
  * <p>
- * Provides support for &#064;{@link Transactional} annotation,
- * {@link Transaction} helper and optionally registers web filter which wraps servlet request
- * in separate transaction.
+ * Provides support for &#064;{@link Transactional} annotation and {@link Transaction} helper.
  * </p>
  */
 @XmlRootElement(name = "transactional")
@@ -41,34 +37,15 @@ public class TransactionalService extends TopLevelService {
 	@ImportService
 	private JtaService jtaService;
 
-	/**
-	 * Register {@link JtaFilter} which wraps web requests handling inside JTA transaction.
-	 */
-	@XmlElement
-	private boolean registerWebFilter = false;
-
-	/**
-	 * Filter pattern matching urls for which {@link JtaFilter} will be registered.
-	 */
-	@XmlElement
-	@XmlDefaultValue("/*")
-	private String filterPattern;
-
 	@Override
 	public Module configure() {
-		return new ServletModule() {
+		return new AbstractModule() {
 			@Override
-			protected void configureServlets() {
-				bind(JtaFilter.class);
-
+			protected void configure() {
 				requestStaticInjection(Transaction.class);
 				TransactionalInterceptor interceptor = new TransactionalInterceptor();
 				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Transactional.class), interceptor);
 				bindInterceptor(Matchers.annotatedWith(Transactional.class), Matchers.any(), interceptor);
-
-				if (registerWebFilter) {
-					filter(filterPattern).through(JtaFilter.class);
-				}
 			}
 		};
 	}
