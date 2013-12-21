@@ -74,6 +74,23 @@ h1 {
   font-weight: 700;
 }
 
+h1 pre {
+	background-color: rgba(0,0,0,0);
+	font-family: monospace;
+	font-size: 20px;
+	line-height: 1.0;
+	color: white;
+	box-shadow: none;
+	text-shadow: #00f 0px 0px 0.5em;
+}
+
+#header_wrap h2 {
+	font-family: monospace;
+	text-shadow: #fff 0px 0px 0.1em;
+	font-size: 20px;
+}
+
+
 h2 {
   padding-bottom: 10px;
   font-size: 32px;
@@ -272,7 +289,7 @@ Full-Width Styles
 
 .inner {
   position: relative;
-  max-width: 640px;
+  max-width: 840px;
   padding: 20px 10px;
   margin: 0 auto;
 }
