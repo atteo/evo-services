@@ -1,11 +1,11 @@
-package org.atteo.moonshine;
-
-import org.atteo.evo.classindex.IndexAnnotated;
+package org.atteo.moonshine.global_modules;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.atteo.evo.classindex.IndexAnnotated;
 
 /**
  * Marker interface for applications that require to supply extra Guice modules
@@ -19,5 +19,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @IndexAnnotated
-public @interface AppModule {
+public @interface GlobalModule {
 }

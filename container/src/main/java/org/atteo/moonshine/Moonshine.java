@@ -140,11 +140,6 @@ public interface Moonshine extends AutoCloseable {
 		RestrictedBuilder addModule(Module module);
 
 		/**
-		 * Auto register application modules that are annotated with {@link AppModule}
-		 */
-		RestrictedBuilder registerAppModules();
-
-		/**
 		 * Adds configuration from given string.
 		 */
 		RestrictedBuilder addConfigurationFromString(String string);
@@ -217,9 +212,6 @@ public interface Moonshine extends AutoCloseable {
 
 		@Override
 		Builder addModule(Module module);
-
-        @Override
-        Builder registerAppModules();
 
 		@Override
 		Builder addConfigurationFromString(String string);

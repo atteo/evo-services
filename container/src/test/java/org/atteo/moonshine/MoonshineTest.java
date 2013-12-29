@@ -369,16 +369,4 @@ public class MoonshineTest {
 		assertThat(MissingDependencyService.configureCount).isEqualTo(1);
 		assertThat(MissingDependencyService.closeCount).isEqualTo(1);
 	}
-
-    @Test
-    public void shouldRegisterAppModules() throws MoonshineException, IOException {
-        try (Moonshine moonshine = Moonshine.Factory.builder().registerAppModules()
-                .homeDirectory("target/test-home/")
-                .build()) {
-            moonshine.start();
-
-            Head head = moonshine.getGlobalInjector().getInstance(Head.class);
-            assertThat(head).isNotNull();
-        }
-    }
 }
