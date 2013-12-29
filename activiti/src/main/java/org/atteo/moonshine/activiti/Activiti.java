@@ -15,102 +15,140 @@
  */
 package org.atteo.moonshine.activiti;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.xml.bind.annotation.XmlRootElement;
 
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngines;
-import org.activiti.engine.impl.cfg.JtaProcessEngineConfiguration;
-import org.atteo.evo.config.XmlDefaultValue;
-import org.atteo.moonshine.TopLevelService;
-
+import com.google.common.collect.Lists;
 import com.google.inject.Binder;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngineConfiguration;
+import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.impl.cfg.JtaProcessEngineConfiguration;
+import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.parse.BpmnParseHandler;
+import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.moonshine.TopLevelService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
  * Starts Activiti database
  */
 @XmlRootElement(name = "activiti")
 public class Activiti extends TopLevelService {
-	@XmlDefaultValue("default")
-	String name;
+    private final Logger log = LoggerFactory.getLogger(Activiti.class);
 
-	/**
-	 * True if to update db schema on boot time:
-	 *
-	 * can be false/true/create/create-drop
-	 *
-	 * @see org.activiti.engine.ProcessEngineConfiguration
-	 * @see org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl
-	 */
-	@XmlDefaultValue("true")
-	String dbSchemaUpdate;
+    @XmlDefaultValue("default")
+    String name;
 
-	/**
-	 * True if the job executor should be activated.
-	 */
-	@XmlDefaultValue("false")
-	Boolean jobExecutorActivate;
+    /**
+     * True if to update db schema on boot time:
+     * <p/>
+     * can be false/true/create/create-drop
+     *
+     * @see org.activiti.engine.ProcessEngineConfiguration
+     * @see org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl
+     */
+    @XmlDefaultValue("true")
+    String dbSchemaUpdate;
 
-	/**
-	 * The host of the mail server
-	 */
-	String mailServerHost;
+    /**
+     * True if the job executor should be activated.
+     */
+    @XmlDefaultValue("false")
+    Boolean jobExecutorActivate;
 
-	/**
-	 * The port of the mail server
-	 */
-	@XmlDefaultValue("25")
-	Integer mailServerPort;
+    /**
+     * The host of the mail server
+     */
+    String mailServerHost;
 
-	/**
-	 * History config
-	 */
-	@XmlDefaultValue("audit")
-	String history;
+    /**
+     * The port of the mail server
+     */
+    @XmlDefaultValue("25")
+    Integer mailServerPort;
+
+    /**
+     * History config
+     */
+    @XmlDefaultValue("audit")
+    String history;
+
+    @XmlElementRef
+    @XmlElementWrapper(name = "bpmn-parse-handlers")
+    List<BpmnParseHandlerConf> bpmnParseHandlers;
+
+    private class ProcessEngineProvider implements Provider<ProcessEngine> {
+        @Inject
+        private DataSource dataSource;
+
+        @Override
+        public ProcessEngine get() {
+            ProcessEngineConfiguration processEngineConfiguration =
+                    JtaProcessEngineConfiguration.createStandaloneProcessEngineConfiguration()
+                            .setDatabaseSchemaUpdate(dbSchemaUpdate).setDataSource(dataSource)
+                            .setJobExecutorActivate(jobExecutorActivate).setHistory(history)
+                            .setMailServerHost(mailServerHost).setMailServerPort(mailServerPort);
+
+            if (bpmnParseHandlers != null && !bpmnParseHandlers.isEmpty()) {
+                if (processEngineConfiguration instanceof ProcessEngineConfigurationImpl) {
+                    ProcessEngineConfigurationImpl pec = (ProcessEngineConfigurationImpl) processEngineConfiguration;
+                    if (pec.getPostBpmnParseHandlers() == null) {
+                        pec.setPostBpmnParseHandlers(createAndGetHandlers());
+                    }
+                } else {
+                    log.info("BPMN parse handlers are ignored since handlers are only supported with " +
+                            "configuration type: ProcessEngineConfigurationImpl");
+                }
+            }
+
+            ProcessEngine pe = processEngineConfiguration.buildProcessEngine();
+            ProcessEngines.registerProcessEngine(pe);
+
+            return pe;
+        }
+    }
+
+    private List<BpmnParseHandler> createAndGetHandlers() {
+        List<BpmnParseHandler> handlers = Lists.newArrayList();
+        if (bpmnParseHandlers != null) {
+            for (BpmnParseHandlerConf hc : bpmnParseHandlers) {
+                try {
+                    handlers.add(hc.getInstance());
+                } catch (Exception e) {
+                    log.warn("Could not create handler {}: {}", hc.className, e);
+                }
+            }
+        }
+
+        return handlers;
+    }
 
 
-	private class ProcessEngineProvider implements Provider<ProcessEngine> {
-		@Inject
-		Injector injector;
+    @Override
+    public Module configure() {
+        return new Module() {
+            @Override
+            public void configure(Binder binder) {
+                binder.bind(ProcessEngine.class).toProvider(new ProcessEngineProvider()).in(Singleton.class);
+            }
+        };
+    }
 
-		@Inject
-		private DataSource dataSource;
+    public void start() {
+        ProcessEngines.init();
+    }
 
-		@Override
-		public ProcessEngine get() {
-			ProcessEngine pe = JtaProcessEngineConfiguration.createStandaloneProcessEngineConfiguration()
-					.setDatabaseSchemaUpdate(dbSchemaUpdate).setDataSource(dataSource)
-					.setJobExecutorActivate(jobExecutorActivate).setHistory(history)
-					.setMailServerHost(mailServerHost).setMailServerPort(mailServerPort).buildProcessEngine();
-
-			ProcessEngines.registerProcessEngine(pe);
-
-			return pe;
-		}
-	}
-
-	@Override
-	public Module configure() {
-		return new Module() {
-			@Override
-			public void configure(Binder binder) {
-				binder.bind(ProcessEngine.class).toProvider(new ProcessEngineProvider()).in(Singleton.class);
-			}
-		};
-	}
-
-	@Override
-	public void start() {
-		ProcessEngines.init();
-	}
-
-	@Override
-	public void stop() {
-		ProcessEngines.destroy();
-	}
+    public void stop() {
+        ProcessEngines.destroy();
+    }
 }
