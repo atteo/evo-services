@@ -30,11 +30,6 @@ public @interface MoonshineConfiguration {
 	boolean skipDefault() default false;
 
     /**
-     * if true app modules will be auto registered
-     */
-    boolean registerAppModules() default false;
-
-    /**
      * If true, a request (scope) per entire test class will be created,
      * default means that a request is created per method.
      */

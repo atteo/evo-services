@@ -42,6 +42,7 @@
 		<module>database</module>
 		<module>database-test-utils</module>
 		<module>firebuglogger</module>
+		<module>global-modules</module>
 		<module>h2</module>
 		<module>hibernate</module>
 		<module>hibernate-search</module>
