@@ -14,6 +14,7 @@ package org.atteo.moonshine.atomikos;
 import java.lang.management.ManagementFactory;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.jms.ConnectionFactory;
 import javax.jms.XAConnectionFactory;
@@ -120,6 +121,9 @@ public class Atomikos extends JtaService {
 	}
 
 	private static class AtomikosDataSourceWrapper implements JtaDataSourceWrapper {
+		@Inject
+		UserTransactionManager userTransactionManager;
+
 		@Override
 		public DataSource wrap(String name, XADataSource xaDataSource, PoolOptions poolOptions, String testQuery) {
 			AtomikosDataSourceBean wrapped = new AtomikosDataSourceBean();
