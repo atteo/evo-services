@@ -14,8 +14,12 @@
 package org.atteo.moonshine.atomikos;
 
 import javax.inject.Inject;
+import javax.transaction.NotSupportedException;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
@@ -29,6 +33,16 @@ public class AtomikosTest extends MoonshineTest {
 	private UserTransaction userTransaction;
 
 	@Test
-	public void trivial() {
+	public void trivial() throws SystemException {
+		assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_NO_TRANSACTION);
+	}
+
+	@Test
+	public void shouldStartTransaction() throws NotSupportedException, SystemException {
+		userTransaction.begin();
+		assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_ACTIVE);
+
+		userTransaction.rollback();
+		assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_NO_TRANSACTION);
 	}
 }
