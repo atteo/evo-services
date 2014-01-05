@@ -58,7 +58,6 @@
 		<module>logback</module>
 		<module>liquibase</module>
 		<module>metrics</module>
-		<module>neo4j</module>
 		<module>perf4j</module>
 		<module>postgresql</module>
 		<module>reflection-utils</module>
