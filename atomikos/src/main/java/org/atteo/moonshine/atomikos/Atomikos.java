@@ -129,9 +129,15 @@ public class Atomikos extends JtaService {
 			AtomikosDataSourceBean wrapped = new AtomikosDataSourceBean();
 			wrapped.setXaDataSource(xaDataSource);
 			wrapped.setUniqueResourceName(name);
-			wrapped.setTestQuery(testQuery);
+
 			if (poolOptions == null) {
-				return wrapped;
+				poolOptions = new PoolOptions();
+			}
+			if (poolOptions.getMaxLifeTime() != null && poolOptions.getMaxLifeTime() != 0) {
+				wrapped.setMaxLifetime(poolOptions.getMaxLifeTime());
+			} else {
+				// test query is only needed when we don't know how long Atomikos can keep connections in the pool
+				wrapped.setTestQuery(testQuery);
 			}
 
 			if (poolOptions.getMinPoolSize() != null) {
@@ -143,7 +149,6 @@ public class Atomikos extends JtaService {
 			if (poolOptions.getMaxIdleTime() != null) {
 				wrapped.setMaxIdleTime(poolOptions.getMaxIdleTime());
 			}
-
 			if (poolOptions.getReapTimeout() != null) {
 				wrapped.setReapTimeout(poolOptions.getReapTimeout());
 			}

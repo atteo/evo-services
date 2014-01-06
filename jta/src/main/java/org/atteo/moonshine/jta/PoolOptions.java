@@ -27,14 +27,14 @@ public class PoolOptions extends Configurable {
 	 * The pool will open this amount of connections during initialization.
 	 */
 	@XmlElement
-	private Integer minPoolSize;
+	private Integer minPoolSize = 2;
 
 	/**
 	 * Sets the maximum pool size. The amount of pooled connections won't go
-	 * above this value. Optional, defaults to 1.
+	 * above this value.
 	 */
 	@XmlElement
-	private Integer maxPoolSize;
+	private Integer maxPoolSize = 25;
 
 	/**
 	 * Sets the maximum amount of seconds that unused excess connections should stay in the pool. Optional.
@@ -56,6 +56,21 @@ public class PoolOptions extends Configurable {
 	@XmlElement
 	private Integer reapTimeout;
 
+	/**
+	 * Sets the maximum amount of seconds that a connection is kept in the pool before it is destroyed automatically.
+	 * Optional, defaults to 0 (no limit).
+	 * <p>
+	 * This makes transaction manager aware of how long it can keep connection and so removes the need for a test query.
+	 * This, in turn, improves performance of the pool because borrowing a connection no longer implies
+	 * a roundtrip to the database (inside a synchronized block!).
+	 * </p>
+	 * <p>
+	 * Set this to 0, to use test queries instead.
+	 * </p>
+	 */
+	@XmlElement
+	private Integer maxLifeTime = 120;
+
 	public Integer getMinPoolSize() {
 		return minPoolSize;
 	}
@@ -70,5 +85,9 @@ public class PoolOptions extends Configurable {
 
 	public Integer getReapTimeout() {
 		return reapTimeout;
+	}
+
+	public Integer getMaxLifeTime() {
+		return maxLifeTime;
 	}
 }
