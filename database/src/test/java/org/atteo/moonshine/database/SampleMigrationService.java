@@ -28,7 +28,7 @@ import org.atteo.moonshine.services.ImportService;
 import com.google.inject.Module;
 
 @XmlRootElement(name = "migration-service")
-public class MigrationService extends TopLevelService {
+public class SampleMigrationService extends TopLevelService {
 	@ImportService
 	private DatabaseService database;
 
@@ -39,6 +39,11 @@ public class MigrationService extends TopLevelService {
 			public void execute(final DataSource dataSource) {
 				try (final Connection connection = dataSource.getConnection();
 						final Statement statement = connection.createStatement()) {
+						try {
+							statement.execute("drop table users");
+						} catch (SQLException e) {
+							// ignore, table might not exist
+						}
 					statement.execute("create table users (name varchar(256))");
 					statement.execute("insert into users(name) values ('John')");
 				} catch (SQLException ex) {

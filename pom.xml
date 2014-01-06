@@ -60,6 +60,7 @@
 		<module>metrics</module>
 		<module>neo4j</module>
 		<module>perf4j</module>
+		<module>postgresql</module>
 		<module>reflection-utils</module>
 		<module>resteasy</module>
 		<module>shiro</module>
@@ -79,6 +80,7 @@
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
+		<skipMoreTests>true</skipMoreTests>
 		<blueprints.version>2.4.0</blueprints.version>
 		<jetty.version>9.1.0.v20131115</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
@@ -210,6 +212,12 @@
 		</plugins>
 	</build>
 	<profiles>
+		<profile>
+			<id>moreTests</id>
+			<properties>
+				<skipMoreTests>false</skipMoreTests>
+			</properties>
+		</profile>
 		<profile>
 			<id>javadocs</id>
 			<build>

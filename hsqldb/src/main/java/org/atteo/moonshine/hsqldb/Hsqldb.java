@@ -32,8 +32,14 @@ public class Hsqldb extends DatabaseService {
 	@XmlElement
 	private String url = "jdbc:hsqldb:mem:mymemdb";
 
+	/**
+	 * Connection pool options.
+	 */
 	@XmlElement
 	private PoolOptions pool;
+
+	@XmlElement
+	private String testQuery = "VALUES 1";
 
 	@Inject
 	private JtaDataSourceWrapper wrapper;
@@ -58,7 +64,7 @@ public class Hsqldb extends DatabaseService {
 				name = getId();
 			}
 			xaDataSource.setUrl(url);
-			dataSource = wrapper.wrap(name, xaDataSource, pool, "VALUES 1");
+			dataSource = wrapper.wrap(name, xaDataSource, pool, testQuery);
 
 			executeMigrations(dataSource);
 			return dataSource;
