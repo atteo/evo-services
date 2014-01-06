@@ -39,6 +39,7 @@ import org.apache.shiro.guice.web.ShiroWebModule;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
@@ -159,5 +160,8 @@ public class ShiroService extends TopLevelService {
 	@Override
 	public void close() {
 		SecurityUtils.setSecurityManager(null);
+
+		ThreadContext.unbindSecurityManager();
+		ThreadContext.unbindSubject();
 	}
 }
