@@ -37,4 +37,6 @@
 		<appender-ref ref="LOGS_DIRECTORY" />
 	</root>
 	<logger name="Moonshine" level="${log.level:-info}"/>
+	<!-- Atomikos throws exception when equals() method is called on connection with INFO enabled -->
+	<logger name="com.atomikos.jdbc.AtomikosConnectionProxy" level="WARN"/>
 </configuration>

@@ -37,7 +37,6 @@ import org.junit.Test;
 		+ "    <migration-service/>"
 		+ "</config>")
 public abstract class DatabaseTest extends MoonshineTest {
-
 	@Inject
 	private DataSource dataSource;
 

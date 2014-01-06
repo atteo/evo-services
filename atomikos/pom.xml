@@ -9,7 +9,7 @@
 	<artifactId>atomikos</artifactId>
 	<name>JTA Atomikos</name>
 	<properties>
-		<atomikos.version>3.8.0</atomikos.version>
+		<atomikos.version>3.9.2</atomikos.version>
 	</properties>
 	<dependencies>
 		<dependency>
