@@ -16,9 +16,13 @@
 
 package org.atteo.moonshine.services;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.util.Lists;
 import org.atteo.moonshine.ConfigurationException;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import com.google.inject.Module;
 
 public class ServicesTest {
 	@Test
@@ -51,6 +55,90 @@ public class ServicesTest {
 		} finally {
 			Mockito.verify(listener).stopping();
 			Mockito.verify(listener).closing();
+		}
+	}
+
+	@Test
+	public void shouldStartServicesInDependencyOrder() throws ConfigurationException {
+		class ServiceA extends AbstractService {
+			boolean started = false;
+			@Override
+			public void start() {
+				started = true;
+			}
+
+			@Override
+			public void stop() {
+				started = false;
+			}
+		}
+		class ServiceB extends AbstractService {
+			@ImportService
+			private ServiceA serviceA;
+
+			@Override
+			public void start() {
+				assertThat(serviceA.started).isTrue();
+			}
+
+			@Override
+			public void stop() {
+				assertThat(serviceA.started).isTrue();
+			}
+		}
+
+		try (Services services = Services.Factory.builder()
+				.configuration(new AbstractService() {
+					@Override
+					public Iterable<? extends Service> getSubServices() {
+						return Lists.newArrayList(new ServiceB(), new ServiceA());
+					}
+				})
+				.build()) {
+			services.start();
+		}
+	}
+
+	@Test
+	public void shouldConfigureCloseInDependencyOrder() throws ConfigurationException {
+		class ServiceA extends AbstractService {
+			boolean configured = false;
+			@Override
+			public Module configure() {
+				configured = true;
+				return null;
+			}
+
+			@Override
+			public void close() {
+				configured = false;
+			}
+		}
+		class ServiceB extends AbstractService {
+			@ImportService
+			private ServiceA serviceA;
+
+			@Override
+			public Module configure() {
+				assertThat(serviceA.configured).isTrue();
+				return null;
+			}
+
+			@Override
+			public void close() {
+				assertThat(serviceA.configured).isTrue();
+			}
+		}
+
+		try (Services services = Services.Factory.builder()
+				.configuration(new AbstractService() {
+					@Override
+					public Iterable<? extends Service> getSubServices() {
+						return Lists.newArrayList(new ServiceB(), new ServiceA());
+					}
+				})
+				.build()) {
+			services.start();
 		}
 	}
 }

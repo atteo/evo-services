@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.inject.Binding;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.CreationException;
@@ -103,8 +104,6 @@ class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	private void buildInjector() throws ConfigurationException {
-		logger.info("Building Guice injector hierarchy");
-
 		List<Module> modules = new ArrayList<>();
 		DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();
 
@@ -132,7 +131,7 @@ class ServicesImplementation implements Services, Services.Builder {
 		}
 
 		services = readServiceMetadata(retrieveServicesRecursively(config));
-		//services = sortTopologically(services);
+		services = sortTopologically(services);
 		verifySingletonServicesAreUnique(services);
 
 		registerInJMX();
@@ -168,6 +167,7 @@ class ServicesImplementation implements Services, Services.Builder {
 
 			modules.add(new InjectMembersModule());
 
+			logger.info("Creating injector");
 			injector = Guice.createInjector(modules);
 
 			for (LifeCycleListener listener : listeners) {
@@ -240,7 +240,7 @@ class ServicesImplementation implements Services, Services.Builder {
 		for (LifeCycleListener listener : listeners) {
 			listener.stopping();
 		}
-		for (ServiceWrapper service : services) {
+		for (ServiceWrapper service : Lists.reverse(services)) {
 			service.stop();
 		}
 	}
@@ -251,7 +251,7 @@ class ServicesImplementation implements Services, Services.Builder {
 		for (LifeCycleListener listener : listeners) {
 			listener.closing();
 		}
-		for (ServiceWrapper service : services) {
+		for (ServiceWrapper service : Lists.reverse(services)) {
 			service.close();
 		}
 		unregisterFromJMX();
