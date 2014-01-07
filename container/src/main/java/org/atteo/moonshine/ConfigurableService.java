@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.evo.config.Configurable;
+import org.atteo.moonshine.services.EmptyImplementation;
 import org.atteo.moonshine.services.Service;
 
 import com.google.inject.Module;
@@ -33,21 +34,25 @@ import com.google.inject.Module;
  * </p>
  */
 public abstract class ConfigurableService extends Configurable implements Service {
+	@EmptyImplementation
 	@Override
 	public Module configure() {
 	    return null;
 	}
 
-	@Override
-	public void close() {
-	}
-
+	@EmptyImplementation
 	@Override
 	public void start() {
 	}
 
+	@EmptyImplementation
 	@Override
 	public void stop() {
+	}
+
+	@EmptyImplementation
+	@Override
+	public void close() {
 	}
 
 	@Nonnull

@@ -17,6 +17,8 @@ package org.atteo.moonshine.services;
 
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import com.google.inject.Module;
 
 public abstract class AbstractService implements Service {
@@ -25,23 +27,28 @@ public abstract class AbstractService implements Service {
 		return null;
 	}
 
+	@EmptyImplementation
 	@Override
 	public Module configure() {
 		return null;
 	}
 
+	@EmptyImplementation
 	@Override
 	public void start() {
 	}
 
+	@EmptyImplementation
 	@Override
 	public void stop() {
 	}
 
+	@EmptyImplementation
 	@Override
 	public void close() {
 	}
 
+	@Nonnull
 	@Override
 	public Iterable<? extends Service> getSubServices() {
 		return Collections.emptyList();

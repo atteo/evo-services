@@ -43,7 +43,6 @@ import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;
 import org.atteo.moonshine.services.internal.ReflectionTools;
 import org.atteo.moonshine.services.internal.ServiceModuleRewriter;
 import org.atteo.moonshine.services.internal.ServiceWrapper;
-import org.atteo.moonshine.services.internal.ServiceWrapper.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,7 +141,6 @@ class ServicesImplementation implements Services, Services.Builder {
 
 		try {
 			for (ServiceWrapper service : services) {
-				logger.info("Configuring: {}", service.getName());
 				Module module = service.configure();
 				if (module != null) {
 					service.setElements(Elements.getElements(duplicateDetection.wrap(module)));
@@ -229,9 +227,6 @@ class ServicesImplementation implements Services, Services.Builder {
 	public void start() {
 		logger.info("Starting services");
 		for (ServiceWrapper service : services) {
-			if (logger.isInfoEnabled() && service.isStartImplemented()) {
-				logger.info("Starting: {}", service.getName());
-			}
 			service.start();
 		}
 		logger.info("All services started");
@@ -246,14 +241,6 @@ class ServicesImplementation implements Services, Services.Builder {
 			listener.stopping();
 		}
 		for (ServiceWrapper service : services) {
-			if (service.getStatus() != Status.STARTED) {
-				continue;
-			}
-			String name = service.getName();
-			if (name == null) {
-				name = service.getClass().getSimpleName();
-			}
-			logger.info("Stopping: {}", name);
 			service.stop();
 		}
 	}

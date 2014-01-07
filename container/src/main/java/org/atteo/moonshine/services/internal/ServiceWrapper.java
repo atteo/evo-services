@@ -16,6 +16,7 @@
 package org.atteo.moonshine.services.internal;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -28,14 +29,19 @@ import javax.management.ObjectName;
 
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.moonshine.reflection.ReflectionUtils;
+import org.atteo.moonshine.services.EmptyImplementation;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.services.ServiceInfo;
 import org.atteo.moonshine.services.ServiceMXBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.inject.Module;
 import com.google.inject.spi.Element;
 
 public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistration {
+	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private final String name;
 	private final ObjectName objectName;
 	private final Service service;
@@ -43,11 +49,19 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 	private final AtomicReference<Status> status = new AtomicReference<>(Status.CREATED);
 	private List<com.google.inject.spi.Element> elements;
 	private boolean singleton = false;
+	private boolean configureImplemented;
+	private boolean startImplemented;
+	private boolean stopImplemented;
+	private boolean closeImplemented;
 
 	public ServiceWrapper(Service service) {
 		this.service = service;
 		this.name = getServiceName(service);
 		this.objectName = getObjectName(service);
+		this.configureImplemented = isImplemented(service.getClass(), "configure");
+		this.startImplemented = isImplemented(service.getClass(), "start");
+		this.stopImplemented = isImplemented(service.getClass(), "stop");
+		this.closeImplemented = isImplemented(service.getClass(), "close");
 	}
 
 	public void addDependency(ServiceWrapper service, Annotation annotation) {
@@ -89,8 +103,13 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 			builder.append("\" ");
 		}
 
+		String className = service.getClass().getSimpleName();
+		if (Strings.isNullOrEmpty(className)) {
+			// for anonymous inner class getSimpleName() returns ""
+			className = service.getClass().getName();
+		}
+		builder.append(className);
 		String summary = ClassIndex.getClassSummary(service.getClass());
-		builder.append(service.getClass().getSimpleName());
 		if (summary != null) {
 			builder.append(" (");
 			builder.append(summary);
@@ -112,6 +131,12 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 		}
 	}
 
+	private static boolean isImplemented(Class<?> klass, String methodName) {
+		Method method = ReflectionUtils.findMethod(klass, methodName);
+
+		return method.getAnnotation(EmptyImplementation.class) == null;
+	}
+
 	public boolean isSingleton() {
 		return singleton;
 	}
@@ -128,38 +153,51 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 
 	public Module configure() {
 		changeState(Status.CREATED, Status.CONFIGURING);
-		try {
-			return service.configure();
-		} finally {
-			status.set(Status.READY);
+		if (logger.isInfoEnabled() && configureImplemented) {
+			logger.info("Configuring: {}", getName());
 		}
+		Module module = service.configure();
+		status.set(Status.READY);
+		return module;
 	}
 
 	@Override
 	public void start() {
 		changeState(Status.READY, Status.STARTING);
-		try {
-			service.start();
-		} finally {
-			status.set(Status.STARTED);
+		if (logger.isInfoEnabled() && startImplemented) {
+			logger.info("Starting: {}", getName());
 		}
-	}
-
-	public boolean isStartImplemented() {
-		return ReflectionUtils.isMethodOverriden(service.getClass(), Service.class, "start");
+		service.start();
+		status.set(Status.STARTED);
 	}
 
 	@Override
 	public void stop() {
-		changeState(Status.STARTED, Status.STOPPING);
-		service.stop();
-		status.set(Status.READY);
+		if (!status.compareAndSet(Status.STARTED, Status.STOPPING)) {
+			return;
+		}
+		if (logger.isInfoEnabled() && stopImplemented) {
+			logger.info("Stopping: {}", getName());
+		}
+		try {
+			service.stop();
+		} finally {
+			status.set(Status.READY);
+		}
 	}
 
 	public void close() {
-		changeState(Status.READY, Status.CLOSING);
-		service.close();
-		status.set(Status.CLOSED);
+		if (!status.compareAndSet(Status.READY, Status.CLOSING)) {
+			return;
+		}
+		if (logger.isInfoEnabled() && closeImplemented) {
+			logger.info("Closing: {}", getName());
+		}
+		try {
+			service.close();
+		} finally {
+			status.set(Status.CLOSED);
+		}
 	}
 
 	public ObjectName getObjectName() {

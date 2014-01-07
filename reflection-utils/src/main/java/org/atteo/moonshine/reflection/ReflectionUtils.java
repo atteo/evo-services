@@ -16,6 +16,7 @@
 
 package org.atteo.moonshine.reflection;
 
+import java.lang.reflect.Method;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -64,4 +65,22 @@ public class ReflectionUtils {
 		return false;
 	}
 
+	/**
+	 * Finds method with given name in given class or in its nearest superclass.
+	 * @param <T> klass type
+	 * @param klass class to search method on
+	 * @param methodName method name to search
+	 * @return found method or null, if not found
+	 */
+	public static <T> Method findMethod(Class<? extends T> klass, String methodName) {
+		Class<?> superClass = klass;
+		while (superClass != Object.class) {
+			try {
+				return superClass.getDeclaredMethod(methodName);
+			} catch (NoSuchMethodException e) {
+			}
+			superClass = superClass.getSuperclass();
+		}
+		return null;
+	}
 }

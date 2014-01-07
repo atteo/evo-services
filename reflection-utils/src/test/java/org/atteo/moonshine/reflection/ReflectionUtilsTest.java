@@ -16,6 +16,8 @@
 
 package org.atteo.moonshine.reflection;
 
+import java.lang.reflect.Method;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 
@@ -66,5 +68,26 @@ public class ReflectionUtilsTest {
 
 		// then
 		assertThat(isOverriden).isFalse();
+	}
+
+	@Test
+	public void shouldFindMethod() {
+		// given
+		class A {
+			void methodFromA() {};
+		}
+		class B extends A {
+			void methodFromB() {};
+		}
+		// when
+		Method methodFromA = ReflectionUtils.findMethod(B.class, "methodFromA");
+		Method methodFromB = ReflectionUtils.findMethod(B.class, "methodFromB");
+		Method notExistingMethod = ReflectionUtils.findMethod(B.class, "notExistingMethod");
+
+		// then
+		// then
+		assertThat(methodFromA.getDeclaringClass()).isEqualTo(A.class);
+		assertThat(methodFromB.getDeclaringClass()).isEqualTo(B.class);
+		assertThat(notExistingMethod).isNull();
 	}
 }

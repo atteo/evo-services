@@ -17,7 +17,6 @@ package org.atteo.moonshine;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
