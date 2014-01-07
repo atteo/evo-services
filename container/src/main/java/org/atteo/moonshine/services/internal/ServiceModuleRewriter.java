@@ -114,8 +114,8 @@ public class ServiceModuleRewriter {
 	 * @param hints list where hints will be stored
 	 * @return provided elements with bindings imported from given service
 	 */
-	public static List<Element> importBindings(final ServiceMetadata service,
-			final List<ServiceMetadata> services, final List<String> hints) {
+	public static List<Element> importBindings(final ServiceWrapper service,
+			final List<ServiceWrapper> services, final List<String> hints) {
 		return Elements.getElements(new Module() {
 			@Override
 			public void configure(final Binder binder) {
@@ -141,8 +141,8 @@ public class ServiceModuleRewriter {
 		});
 	}
 
-	private static void importBindings(final PrivateBinder binder, PrivateElements elements, ServiceMetadata service,
-			List<ServiceMetadata> services, List<String> hints) {
+	private static void importBindings(final PrivateBinder binder, PrivateElements elements, ServiceWrapper service,
+			List<ServiceWrapper> services, List<String> hints) {
 
 		// copy all elements
 		for (Element element : elements.getElements()) {
@@ -152,7 +152,7 @@ public class ServiceModuleRewriter {
 			binder.expose(key);
 		}
 
-		for (final ServiceMetadata.Dependency dependency : service.getDependencies()) {
+		for (final ServiceWrapper.Dependency dependency : service.getDependencies()) {
 			List<Element> importedElements;
 
 			importedElements = dependency.getService().getElements();

@@ -16,6 +16,7 @@
 package org.atteo.moonshine.services;
 
 import java.lang.annotation.Annotation;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -28,16 +29,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.NotCompliantMBeanException;
+
 import org.atteo.evo.urlhandlers.UrlHandlers;
 import org.atteo.moonshine.ConfigurationException;
 import org.atteo.moonshine.injection.InjectMembersModule;
 import org.atteo.moonshine.reflection.ReflectionUtils;
 import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;
 import org.atteo.moonshine.services.internal.ReflectionTools;
-import org.atteo.moonshine.services.internal.ServiceMetadata;
-import org.atteo.moonshine.services.internal.ServiceMetadata.Status;
-import static org.atteo.moonshine.services.internal.ServiceMetadata.Status.STARTED;
 import org.atteo.moonshine.services.internal.ServiceModuleRewriter;
+import org.atteo.moonshine.services.internal.ServiceWrapper;
+import org.atteo.moonshine.services.internal.ServiceWrapper.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +61,14 @@ import com.google.inject.spi.Element;
 import com.google.inject.spi.Elements;
 import com.google.inject.spi.PrivateElements;
 
-public class ServicesImplementation implements Services, Services.Builder {
+class ServicesImplementation implements Services, Services.Builder {
 	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private final List<Module> extraModules = new ArrayList<>();
 
 	private Injector injector;
 	private Service config;
 	private List<LifeCycleListener> listeners = new ArrayList<>();
-	private List<ServiceMetadata> services;
+	private List<ServiceWrapper> services;
 
 	public ServicesImplementation() {
 		UrlHandlers.registerAnnotatedHandlers();
@@ -130,12 +136,14 @@ public class ServicesImplementation implements Services, Services.Builder {
 		//services = sortTopologically(services);
 		verifySingletonServicesAreUnique(services);
 
+		registerInJMX();
+
 		List<String> hints = new ArrayList<>();
 
 		try {
-			for (ServiceMetadata service : services) {
+			for (ServiceWrapper service : services) {
 				logger.info("Configuring: {}", service.getName());
-				Module module = service.getService().configure();
+				Module module = service.configure();
 				if (module != null) {
 					service.setElements(Elements.getElements(duplicateDetection.wrap(module)));
 				} else {
@@ -143,20 +151,20 @@ public class ServicesImplementation implements Services, Services.Builder {
 				}
 			}
 
-			for (ServiceMetadata service : services) {
+			for (ServiceWrapper service : services) {
 				checkOnlySingletonBindWithoutAnnotation(service);
 			}
 
-			for (ServiceMetadata service : services) {
+			for (ServiceWrapper service : services) {
 				service.setElements(ServiceModuleRewriter.annotateExposedWithId(service.getElements(),
 						service.getService()));
 			}
 
-			for (ServiceMetadata service : services) {
+			for (ServiceWrapper service : services) {
 				service.setElements(ServiceModuleRewriter.importBindings(service, services, hints));
 			}
 
-			for (ServiceMetadata service : services) {
+			for (ServiceWrapper service : services) {
 				modules.add(Elements.getModule(service.getElements()));
 			}
 
@@ -190,6 +198,28 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
+	private void registerInJMX() throws ConfigurationException {
+		MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+		try {
+			for (ServiceWrapper service: services) {
+				mbeanServer.registerMBean(service, null);
+			}
+		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void unregisterFromJMX() {
+		MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+		for (ServiceWrapper service : services) {
+			try {
+				mbeanServer.unregisterMBean(service.getObjectName());
+			} catch (InstanceNotFoundException | MBeanRegistrationException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
 	@Override
 	public Injector getGlobalInjector() {
 		return injector;
@@ -198,13 +228,11 @@ public class ServicesImplementation implements Services, Services.Builder {
 	@Override
 	public void start() {
 		logger.info("Starting services");
-		for (ServiceMetadata service : services) {
-			if (logger.isInfoEnabled()
-					&& ReflectionUtils.isMethodOverriden(service.getService().getClass(), Service.class, "start")) {
+		for (ServiceWrapper service : services) {
+			if (logger.isInfoEnabled() && service.isStartImplemented()) {
 				logger.info("Starting: {}", service.getName());
 			}
-			service.setStatus(STARTED);
-			service.getService().start();
+			service.start();
 		}
 		logger.info("All services started");
 		for (LifeCycleListener listener : listeners) {
@@ -217,7 +245,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		for (LifeCycleListener listener : listeners) {
 			listener.stopping();
 		}
-		for (ServiceMetadata service : services) {
+		for (ServiceWrapper service : services) {
 			if (service.getStatus() != Status.STARTED) {
 				continue;
 			}
@@ -226,8 +254,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 				name = service.getClass().getSimpleName();
 			}
 			logger.info("Stopping: {}", name);
-			service.getService().stop();
-			service.setStatus(Status.READY);
+			service.stop();
 		}
 	}
 
@@ -237,9 +264,10 @@ public class ServicesImplementation implements Services, Services.Builder {
 		for (LifeCycleListener listener : listeners) {
 			listener.closing();
 		}
-		for (ServiceMetadata service : services) {
-			service.getService().close();
+		for (ServiceWrapper service : services) {
+			service.close();
 		}
+		unregisterFromJMX();
 		if (logger != null) {
 			logger.info("All services stopped");
 		}
@@ -247,13 +275,13 @@ public class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	@Override
-	public List<ServiceMetadata> getServiceElements() {
+	public List<ServiceWrapper> getServiceElements() {
 		return services;
 	}
 
-	private static void verifySingletonServicesAreUnique(List<ServiceMetadata> services) throws ConfigurationException {
+	private static void verifySingletonServicesAreUnique(List<ServiceWrapper> services) throws ConfigurationException {
 		Set<Class<?>> set = new HashSet<>();
-		for (ServiceMetadata service : services) {
+		for (ServiceWrapper service : services) {
 			Class<?> klass = service.getService().getClass();
 			if (service.isSingleton()) {
 				if (set.contains(klass)) {
@@ -270,7 +298,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
-	private static void ensureBindsWithoutAnnotation(Element element, final ServiceMetadata service) {
+	private static void ensureBindsWithoutAnnotation(Element element, final ServiceWrapper service) {
 			element.acceptVisitor(new DefaultElementVisitor<Void>() {
 				@Override
 				public <T> Void visit(Binding<T> binding) {
@@ -297,7 +325,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 			});
 	}
 
-	private static void checkOnlySingletonBindWithoutAnnotation(final ServiceMetadata service) {
+	private static void checkOnlySingletonBindWithoutAnnotation(final ServiceWrapper service) {
 		if (service.isSingleton()) {
 			return;
 		}
@@ -309,18 +337,18 @@ public class ServicesImplementation implements Services, Services.Builder {
 	/**
 	 * Finds dependencies between services.
 	 */
-	private List<ServiceMetadata> readServiceMetadata(List<Service> services) throws ConfigurationException {
-		List<ServiceMetadata> servicesMetadata = new ArrayList<>();
-		Map<Service, ServiceMetadata> map = new IdentityHashMap<>();
+	private List<ServiceWrapper> readServiceMetadata(List<Service> services) throws ConfigurationException {
+		List<ServiceWrapper> servicesMetadata = new ArrayList<>();
+		Map<Service, ServiceWrapper> map = new IdentityHashMap<>();
 		for (Service service : services) {
-			ServiceMetadata metadata = new ServiceMetadata(service);
+			ServiceWrapper metadata = new ServiceWrapper(service);
 			servicesMetadata.add(metadata);
 			map.put(service, metadata);
 		}
 
 		List<String> configurationErrors = new ArrayList<>();
 
-		for (ServiceMetadata metadata : servicesMetadata) {
+		for (ServiceWrapper metadata : servicesMetadata) {
 			for (Class<?> ancestorClass : ReflectionUtils.getAncestors(metadata.getService().getClass())) {
 				metadata.setSingleton(ReflectionTools.isSingleton(ancestorClass));
 				for (final Field field : ancestorClass.getDeclaredFields()) {
@@ -343,12 +371,11 @@ public class ServicesImplementation implements Services, Services.Builder {
 					Service importedService;
 					try {
 						importedService = (Service) field.get(metadata.getService());
-						ServiceMetadata importedServiceMetadata = null;
+						ServiceWrapper importedServiceMetadata;
 
 						if (importedService == null) {
 							try {
-								importedServiceMetadata = findDefaultService(servicesMetadata,
-								    field.getType());
+								importedServiceMetadata = findDefaultService(servicesMetadata, field.getType());
 							} catch (ConfigurationException ex) {
 								configurationErrors.add("Service '" + metadata.getName()
 								    + "' requires '" + field.getType().getName() + "' which is"
@@ -400,9 +427,9 @@ public class ServicesImplementation implements Services, Services.Builder {
 	/**
 	 * Find the default service which can be assigned for given type.
 	 */
-	private static ServiceMetadata findDefaultService(List<ServiceMetadata> services, Class<?> type) throws ConfigurationException {
-		ServiceMetadata result = null;
-		for (ServiceMetadata service : services) {
+	private static ServiceWrapper findDefaultService(List<ServiceWrapper> services, Class<?> type) throws ConfigurationException {
+		ServiceWrapper result = null;
+		for (ServiceWrapper service : services) {
 			if (type.isAssignableFrom(service.getService().getClass())) {
 				if (result != null) {
 					throw new ConfigurationException("Service of type '" + type + "' is not unique");
@@ -445,11 +472,11 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
-	private static void addService(ServiceMetadata service, Set<ServiceMetadata> set, List<ServiceMetadata> sorted) {
+	private static void addService(ServiceWrapper service, Set<ServiceWrapper> set, List<ServiceWrapper> sorted) {
 		if (!set.contains(service)) {
 			return;
 		}
-		for (ServiceMetadata.Dependency dependency : service.getDependencies()) {
+		for (ServiceWrapper.Dependency dependency : service.getDependencies()) {
 			addService(dependency.getService(), set, sorted);
 		}
 		if (!set.remove(service)) {
@@ -458,13 +485,13 @@ public class ServicesImplementation implements Services, Services.Builder {
 		sorted.add(service);
 	}
 
-	private static List<ServiceMetadata> sortTopologically(List<ServiceMetadata> services) {
-		List<ServiceMetadata> sorted = new ArrayList<>();
+	private static List<ServiceWrapper> sortTopologically(List<ServiceWrapper> services) {
+		List<ServiceWrapper> sorted = new ArrayList<>();
 
-		Set<ServiceMetadata> set = new LinkedHashSet<>(services);
+		Set<ServiceWrapper> set = new LinkedHashSet<>(services);
 
 		while (!set.isEmpty()) {
-			ServiceMetadata service = set.iterator().next();
+			ServiceWrapper service = set.iterator().next();
 			addService(service, set, sorted);
 		}
 		return sorted;

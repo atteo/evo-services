@@ -79,10 +79,10 @@
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
-		<skipMoreTests>true</skipMoreTests>
 		<blueprints.version>2.4.0</blueprints.version>
 		<jetty.version>9.1.0.v20131115</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
+		<skipMoreTests>true</skipMoreTests>
 		<tomcat.version>8.0.0-RC5</tomcat.version>
 	</properties>
 	<dependencyManagement>
