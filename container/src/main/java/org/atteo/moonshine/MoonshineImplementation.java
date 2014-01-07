@@ -32,6 +32,7 @@ import org.atteo.moonshine.directories.FileAccessorFactory;
 import org.atteo.moonshine.directories.SubdirectoryLayout;
 import org.atteo.moonshine.logging.Logback;
 import org.atteo.moonshine.logging.Logging;
+import org.atteo.moonshine.services.LifeCycleListener;
 import org.atteo.moonshine.services.Services;
 import org.atteo.moonshine.services.internal.GuiceBindingsHelper;
 import org.slf4j.Logger;
@@ -76,6 +77,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	private final List<String> optionalConfigurationResources = new ArrayList<>();
 	private final List<String> configurationStrings = new ArrayList<>();
 	private final List<Module> modules = new ArrayList<>();
+	private final List<LifeCycleListener> listeners = new ArrayList<>();
 	private final List<PropertyResolver> propertyResolvers = new ArrayList<>();
 	private final List<String> configDirs = new ArrayList<>();
 	private final List<String> dataDirs = new ArrayList<>();
@@ -221,6 +223,9 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		for (Module module : modules) {
 			builder.addModule(module);
 		}
+		for (LifeCycleListener listener : listeners) {
+			builder.registerListener(listener);
+		}
 		builder.configuration(config);
 
 		services = builder.build();
@@ -279,6 +284,12 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	@Override
 	public Builder addModule(Module module) {
 		modules.add(module);
+		return this;
+	}
+
+	@Override
+	public Builder registerListener(LifeCycleListener listener) {
+		listeners.add(listener);
 		return this;
 	}
 

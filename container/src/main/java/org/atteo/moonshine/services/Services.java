@@ -44,6 +44,11 @@ public interface Services extends AutoCloseable {
 		Builder configuration(Service config);
 
 		/**
+		 * Sets lifecycle listener.
+		 */
+		Builder registerListener(LifeCycleListener listener);
+
+		/**
 		 * Builds {@link Services} based on this builder parameters.
 		 */
 		Services build() throws ConfigurationException;

@@ -16,7 +16,7 @@
 package org.atteo.moonshine;
 
 /**
- * 
+ * General exception thrown by Moonshine.
  */
 public class MoonshineException extends Exception {
 	private static final long serialVersionUID = 1L;

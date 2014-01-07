@@ -61,6 +61,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 
 	private Injector injector;
 	private Service config;
+	private List<LifeCycleListener> listeners = new ArrayList<>();
 	private List<ServiceMetadata> services;
 
 	public ServicesImplementation() {
@@ -80,12 +81,25 @@ public class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	@Override
-	public Services build() throws ConfigurationException {
-		createInjector();
+	public Builder registerListener(LifeCycleListener listener) {
+		listeners.add(listener);
 		return this;
 	}
 
-	private Injector buildInjector() throws ConfigurationException {
+	@Override
+	public Services build() throws ConfigurationException {
+		if (config == null) {
+			config = new AbstractService() {
+			};
+		}
+
+		buildInjector();
+		return this;
+	}
+
+	private void buildInjector() throws ConfigurationException {
+		logger.info("Building Guice injector hierarchy");
+
 		List<Module> modules = new ArrayList<>();
 		DuplicateDetectionWrapper duplicateDetection = new DuplicateDetectionWrapper();
 
@@ -112,7 +126,7 @@ public class ServicesImplementation implements Services, Services.Builder {
 			modules.add(duplicateDetection.wrap(module));
 		}
 
-		services = readServiceMetadata(retrieveServicesRecursively(config.getSubServices()));
+		services = readServiceMetadata(retrieveServicesRecursively(config));
 		//services = sortTopologically(services);
 		verifySingletonServicesAreUnique(services);
 
@@ -148,7 +162,11 @@ public class ServicesImplementation implements Services, Services.Builder {
 
 			modules.add(new InjectMembersModule());
 
-			return Guice.createInjector(modules);
+			injector = Guice.createInjector(modules);
+
+			for (LifeCycleListener listener : listeners) {
+				listener.configured();
+			}
 		} catch (CreationException e) {
 			if (!hints.isEmpty()) {
 				logger.warn("Problem detected while creating Guice injector, possible causes:");
@@ -172,17 +190,6 @@ public class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
-	private void createInjector() throws ConfigurationException {
-		logger.info("Building Guice injector hierarchy");
-
-		if (config == null) {
-			config = new AbstractService() {
-			};
-		}
-
-		injector = buildInjector();
-	}
-
 	@Override
 	public Injector getGlobalInjector() {
 		return injector;
@@ -200,14 +207,16 @@ public class ServicesImplementation implements Services, Services.Builder {
 			service.getService().start();
 		}
 		logger.info("All services started");
+		for (LifeCycleListener listener : listeners) {
+			listener.started();
+		}
 	}
 
 	@Override
 	public void stop() {
-		if (config == null) {
-			return;
+		for (LifeCycleListener listener : listeners) {
+			listener.stopping();
 		}
-
 		for (ServiceMetadata service : services) {
 			if (service.getStatus() != Status.STARTED) {
 				continue;
@@ -225,6 +234,9 @@ public class ServicesImplementation implements Services, Services.Builder {
 	@Override
 	public void close() {
 		stop();
+		for (LifeCycleListener listener : listeners) {
+			listener.closing();
+		}
 		for (ServiceMetadata service : services) {
 			service.getService().close();
 		}
@@ -420,16 +432,16 @@ public class ServicesImplementation implements Services, Services.Builder {
 		return result;
 	}
 
-	private static List<Service> retrieveServicesRecursively(Iterable<? extends Service> services) {
+	private static List<Service> retrieveServicesRecursively(Service service) {
 		List<Service> result = new ArrayList<>();
-		addServicesRecursively(result, services);
+		addServicesRecursively(result, service);
 		return result;
 	}
 
-	private static void addServicesRecursively(List<Service> result, Iterable<? extends Service> services) {
-		for (Service service : services) {
-			result.add(service);
-			addServicesRecursively(result, service.getSubServices());
+	private static void addServicesRecursively(List<Service> result, Service service) {
+		result.add(service);
+		for (Service subService : service.getSubServices()) {
+			addServicesRecursively(result, subService);
 		}
 	}
 

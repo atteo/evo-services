@@ -20,7 +20,6 @@ import java.io.IOException;
 import javax.annotation.Nullable;
 
 import org.atteo.evo.config.Configuration;
-import org.atteo.evo.config.IncorrectConfigurationException;
 import org.atteo.evo.filtering.EnvironmentPropertyResolver;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.evo.filtering.SystemPropertyResolver;
@@ -28,6 +27,7 @@ import org.atteo.evo.filtering.XmlPropertyResolver;
 import org.atteo.moonshine.directories.FileAccessor;
 import org.atteo.moonshine.logging.Logback;
 import org.atteo.moonshine.logging.Logging;
+import org.atteo.moonshine.services.LifeCycleListener;
 import org.atteo.moonshine.services.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,6 +140,11 @@ public interface Moonshine extends AutoCloseable {
 		RestrictedBuilder addModule(Module module);
 
 		/**
+		 * Adds life cycle listener.
+		 */
+		RestrictedBuilder registerListener(LifeCycleListener listener);
+
+		/**
 		 * Adds configuration from given string.
 		 */
 		RestrictedBuilder addConfigurationFromString(String string);
@@ -214,6 +219,9 @@ public interface Moonshine extends AutoCloseable {
 		Builder addModule(Module module);
 
 		@Override
+		Builder registerListener(LifeCycleListener listener);
+
+		@Override
 		Builder addConfigurationFromString(String string);
 
 		@Override
@@ -234,7 +242,7 @@ public interface Moonshine extends AutoCloseable {
 		 * </p>
 		 * @return created Moonshine container, or null if intended behavior is to skip container creation
 		 * @throws IOException when configuration could not be accessed
-		 * @throws IncorrectConfigurationException when configuration is incorrect
+		 * @throws MoonshineException when configuration is incorrect
 		 */
 		@Nullable
 		Moonshine build() throws MoonshineException, IOException;

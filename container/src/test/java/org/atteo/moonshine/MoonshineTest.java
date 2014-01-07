@@ -18,7 +18,9 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.moonshine.services.LifeCycleListener;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -368,5 +370,17 @@ public class MoonshineTest {
 
 		assertThat(MissingDependencyService.configureCount).isEqualTo(1);
 		assertThat(MissingDependencyService.closeCount).isEqualTo(1);
+	}
+
+	@Test
+	public void shouldFireListeners() throws MoonshineException, IOException {
+		LifeCycleListener listener = Mockito.mock(LifeCycleListener.class);
+		try (Moonshine moonshine = Moonshine.Factory.builder().registerListener(listener).build()) {
+			Mockito.verify(listener).configured();
+			moonshine.start();
+			Mockito.verify(listener).started();
+		}
+		Mockito.verify(listener).stopping();
+		Mockito.verify(listener).closing();
 	}
 }
