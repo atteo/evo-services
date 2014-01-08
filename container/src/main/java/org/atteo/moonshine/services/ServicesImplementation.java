@@ -247,6 +247,7 @@ class ServicesImplementation implements Services, Services.Builder {
 
 	@Override
 	public void close() {
+		unregisterFromJMX();
 		stop();
 		for (LifeCycleListener listener : listeners) {
 			listener.closing();
@@ -254,7 +255,6 @@ class ServicesImplementation implements Services, Services.Builder {
 		for (ServiceWrapper service : Lists.reverse(services)) {
 			service.close();
 		}
-		unregisterFromJMX();
 		if (logger != null) {
 			logger.info("All services stopped");
 		}
