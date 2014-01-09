@@ -16,6 +16,8 @@
 
 package org.atteo.moonshine.services;
 
+import com.google.inject.Injector;
+
 import java.util.EventListener;
 
 /**
@@ -24,8 +26,9 @@ import java.util.EventListener;
 public interface LifeCycleListener extends EventListener {
 	/**
 	 * Executed after all services {@link Service#configure() configure} successfully.
+     * @param injector Global injector
 	 */
-	void configured();
+	void configured(Injector injector);
 
 	/**
 	 * Executed after all services {@link Service#start() start} successfully.
