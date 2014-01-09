@@ -91,10 +91,15 @@ public class Resteasy extends TopLevelService {
 
 				if (discoverResources) {
 					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {
-						bind(klass);
-						log.info("Discovered REST resource {} annotated by @Path.", klass.getName());
-						final ResourceFactory resourceFactory = new GuiceResourceFactory(getProvider(klass), klass);
-						resourceFactories.add(resourceFactory);
+                        if (!klass.isInterface()) {
+                            bind(klass);
+                            log.info("Discovered REST resource {} annotated by @Path.", klass.getName());
+                            final ResourceFactory resourceFactory = new GuiceResourceFactory(getProvider(klass), klass);
+                            resourceFactories.add(resourceFactory);
+                        } else {
+                            log.debug("Interface {} was marked with @Path, skipping bindings as interfaces are currently " +
+                                    "not supported.", klass.getName());
+                        }
 					}
 
 					for (Class<?> klass : ClassIndex.getAnnotated(javax.ws.rs.ext.Provider.class)) {
