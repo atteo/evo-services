@@ -18,6 +18,7 @@ package org.atteo.moonshine.global_modules;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.inject.Singleton;
 import org.atteo.evo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import com.google.inject.Module;
  * Registers application modules that are annotated with {@link GlobalModule}
  */
 @XmlRootElement(name = "global-modules")
+@Singleton
 public class GlobalModulesService extends TopLevelService {
     private final static Logger logger = LoggerFactory.getLogger(GlobalModulesService.class);
 
