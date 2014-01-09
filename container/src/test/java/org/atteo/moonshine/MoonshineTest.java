@@ -376,7 +376,7 @@ public class MoonshineTest {
 	public void shouldFireListeners() throws MoonshineException, IOException {
 		LifeCycleListener listener = Mockito.mock(LifeCycleListener.class);
 		try (Moonshine moonshine = Moonshine.Factory.builder().registerListener(listener).build()) {
-			Mockito.verify(listener).configured();
+			Mockito.verify(listener).configured(moonshine.getGlobalInjector());
 			moonshine.start();
 			Mockito.verify(listener).started();
 		}
