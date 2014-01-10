@@ -39,10 +39,9 @@ public abstract class DatabaseService extends TopLevelService {
 	/**
 	 * Execute registered database migrations.
 	 */
-	protected void executeMigrations(DataSource dataSource) {
+	public void executeMigrations(DataSource dataSource) {
 		for (DatabaseMigration migration : migrations) {
 			migration.execute(dataSource);
 		}
-		migrations = null;
 	}
 }
