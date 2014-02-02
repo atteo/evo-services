@@ -29,7 +29,7 @@ public class ServicesTest {
 	public void shouldFireListeners() throws ConfigurationException {
 		LifeCycleListener listener = Mockito.mock(LifeCycleListener.class);
 		try (Services services = Services.Factory.builder().registerListener(listener).build()) {
-			Mockito.verify(listener).configured();
+			Mockito.verify(listener).configured(services.getGlobalInjector());
 			services.start();
 			Mockito.verify(listener).started();
 		}
@@ -49,7 +49,7 @@ public class ServicesTest {
 					}
 				})
 				.build()) {
-			Mockito.verify(listener).configured();
+			Mockito.verify(listener).configured(services.getGlobalInjector());
 			services.start();
 			Mockito.verify(listener, Mockito.times(0)).started();
 		} finally {

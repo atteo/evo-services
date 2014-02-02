@@ -171,7 +171,7 @@ class ServicesImplementation implements Services, Services.Builder {
 			injector = Guice.createInjector(modules);
 
 			for (LifeCycleListener listener : listeners) {
-				listener.configured();
+				listener.configured(getGlobalInjector());
 			}
 		} catch (CreationException e) {
 			if (!hints.isEmpty()) {
