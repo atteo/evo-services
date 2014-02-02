@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Atteo.
+ * Copyright 2014 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.atteo.moonshine.jersey;
 
 
@@ -21,13 +22,11 @@ import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <jersey>"
-		+ "        <prefix>/rest</prefix>"
-		+ "    </jersey>"
+		+ "    <jersey/>"
 		+ "</config>")
-public class JerseyTest extends CommonTest {
+public class EmptyPrefixTest extends CommonTest {
 	@Test
 	public void test() throws Exception {
-		request("/rest/resource");
+		request("/resource");
 	}
 }

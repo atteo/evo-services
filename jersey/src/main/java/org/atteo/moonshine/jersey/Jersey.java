@@ -48,7 +48,7 @@ public class Jersey extends TopLevelService {
 	 * Prefix under which JAX-RS resources should be registered.
 	 */
 	@XmlElement
-	private String prefix = "/";
+	private String prefix = "";
 
 	/**
 	 * Automatically register in Jersey any class marked with
