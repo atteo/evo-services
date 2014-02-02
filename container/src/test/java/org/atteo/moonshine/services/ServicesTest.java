@@ -24,6 +24,7 @@ import org.atteo.moonshine.ConfigurationException;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
 
@@ -164,5 +165,60 @@ public class ServicesTest {
 				})
 				.build()) {
 				}
+	}
+
+	@Test
+	public void shouldInjectRequestInjection() throws ConfigurationException {
+		class ProviderService extends AbstractService {
+			@Override
+			public String getId() {
+				return "provider";
+			}
+
+			@Override
+			public Module configure() {
+				return new AbstractModule() {
+					@Override
+					protected void configure() {
+						bind(String.class).toInstance("Hello World!");
+					}
+				};
+			}
+		}
+		class Consumer {
+			@Inject
+			public String hello;
+		}
+		final Consumer consumer = new Consumer();
+
+		class ConsumerService extends AbstractService {
+			@ImportService
+			public ProviderService service;
+
+			@Override
+			public Module configure() {
+				return new AbstractModule() {
+					@Override
+					protected void configure() {
+						requestInjection(consumer);
+					}
+				};
+			}
+
+		}
+		try (Services services = Services.Factory.builder()
+				.configuration(new AbstractService() {
+					@Override
+					public Iterable<? extends Service> getSubServices() {
+						ProviderService providerService = new ProviderService();
+						ConsumerService consumerService = new ConsumerService();
+						consumerService.service = providerService;
+
+						return Lists.newArrayList(providerService, consumerService);
+					}
+				}).build()) {
+
+			assertThat(consumer.hello).isEqualTo("Hello World!");
+		}
 	}
 }

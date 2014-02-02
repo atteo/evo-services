@@ -31,6 +31,7 @@ import com.google.inject.name.Names;
 import com.google.inject.spi.DefaultElementVisitor;
 import com.google.inject.spi.Element;
 import com.google.inject.spi.Elements;
+import com.google.inject.spi.InjectionRequest;
 import com.google.inject.spi.PrivateElements;
 
 public class ServiceModuleRewriter {
@@ -116,13 +117,18 @@ public class ServiceModuleRewriter {
 		return Elements.getElements(new Module() {
 			@Override
 			public void configure(final Binder binder) {
+				final PrivateBinder privateBinder = binder.newPrivateBinder();
 				for (Element element : service.getElements()) {
 					element.acceptVisitor(new DefaultElementVisitor<Void>() {
 						@Override
 						public Void visit(PrivateElements privateElements) {
-							PrivateBinder privateBinder = binder.newPrivateBinder();
-
 							importBindings(privateBinder, privateElements, service, services, hints);
+							return null;
+						}
+
+						@Override
+						public Void visit(InjectionRequest<?> injectionRequest) {
+							injectionRequest.applyTo(privateBinder);
 							return null;
 						}
 
