@@ -50,9 +50,6 @@ public class ServiceModuleRewriter {
 					element.acceptVisitor(new DefaultElementVisitor<Void>() {
 						@Override
 						public Void visit(PrivateElements privateElements) {
-							PrivateBinder privateBinder = binder.newPrivateBinder().withSource(
-									privateElements.getSource());
-
 							annotateExposedWithId(privateBinder, privateElements, service);
 							return null;
 						}

@@ -16,6 +16,8 @@
 
 package org.atteo.moonshine.services;
 
+import javax.inject.Inject;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import org.assertj.core.util.Lists;
 import org.atteo.moonshine.ConfigurationException;
@@ -23,6 +25,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.inject.Module;
+import com.google.inject.PrivateModule;
 
 public class ServicesTest {
 	@Test
@@ -140,5 +143,26 @@ public class ServicesTest {
 				.build()) {
 			services.start();
 		}
+	}
+
+	@Test
+	public void shouldInjectServiceWhenPrivateModuleIsUsed() throws ConfigurationException {
+		try (Services services = Services.Factory.builder()
+				.configuration(new AbstractService() {
+					@Inject
+					private String helloWorld;
+
+					@Override
+					public Module configure() {
+						return new PrivateModule() {
+							@Override
+							protected void configure() {
+								bind(String.class).toInstance("Hello World");
+							}
+						};
+					}
+				})
+				.build()) {
+				}
 	}
 }
