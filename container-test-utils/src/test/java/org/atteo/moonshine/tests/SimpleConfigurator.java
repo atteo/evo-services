@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine.tests;
 
+import org.atteo.evo.filtering.PropertyFilter;
 import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.moonshine.Moonshine;
@@ -28,7 +29,7 @@ public class SimpleConfigurator implements MoonshineConfigurator {
 				+ "</config>");
 		builder.addPropertyResolver(new PropertyResolver() {
 			@Override
-			public String resolveProperty(String property, PropertyResolver pr) throws PropertyNotFoundException {
+			public String resolveProperty(String property, PropertyFilter pr) throws PropertyNotFoundException {
 				if ("message".equals(property)) {
 					return "Hello World";
 				}

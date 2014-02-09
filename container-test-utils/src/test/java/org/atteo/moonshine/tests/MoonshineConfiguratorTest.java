@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.atteo.evo.filtering.PropertyFilter;
 import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.moonshine.Moonshine;
@@ -35,7 +36,7 @@ public class MoonshineConfiguratorTest extends MoonshineTest {
 					+ "</config>");
 			builder.addPropertyResolver(new PropertyResolver() {
 				@Override
-				public String resolveProperty(String property, PropertyResolver pr) throws PropertyNotFoundException {
+				public String resolveProperty(String property, PropertyFilter pr) throws PropertyNotFoundException {
 					if ("message".equals(property)) {
 						return "Hello World";
 					}

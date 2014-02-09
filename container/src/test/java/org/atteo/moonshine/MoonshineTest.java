@@ -16,6 +16,7 @@ package org.atteo.moonshine;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import org.atteo.evo.filtering.PropertyFilter;
 import org.atteo.evo.filtering.PropertyNotFoundException;
 import org.atteo.evo.filtering.PropertyResolver;
 import org.atteo.moonshine.services.LifeCycleListener;
@@ -205,7 +206,7 @@ public class MoonshineTest {
 				+ "</config>")
 				.addPropertyResolver(new PropertyResolver() {
 					@Override
-					public String resolveProperty(String property, PropertyResolver pr)
+					public String resolveProperty(String property, PropertyFilter pr)
 							throws PropertyNotFoundException {
 						if ("property".equals(property)) {
 							return "value";
