@@ -32,6 +32,7 @@ import com.google.inject.PrivateModule;
  */
 @XmlRootElement(name = "in-place")
 public class InPlaceRealmService extends RealmService {
+
 	@XmlElementWrapper(name = "accounts")
 	@XmlElement(name = "account")
 	private List<Account> accounts;
@@ -44,8 +45,15 @@ public class InPlaceRealmService extends RealmService {
 				AdminSimpleAccountRealm realm = new AdminSimpleAccountRealm();
 				if (accounts != null) {
 					for (Account account : accounts) {
-						realm.addAccount(account.getUsername(), account.getPassword(), account.isAdministrator(),
-								account.getRoles().toArray(new String[account.getRoles().size()]));
+						String roles[] = {};
+
+						if (account.getRoles() != null) {
+							roles = account.getRoles().
+							    toArray(new String[account.getRoles().size()]);
+						}
+
+						realm.addAccount(account.getUsername(), account.getPassword(),
+						    account.isAdministrator(), roles);
 					}
 				}
 
