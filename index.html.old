@@ -1,0 +1,71 @@
+---
+layout: default
+---
+
+<section id="main_content" class="inner">
+<h3>
+	<a name="moonshine" class="anchor" href="#moonshine"><span class="octicon octicon-link"></span></a>
+</h3>
+
+<h1>
+	<a name="about" class="anchor" href="#about"><span class="octicon octicon-link"></span></a>About</h1>
+<p>
+Moonshine is a small, well thought out and robust layer over the <a href="https://code.google.com/p/google-guice/">Google Guice</a> dependency injection engine. It extends the concept of Guice's modules into <a href="manual/intro/#overview">Services</a> which can be configured using XML in similar way to the Spring's beans.xml file. Moonshine, out of the box, provides services for many popular Java technologies greatly simplifying development of Guice based applications.
+</p>
+<h1>
+	<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h1>
+<p>
+<ul>
+	<li>lightweight wrapper over Google Guice</li>
+	<li>extends Guice modules into configurable and reusable entities with well defined lifecycle called Services</li>
+	<li>very quick startup thanks to the use of <a href="https://github.com/atteo/evo-classindex">compile-time class indexing</a> instead of run-time classpath scanning commonly used in popular application containers</li>
+	<li><a href="/manual/basics/#instantiation">XML configuration file</a> with support for complex <a href="https://github.com/atteo/evo-config">property filtering</a></li>
+	<li>easy unit and integration testing thanks to excellent <a href="http://moonshine.atteo.org/manual/basics/#testing">JUnit support</a></li>
+	<li>provides <a href="https://github.com/atteo/evo-config#evo-config-doclet">Javadoc doclet</a> to add Service's specific documentation</li>
+	<li>provides ready to use services for numerous Java technologies including:
+		<ul>
+			<li><a href="/apidocs/org/atteo/moonshine/jta/JtaService.html">JTA transactions</a></li>
+			<li><a href="/apidocs/org/atteo/moonshine/database/DatabaseService.html">database access</a> with
+				<a href="/apidocs/org/atteo/moonshine/liquibase/LiquibaseService.html">migrations</a>
+			</li>
+			<li>persistence with <a href="/apidocs/org/atteo/moonshine/hibernate/HibernateService.html">Hibernate</a> and
+				<a href="/apidocs/org/atteo/moonshine/springdata/SpringData.html">Spring Data</a>
+			</li>
+			<li>two HTTP engines <a href="/apidocs/org/atteo/moonshine/jetty/JettyService.html">Jetty</a> and
+				<a href="/apidocs/org/atteo/moonshine/tomcat/TomcatService.html">Tomcat</a> with 
+				<a href="/apidocs/org/atteo/moonshine/webserver/ServletContainer.html">servlets</a>,
+				<a href="/apidocs/org/atteo/moonshine/websocket/WebSocketContainerService.html">websockets</a> and
+				<a href="/apidocs/org/atteo/moonshine/jersey/Jersey.html">REST services</a>.
+			</li>
+		</ul>
+	</li>
+
+	<li>supports monitoring with <a href="/apidocs/org/atteo/moonshine/jmx/JMX.html">JMX</a>,
+		through the provided <a href="/apidocs/org/atteo/moonshine/jolokia/JolokiaService.html">REST wrapper for JMX</a>
+		or through <a href="/apidocs/org/atteo/moonshine/jminix/JMinix.html">web console</a>
+	</li>
+	<li>integrates services which allow to <a href="/apidocs/org/atteo/moonshine/perf4j/Perf4JService.html">profile</a> your application and collect
+	<a href="/apidocs/org/moonshine/metrics/Metrics.html">metrics</a>
+	</li>
+</ul>
+
+</p>
+
+<h1>
+	<a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Changes</h1>
+
+<p>0.9 Initial Moonshine revision</p>
+
+<h1>
+	<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h1>
+
+<p>Moonshine is available under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache License 2.0</a>.</p>
+
+<h1>
+	<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h1>
+<ul>
+	<li><a href="/apidocs">Javadoc</a></li>
+	<li><a href="/manual">Manual</a></li>
+	<li><a href="https://github.com/atteo/moonshine-examples">Examples</a></li>
+</ul>
+</section>
