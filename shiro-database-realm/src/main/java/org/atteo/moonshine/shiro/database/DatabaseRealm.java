@@ -28,6 +28,7 @@ import org.apache.shiro.realm.AuthenticatingRealm;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.SimpleByteSource;
+import org.atteo.moonshine.jta.Transactional;
 
 import com.google.inject.Inject;
 
@@ -66,6 +67,7 @@ public class DatabaseRealm extends AuthenticatingRealm {
 	}
 
 	@Override
+	@Transactional
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
 			throws AuthenticationException {
 		String principal = (String) token.getPrincipal();

@@ -42,7 +42,7 @@ public class InPlaceRealmService extends RealmService {
 		return new PrivateModule() {
 			@Override
 			protected void configure() {
-				AdminSimpleAccountRealm realm = new AdminSimpleAccountRealm();
+				InPlaceRealm realm = new InPlaceRealm();
 				if (accounts != null) {
 					for (Account account : accounts) {
 						String roles[] = {};

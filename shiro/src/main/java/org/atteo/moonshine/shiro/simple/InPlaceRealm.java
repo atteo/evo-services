@@ -25,14 +25,20 @@ import org.apache.shiro.util.CollectionUtils;
 
 import com.google.common.collect.Sets;
 
-public class AdminSimpleAccountRealm extends SimpleAccountRealm {
-    public void addAccount(String username, String password, boolean isAdmin, String... roles) {
-        Set<String> roleNames = CollectionUtils.asSet(roles);
+public class InPlaceRealm extends SimpleAccountRealm {
+	private static final String REALM_NAME = "InPlaceRealm";
+
+	public InPlaceRealm() {
+		super(REALM_NAME);
+	}
+
+	public void addAccount(String username, String password, boolean isAdmin, String... roles) {
+		Set<String> roleNames = CollectionUtils.asSet(roles);
 		Set<Permission> permissions = null;
 		if (isAdmin) {
 			permissions = Sets.<Permission>newHashSet(new AllPermission());
 		}
-        SimpleAccount account = new SimpleAccount(username, password, getName(), roleNames, permissions);
-        add(account);
-    }
+		SimpleAccount account = new SimpleAccount(username, password, getName(), roleNames, permissions);
+		add(account);
+	}
 }
