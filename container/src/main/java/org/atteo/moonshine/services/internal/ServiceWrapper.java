@@ -49,10 +49,10 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 	private final AtomicReference<Status> status = new AtomicReference<>(Status.CREATED);
 	private List<com.google.inject.spi.Element> elements;
 	private boolean singleton = false;
-	private boolean configureImplemented;
-	private boolean startImplemented;
-	private boolean stopImplemented;
-	private boolean closeImplemented;
+	private final boolean configureImplemented;
+	private final boolean startImplemented;
+	private final boolean stopImplemented;
+	private final boolean closeImplemented;
 
 	public ServiceWrapper(Service service) {
 		this.service = service;
@@ -219,6 +219,11 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 
 	@Override
 	public void postDeregister() {
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 	public static class Dependency {
