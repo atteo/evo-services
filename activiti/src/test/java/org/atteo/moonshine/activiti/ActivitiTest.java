@@ -33,20 +33,6 @@ import org.junit.runners.MethodSorters;
 
 import com.google.inject.Inject;
 
-@MoonshineConfiguration(fromString = ""
-        + "<config>"
-        + "    <activiti>"
-        + "         <bpmn-parse-handlers>"
-        + "             <handler>"
-        + "                 <className>no.handler.exist.HandlerImpl</className>"
-        + "                 <className>org.atteo.moonshine.activiti.BpmnParseHandlerTest</className>"
-        + "             </handler>"
-        + "         </bpmn-parse-handlers>"
-        + "    </activiti>"
-        + "    <atomikos>"
-        + "        <transactionTimeout>5</transactionTimeout>"
-        + "    </atomikos>"
-        + "</config>")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ActivitiTest extends MoonshineTest {
 	@Inject
@@ -56,8 +42,9 @@ public class ActivitiTest extends MoonshineTest {
     public void firstVvacationRequestFlowTest() {
         assertThat(processEngine).isNotNull();
         RepositoryService repositoryService = processEngine.getRepositoryService();
+        long processCounter = repositoryService.createProcessDefinitionQuery().count();
         repositoryService.createDeployment().addClasspathResource("vacation_request-bpmn20.xml").deploy();
-        assertThat(repositoryService.createProcessDefinitionQuery().count()).isEqualTo(1);
+        assertThat(repositoryService.createProcessDefinitionQuery().count()).isEqualTo(processCounter+1);
 
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("employeeName", "Kermit");
