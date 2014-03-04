@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
 

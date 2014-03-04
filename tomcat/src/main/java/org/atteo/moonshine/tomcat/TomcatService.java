@@ -32,7 +32,7 @@ import static org.apache.catalina.LifecycleState.STARTED;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
-import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.atteo.moonshine.webserver.WebServerService;

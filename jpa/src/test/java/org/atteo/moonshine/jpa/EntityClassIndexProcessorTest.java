@@ -18,7 +18,7 @@ package org.atteo.moonshine.jpa;
 import javax.persistence.Entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.junit.Test;
 
 public class EntityClassIndexProcessorTest {

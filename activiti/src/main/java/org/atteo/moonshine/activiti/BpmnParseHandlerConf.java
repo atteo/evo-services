@@ -1,7 +1,7 @@
 package org.atteo.moonshine.activiti;
 
 import org.activiti.engine.parse.BpmnParseHandler;
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

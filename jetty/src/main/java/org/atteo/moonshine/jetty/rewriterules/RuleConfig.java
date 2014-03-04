@@ -15,7 +15,7 @@
  */
 package org.atteo.moonshine.jetty.rewriterules;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 import org.eclipse.jetty.rewrite.handler.Rule;
 
 public abstract class RuleConfig extends Configurable {

@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 
 /**
  * Plugin which extends the functionality of Hibernate.

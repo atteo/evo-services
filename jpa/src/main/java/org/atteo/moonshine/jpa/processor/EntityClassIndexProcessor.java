@@ -15,7 +15,7 @@ package org.atteo.moonshine.jpa.processor;
 
 import javax.persistence.Entity;
 
-import org.atteo.evo.classindex.processor.ClassIndexProcessor;
+import org.atteo.classindex.processor.ClassIndexProcessor;
 
 public class EntityClassIndexProcessor extends ClassIndexProcessor {
 	public EntityClassIndexProcessor() {

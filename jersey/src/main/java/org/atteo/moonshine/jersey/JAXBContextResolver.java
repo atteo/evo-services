@@ -18,7 +18,7 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.jaxrs.ResourceModel;
 
 import com.google.common.collect.Iterables;

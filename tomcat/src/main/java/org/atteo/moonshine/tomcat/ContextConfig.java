@@ -25,7 +25,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.ServletContainer;

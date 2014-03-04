@@ -13,7 +13,7 @@
  */
 package org.atteo.moonshine.webdriver.browsers;
 
-import org.atteo.evo.classindex.IndexSubclasses;
+import org.atteo.classindex.IndexSubclasses;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**

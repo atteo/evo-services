@@ -19,9 +19,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.evo.filtering.PropertyFilter;
-import org.atteo.evo.filtering.PropertyNotFoundException;
-import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.filtering.PropertyFilter;
+import org.atteo.filtering.PropertyNotFoundException;
+import org.atteo.filtering.PropertyResolver;
 import org.atteo.moonshine.Moonshine;
 import org.junit.Test;
 

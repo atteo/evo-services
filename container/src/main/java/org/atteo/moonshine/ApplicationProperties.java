@@ -21,8 +21,8 @@ import java.lang.annotation.Target;
 
 import javax.inject.Inject;
 
-import org.atteo.evo.classindex.IndexAnnotated;
-import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.classindex.IndexAnnotated;
+import org.atteo.filtering.PropertyResolver;
 
 import com.google.inject.BindingAnnotation;
 

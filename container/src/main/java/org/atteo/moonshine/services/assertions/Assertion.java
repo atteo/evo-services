@@ -13,7 +13,7 @@
  */
 package org.atteo.moonshine.services.assertions;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 
 /**
  * Assertion.

@@ -19,11 +19,11 @@ import java.io.IOException;
 
 import javax.annotation.Nullable;
 
-import org.atteo.evo.config.Configuration;
-import org.atteo.evo.filtering.EnvironmentPropertyResolver;
-import org.atteo.evo.filtering.PropertyResolver;
-import org.atteo.evo.filtering.SystemPropertyResolver;
-import org.atteo.evo.filtering.XmlPropertyResolver;
+import org.atteo.config.Configuration;
+import org.atteo.filtering.EnvironmentPropertyResolver;
+import org.atteo.filtering.PropertyResolver;
+import org.atteo.filtering.SystemPropertyResolver;
+import org.atteo.filtering.XmlPropertyResolver;
 import org.atteo.moonshine.directories.FileAccessor;
 import org.atteo.moonshine.logging.Logback;
 import org.atteo.moonshine.logging.Logging;

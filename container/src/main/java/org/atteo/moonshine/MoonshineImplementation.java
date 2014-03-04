@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.atteo.evo.config.IncorrectConfigurationException;
-import org.atteo.evo.filtering.PropertiesPropertyResolver;
-import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.config.IncorrectConfigurationException;
+import org.atteo.filtering.PropertiesPropertyResolver;
+import org.atteo.filtering.PropertyResolver;
 import org.atteo.moonshine.directories.DefaultFileAccessor;
 import org.atteo.moonshine.directories.FileAccessor;
 import org.atteo.moonshine.directories.FileAccessorFactory;

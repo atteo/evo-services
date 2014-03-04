@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.atteo.evo.classindex.IndexAnnotated;
+import org.atteo.classindex.IndexAnnotated;
 
 /**
  * Marks models used in JAX-RS resources.

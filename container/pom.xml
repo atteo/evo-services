@@ -15,8 +15,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.atteo</groupId>
-			<artifactId>evo-config</artifactId>
+			<groupId>org.atteo.config</groupId>
+			<artifactId>config</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.sisu</groupId>

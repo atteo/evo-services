@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.atteo.evo.classindex.IndexAnnotated;
+import org.atteo.classindex.IndexAnnotated;
 
 /**
  * Marker interface for applications that require to supply extra Guice modules

@@ -19,7 +19,7 @@ package org.atteo.moonshine.global_modules;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.inject.Singleton;
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

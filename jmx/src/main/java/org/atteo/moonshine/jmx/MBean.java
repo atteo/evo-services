@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 
 import javax.inject.Singleton;
 
-import org.atteo.evo.classindex.IndexAnnotated;
+import org.atteo.classindex.IndexAnnotated;
 
 /**
  * MBean marker interface.

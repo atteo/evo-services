@@ -1,4 +1,4 @@
-package org.atteo.evo.hsqldb;
+package org.atteo.hsqldb;
 
 import org.atteo.moonshine.database.DatabaseTest;
 import org.atteo.moonshine.tests.MoonshineConfiguration;

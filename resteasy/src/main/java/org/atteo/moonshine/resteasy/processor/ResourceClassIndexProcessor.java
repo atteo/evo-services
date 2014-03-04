@@ -16,7 +16,7 @@ package org.atteo.moonshine.resteasy.processor;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
-import org.atteo.evo.classindex.processor.ClassIndexProcessor;
+import org.atteo.classindex.processor.ClassIndexProcessor;
 
 public class ResourceClassIndexProcessor extends ClassIndexProcessor {
 	public ResourceClassIndexProcessor() {

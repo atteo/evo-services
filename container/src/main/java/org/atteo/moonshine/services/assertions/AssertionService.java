@@ -18,8 +18,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.injection.InjectMembers;
 import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.injection.InjectMembers;
 
 /**
  * Service which can be used to test for some conditions.

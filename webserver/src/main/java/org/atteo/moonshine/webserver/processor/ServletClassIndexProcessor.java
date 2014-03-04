@@ -17,7 +17,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
 
-import org.atteo.evo.classindex.processor.ClassIndexProcessor;
+import org.atteo.classindex.processor.ClassIndexProcessor;
 
 public class ServletClassIndexProcessor extends ClassIndexProcessor {
 	public ServletClassIndexProcessor() {

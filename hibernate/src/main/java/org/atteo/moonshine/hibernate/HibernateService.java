@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.jpa.TransactionScopedEntityManager;
 import org.hibernate.cfg.AvailableSettings;

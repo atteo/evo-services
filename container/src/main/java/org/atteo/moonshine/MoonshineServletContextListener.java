@@ -23,8 +23,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.atteo.evo.filtering.PropertiesPropertyResolver;
-import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.filtering.PropertiesPropertyResolver;
+import org.atteo.filtering.PropertyResolver;
 
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;

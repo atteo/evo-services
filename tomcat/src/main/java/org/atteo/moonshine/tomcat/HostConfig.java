@@ -21,7 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 
 /**
  * Virtual host configuration.

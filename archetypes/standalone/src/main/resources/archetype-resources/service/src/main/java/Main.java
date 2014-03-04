@@ -5,7 +5,7 @@ package ${package};
 
 import java.io.IOException;
 
-import org.atteo.evo.config.IncorrectConfigurationException;
+import org.atteo.config.IncorrectConfigurationException;
 import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.MoonshineException;
 

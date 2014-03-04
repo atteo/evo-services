@@ -27,7 +27,7 @@ import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.impl.cfg.JtaProcessEngineConfiguration;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.activiti.engine.parse.BpmnParseHandler;
-import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

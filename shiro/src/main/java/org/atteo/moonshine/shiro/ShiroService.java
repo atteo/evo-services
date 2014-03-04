@@ -44,7 +44,7 @@ import org.apache.shiro.web.filter.mgt.FilterChainResolver;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
-import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.TopLevelService;
 

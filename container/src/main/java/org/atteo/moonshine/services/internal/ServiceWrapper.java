@@ -27,7 +27,7 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.reflection.ReflectionUtils;
 import org.atteo.moonshine.services.EmptyImplementation;
 import org.atteo.moonshine.services.Service;

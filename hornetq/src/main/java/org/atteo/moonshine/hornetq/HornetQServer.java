@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.XmlDefaultValue;
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
 import org.hornetq.api.core.TransportConfiguration;
 import org.hornetq.core.config.Configuration;

@@ -18,7 +18,7 @@ package org.atteo.moonshine.tests;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.evo.filtering.PropertyResolver;
+import org.atteo.filtering.PropertyResolver;
 import org.atteo.moonshine.ApplicationProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;

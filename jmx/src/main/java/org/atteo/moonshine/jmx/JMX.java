@@ -29,7 +29,7 @@ import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.classindex.ClassIndex;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.AbstractModule;

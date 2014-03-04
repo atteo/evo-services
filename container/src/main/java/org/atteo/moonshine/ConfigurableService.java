@@ -18,7 +18,7 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 import org.atteo.moonshine.services.EmptyImplementation;
 import org.atteo.moonshine.services.Service;
 

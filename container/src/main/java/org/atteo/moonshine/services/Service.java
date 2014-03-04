@@ -18,7 +18,7 @@ package org.atteo.moonshine.services;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-import org.atteo.evo.classindex.IndexSubclasses;
+import org.atteo.classindex.IndexSubclasses;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

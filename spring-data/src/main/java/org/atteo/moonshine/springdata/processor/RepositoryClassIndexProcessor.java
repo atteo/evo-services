@@ -13,7 +13,7 @@
  */
 package org.atteo.moonshine.springdata.processor;
 
-import org.atteo.evo.classindex.processor.ClassIndexProcessor;
+import org.atteo.classindex.processor.ClassIndexProcessor;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.RepositoryDefinition;
 

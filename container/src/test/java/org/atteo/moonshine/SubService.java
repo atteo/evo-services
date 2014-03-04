@@ -19,7 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.evo.config.Configurable;
+import org.atteo.config.Configurable;
 
 @XmlRootElement(name = "subservice")
 public class SubService extends Configurable {
