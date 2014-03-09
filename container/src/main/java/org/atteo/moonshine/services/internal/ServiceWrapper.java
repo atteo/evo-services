@@ -43,7 +43,6 @@ import com.google.inject.spi.Element;
 public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistration {
 	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private final String name;
-	private final ObjectName objectName;
 	private final Service service;
 	private final List<Dependency> dependencies = new ArrayList<>();
 	private final AtomicReference<Status> status = new AtomicReference<>(Status.CREATED);
@@ -57,7 +56,6 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 	public ServiceWrapper(Service service) {
 		this.service = service;
 		this.name = getServiceName(service);
-		this.objectName = getObjectName(service);
 		this.configureImplemented = isImplemented(service.getClass(), "configure");
 		this.startImplemented = isImplemented(service.getClass(), "start");
 		this.stopImplemented = isImplemented(service.getClass(), "stop");
@@ -118,14 +116,16 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 		return builder.toString();
 	}
 
-	public static ObjectName getObjectName(Service service) {
+	public ObjectName getObjectName() {
 		try {
 			Hashtable<String, String> keys = new Hashtable<>();
 			keys.put("type", service.getClass().getName());
 			if (service.getId() != null) {
 				keys.put("id", service.getId());
+			} else if (!singleton){
+				keys.put("hashCode", Integer.toHexString(System.identityHashCode(service)));
 			}
-			return ObjectName.getInstance("org.atteo.moonshine.services", keys);
+			return ObjectName.getInstance(Service.class.getPackage().getName(), keys);
 		} catch (MalformedObjectNameException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -200,13 +200,9 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 		}
 	}
 
-	public ObjectName getObjectName() {
-		return objectName;
-	}
-
 	@Override
 	public ObjectName preRegister(MBeanServer mbs, ObjectName on) throws Exception {
-		return objectName;
+		return getObjectName();
 	}
 
 	@Override

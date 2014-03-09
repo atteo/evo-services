@@ -66,8 +66,8 @@ class ServicesImplementation implements Services, Services.Builder {
 	private final List<Module> extraModules = new ArrayList<>();
 
 	private Injector injector;
-	private Service config;
-	private List<LifeCycleListener> listeners = new ArrayList<>();
+	private Service root;
+	private final List<LifeCycleListener> listeners = new ArrayList<>();
 	private List<ServiceWrapper> services;
 
 	public ServicesImplementation() {
@@ -81,8 +81,8 @@ class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	@Override
-	public Builder configuration(Service config) {
-		this.config = config;
+	public Builder configuration(Service root) {
+		this.root = root;
 		return this;
 	}
 
@@ -94,8 +94,8 @@ class ServicesImplementation implements Services, Services.Builder {
 
 	@Override
 	public Services build() throws ConfigurationException {
-		if (config == null) {
-			config = new AbstractService() {
+		if (root == null) {
+			root = new AbstractService() {
 			};
 		}
 
@@ -130,7 +130,7 @@ class ServicesImplementation implements Services, Services.Builder {
 			modules.add(duplicateDetection.wrap(module));
 		}
 
-		services = readServiceMetadata(retrieveServicesRecursively(config));
+		services = readServiceMetadata(retrieveServicesRecursively(root));
 		services = sortTopologically(services);
 		verifySingletonServicesAreUnique(services);
 

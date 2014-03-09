@@ -221,4 +221,48 @@ public class ServicesTest {
 			assertThat(consumer.hello).isEqualTo("Hello World!");
 		}
 	}
+
+	@Test
+	public void shouldStartTwoInstancesOfTheSameServiceWithDifferentId() throws ConfigurationException {
+		class Service extends AbstractService {
+			private String id;
+
+			public Service(String id) {
+				this.id = id;
+			}
+
+			@Override
+			public String getId() {
+				return id;
+			}
+		}
+
+		try (Services services = Services.Factory.builder()
+				.configuration(new AbstractService() {
+					@Override
+					public Iterable<? extends Service> getSubServices() {
+						return Lists.newArrayList(new Service("a"), new Service("b"));
+					}
+				})
+				.build()) {
+			services.start();
+		}
+	}
+
+	@Test
+	public void shouldSupportTwoServicesWithTheSameId() throws ConfigurationException {
+		class Service extends AbstractService {
+		}
+
+		try (Services services = Services.Factory.builder()
+				.configuration(new AbstractService() {
+					@Override
+					public Iterable<? extends Service> getSubServices() {
+						return Lists.newArrayList(new Service(), new Service());
+					}
+				})
+				.build()) {
+			services.start();
+		}
+	}
 }
