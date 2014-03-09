@@ -51,6 +51,10 @@
 		<connection>https://github.com/atteo/moonshine</connection>
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
+	<properties>
+		<config.version>1.0-SNAPSHOT</config.version>
+		<filtering.version>1.0</filtering.version>
+	</properties>
 	<distributionManagement>
 		<repository>
 			<id>sonatype-nexus-staging</id>
@@ -65,6 +69,21 @@
 	</distributionManagement>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.atteo.config</groupId>
+				<artifactId>config</artifactId>
+				<version>${config.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.filtering</groupId>
+				<artifactId>filtering</artifactId>
+				<version>${filtering.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.filtering</groupId>
+				<artifactId>janino</artifactId>
+				<version>${filtering.version}</version>
+			</dependency>
             <dependency>
                 <groupId>org.atteo.moonshine</groupId>
                 <artifactId>activiti</artifactId>
