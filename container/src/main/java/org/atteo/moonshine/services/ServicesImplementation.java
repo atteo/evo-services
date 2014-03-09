@@ -35,7 +35,6 @@ import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
 import javax.management.NotCompliantMBeanException;
 
-import org.atteo.evo.urlhandlers.UrlHandlers;
 import org.atteo.moonshine.ConfigurationException;
 import org.atteo.moonshine.injection.InjectMembersModule;
 import org.atteo.moonshine.reflection.ReflectionUtils;
@@ -43,6 +42,7 @@ import org.atteo.moonshine.services.internal.DuplicateDetectionWrapper;
 import org.atteo.moonshine.services.internal.ReflectionTools;
 import org.atteo.moonshine.services.internal.ServiceModuleRewriter;
 import org.atteo.moonshine.services.internal.ServiceWrapper;
+import org.atteo.urlhandlers.UrlHandlers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
