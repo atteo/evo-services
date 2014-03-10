@@ -84,18 +84,19 @@
 		<shiro.version>1.2.2</shiro.version>
 		<skipMoreTests>true</skipMoreTests>
 		<tomcat.version>8.0.0-RC5</tomcat.version>
+		<config.version>1.2</config.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.atteo.classindex</groupId>
 				<artifactId>classindex</artifactId>
-				<version>3.0-SNAPSHOT</version>
+				<version>3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.config</groupId>
 				<artifactId>config</artifactId>
-				<version>1.0-SNAPSHOT</version>
+				<version>${config.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
@@ -235,7 +236,7 @@
 										<docletArtifact>
 											<groupId>org.atteo.config</groupId>
 											<artifactId>config-doclet</artifactId>
-											<version>1.0-SNAPSHOT</version>
+											<version>${config.version}</version>
 										</docletArtifact>
 									</docletArtifacts>
 								</configuration>
