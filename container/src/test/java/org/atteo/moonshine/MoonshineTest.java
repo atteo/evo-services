@@ -38,6 +38,7 @@ public class MoonshineTest {
 	public void shouldStartWithDefaults() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.build()) {
 			moonshine.start();
 		}
@@ -47,6 +48,7 @@ public class MoonshineTest {
 	public void shouldStartWithTrivialConfiguration() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "</config>")
@@ -60,6 +62,7 @@ public class MoonshineTest {
 		// given
 		try (Moonshine moonshine = when(Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <singletonService id='test'/>"
@@ -77,6 +80,7 @@ public class MoonshineTest {
 		// given
 		try (Moonshine moonshine = when(Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <singletonService/>"
@@ -96,6 +100,7 @@ public class MoonshineTest {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <head id='first'/>"
@@ -112,6 +117,7 @@ public class MoonshineTest {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <head/>"
@@ -128,6 +134,7 @@ public class MoonshineTest {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromResource("/robot-service.xml")
 				.build()) {
 			moonshine.start();
@@ -145,6 +152,7 @@ public class MoonshineTest {
 	public void shouldUseCustomModule() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addModule(new AbstractModule() {
 					@Override
 					protected void configure() {
@@ -167,6 +175,7 @@ public class MoonshineTest {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <injectmembers>"
@@ -195,6 +204,7 @@ public class MoonshineTest {
 	public void shouldInjectCustomProperty() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <assertions>"
@@ -224,6 +234,7 @@ public class MoonshineTest {
 	public void shouldInjectProperties() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 				+ "<config>"
 				+ "    <assertions>"
@@ -250,6 +261,7 @@ public class MoonshineTest {
 	@Test
 	public void shouldEnableInfo() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.skipImplicitConfiguration()
 				.homeDirectory("target/test-home")
 				.arguments(new String[] { "--loglevel", "INFO" })
 				.build()) {
@@ -269,6 +281,7 @@ public class MoonshineTest {
 	@Test
 	public void shouldEnableDebugLogging() throws IOException, MoonshineException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.skipImplicitConfiguration()
 				.homeDirectory("target/test-home")
 				.arguments(new String[] { "--loglevel", "DEBUG" })
 				.build()) {
@@ -300,6 +313,7 @@ public class MoonshineTest {
 		CustomParameters custom = new CustomParameters();
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addParameterProcessor(custom)
 				.arguments(new String[] { "--custom" })
 				.build()) {
@@ -313,6 +327,7 @@ public class MoonshineTest {
 	public void shouldExitAfterPrintingHelp() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.arguments(new String[] { "--help" })
 				.build()) {
 
@@ -325,6 +340,7 @@ public class MoonshineTest {
 	public void shouldDetectNonSingletonServicesBindingWithAnnotation() throws MoonshineException, IOException {
 		try (Moonshine moonshine = when(Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 					+ "<config>"
 					+ "    <incorrect/>"
@@ -342,6 +358,7 @@ public class MoonshineTest {
 			throws MoonshineException, IOException {
 		try (Moonshine moonshine = when(Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 					+ "<config>"
 					+ "    <incorrect-private/>"
@@ -358,6 +375,7 @@ public class MoonshineTest {
 	public void shouldExecuteDeconfigureEvenWhenInjectorCreationFails() throws MoonshineException, IOException {
 		try (Moonshine moonshine = when(Moonshine.Factory.builder()
 				.homeDirectory("target/test-home")
+				.skipImplicitConfiguration()
 				.addConfigurationFromString(""
 						+ "<config>"
 						+ "    <missing-dependency-service/>"
@@ -376,12 +394,22 @@ public class MoonshineTest {
 	@Test
 	public void shouldFireListeners() throws MoonshineException, IOException {
 		LifeCycleListener listener = Mockito.mock(LifeCycleListener.class);
-		try (Moonshine moonshine = Moonshine.Factory.builder().registerListener(listener).build()) {
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.skipImplicitConfiguration()
+				.registerListener(listener)
+				.build()) {
 			Mockito.verify(listener).configured(moonshine.getGlobalInjector());
 			moonshine.start();
 			Mockito.verify(listener).started();
 		}
 		Mockito.verify(listener).stopping();
 		Mockito.verify(listener).closing();
+	}
+
+	@Test
+	public void shouldUseImplicitServices() throws MoonshineException, IOException {
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.build()) {
+		}
 	}
 }

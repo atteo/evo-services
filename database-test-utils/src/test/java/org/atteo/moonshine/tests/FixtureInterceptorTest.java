@@ -28,12 +28,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <atomikos/>"
-		+ "    <h2/>"
-		+ "    <database-tests/>"
-		+ "</config>")
 public class FixtureInterceptorTest extends MoonshineTest {
 
 	@Inject

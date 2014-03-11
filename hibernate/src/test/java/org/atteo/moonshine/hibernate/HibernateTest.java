@@ -32,9 +32,6 @@ import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <atomikos/>"
-		+ "    <transactional/>"
-		+ "    <h2/>"
 		+ "    <hibernate>"
 		+ "        <initSchema>create</initSchema>"
 		+ "    </hibernate>"

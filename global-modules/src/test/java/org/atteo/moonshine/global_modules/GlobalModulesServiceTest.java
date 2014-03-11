@@ -19,14 +19,9 @@ package org.atteo.moonshine.global_modules;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
-        + "<config>"
-        + "    <global-modules/>"
-        + "</config>")
 public class GlobalModulesServiceTest extends MoonshineTest {
     @Inject
     private String value;

@@ -37,14 +37,14 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * JMX helper service.
+ * Jmx helper service.
  *
  * <p>
  * Starts MBean server and automatically registers any class annotated with &#064;{@link MBean}.
  * </p>
  */
 @XmlRootElement(name = "jmx")
-public class JMX extends TopLevelService {
+public class Jmx extends TopLevelService {
 	@Override
 	public Module configure() {
 		return new AbstractModule() {

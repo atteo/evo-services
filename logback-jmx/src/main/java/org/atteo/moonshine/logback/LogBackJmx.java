@@ -22,6 +22,8 @@ import javax.management.ObjectName;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.jmx.Jmx;
+import org.atteo.moonshine.services.ImportService;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
@@ -30,14 +32,17 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 
 /**
- * LogBack JMX support.
+ * LogBackJmx JMX support.
  *
  * <p>
- * LogBack MBeans allow you to change logging levels in running application.
- * </p>
+ LogBackJmx MBeans allow you to change logging levels in running application.
+ </p>
  */
-@XmlRootElement(name = "logback")
-public class LogBack extends TopLevelService {
+@XmlRootElement(name = "logback-jmx")
+public class LogBackJmx extends TopLevelService {
+	@ImportService
+	private Jmx jmx;
+
 	@Inject
 	private MBeanServer mbeanServer;
 

@@ -82,6 +82,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	private final List<String> configDirs = new ArrayList<>();
 	private final List<String> dataDirs = new ArrayList<>();
 	private boolean shutdownHook = true;
+	private boolean skipImplicitConfiguration = false;
 	private boolean skipDefaultConfigurationFile = false;
 	private boolean skipExceptionHandler = false;
 
@@ -258,6 +259,13 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 	}
 
 	@Override
+	public Builder skipImplicitConfiguration() {
+		skipImplicitConfiguration = true;
+		return this;
+	}
+
+
+	@Override
 	public Builder skipDefaultConfigurationFiles() {
 		skipDefaultConfigurationFile = true;
 		return this;
@@ -334,6 +342,10 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	protected void setupConfiguration(MoonshineCommandLineParameters moonshineParameters,
 			final ConfigurationReader configuration) throws IOException, IncorrectConfigurationException {
+
+		if (!skipImplicitConfiguration && !moonshineParameters.isNoImplicit()) {
+			configuration.combineImplicitConfiguration();
+		}
 
 		if (!skipDefaultConfigurationFile && !moonshineParameters.isNoDefaults()) {
 			configuration.combineDefaultConfiguration();

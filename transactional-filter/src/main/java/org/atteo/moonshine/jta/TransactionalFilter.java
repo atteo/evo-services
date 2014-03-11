@@ -29,7 +29,7 @@ import javax.servlet.ServletResponse;
  * {@link Filter} which wraps the request handling inside JTA transaction.
  */
 @Singleton
-public class JtaFilter implements Filter {
+public class TransactionalFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {

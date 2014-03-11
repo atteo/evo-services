@@ -52,10 +52,11 @@
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>jmx</module>
+		<module>jmx-server</module>
 		<module>jolokia</module>
 		<module>jpa</module>
 		<module>jta</module>
-		<module>logback</module>
+		<module>logback-jmx</module>
 		<module>liquibase</module>
 		<module>metrics</module>
 		<module>perf4j</module>
@@ -66,6 +67,7 @@
 		<module>shiro-database-realm</module>
 		<module>shiro-test-utils</module>
 		<module>spring-data</module>
+		<module>transactional-filter</module>
 		<module>tomcat</module>
 		<module>webdriver</module>
 		<module>webserver</module>
@@ -80,11 +82,11 @@
 	</scm>
 	<properties>
 		<blueprints.version>2.4.0</blueprints.version>
+		<config.version>1.2</config.version>
 		<jetty.version>9.1.1.v20140108</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
 		<skipMoreTests>true</skipMoreTests>
 		<tomcat.version>8.0.0-RC5</tomcat.version>
-		<config.version>1.2</config.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

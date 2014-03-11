@@ -21,24 +21,14 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <atomikos/>"
-		+ "    <h2/>"
-		+ "    <liquibase/>"
-		+ "</config>")
 public class LiquibaseServiceTest extends MoonshineTest {
 	@Inject
 	private DataSource dataSource;
-
-	@Inject
-	private LiquibaseFacade migrations;
 
 	private boolean userExists() throws SQLException {
 		try (Connection connection = dataSource.getConnection();
@@ -51,6 +41,7 @@ public class LiquibaseServiceTest extends MoonshineTest {
 
 	@Test
 	public void testMigrations() throws SQLException {
+		LiquibaseFacade migrations = new LiquibaseFacade(dataSource);
 		migrations.migrate("/test-migration1.xml");
 
 		assertFalse(userExists());

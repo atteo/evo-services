@@ -26,6 +26,9 @@ public class MoonshineCommandLineParameters {
 			+ " and ${configDirs} are merged.")
 	private final List<String> configurationFiles = new ArrayList<>();
 
+	@Parameter(names = "--no-implicit", description = "Do not automatically add one instance of every service")
+	private boolean noImplicit;
+
 	@Parameter(names = "--no-defaults", description = "Do not read default configuration")
 	private boolean noDefaults;
 
@@ -44,6 +47,10 @@ public class MoonshineCommandLineParameters {
 
 	public List<String> getConfigurationFiles() {
 		return configurationFiles;
+	}
+
+	public boolean isNoImplicit() {
+		return noImplicit;
 	}
 
 	public boolean isNoDefaults() {

@@ -18,15 +18,10 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <jmx/>"
-		+ "</config>")
 public class MBeanTest extends MoonshineTest {
 	@Test
 	public void getData() throws IOException, MalformedObjectNameException {

@@ -22,15 +22,9 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-        + "    <jta-mock/>"
-		+ "    <transactional/>"
-		+ "</config>")
 public class TransactionalServiceTest extends MoonshineTest {
     @Inject
     private UserTransaction userTransaction;

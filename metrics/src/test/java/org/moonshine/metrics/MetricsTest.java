@@ -26,7 +26,6 @@ import javax.management.remote.JMXConnector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.jmx.JmxUtils;
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
@@ -34,11 +33,6 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.annotation.Metered;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <jmx/>"
-		+ "    <metrics/>"
-		+ "</config>")
 public class MetricsTest extends MoonshineTest {
 	@Inject
 	private MBeanServer mbeanServer;

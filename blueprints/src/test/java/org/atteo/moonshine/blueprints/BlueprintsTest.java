@@ -18,7 +18,6 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
@@ -27,10 +26,6 @@ import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 
-
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "</config>")
 public abstract class BlueprintsTest extends MoonshineTest {
 	@Inject
 	//This is because we want to let implementations (see Neo4j service for example) to perform tests on multiple

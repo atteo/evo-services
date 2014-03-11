@@ -6,12 +6,12 @@
 		<groupId>org.atteo.moonshine</groupId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>logback</artifactId>
-	<name>LogBack</name>
+	<artifactId>logback-jmx</artifactId>
+	<name>LogBack JMX MBeans</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>container</artifactId>
+			<artifactId>jmx</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

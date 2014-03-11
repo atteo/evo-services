@@ -7,8 +7,8 @@ import com.google.inject.AbstractModule;
  */
 @GlobalModule
 public class GlobalModuleSample extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(String.class).toInstance("Hello World!");
-    }
+	@Override
+	protected void configure() {
+		bind(String.class).toInstance("Hello World!");
+	}
 }

@@ -22,12 +22,22 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.atteo.classindex.ClassFilter;
+import org.atteo.classindex.ClassIndex;
 import org.atteo.config.Configuration;
 import org.atteo.config.IncorrectConfigurationException;
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.config.XmlUtils;
 import org.atteo.filtering.CompoundPropertyResolver;
 import org.atteo.filtering.EnvironmentPropertyResolver;
@@ -36,9 +46,11 @@ import org.atteo.filtering.PropertyResolver;
 import org.atteo.filtering.SystemPropertyResolver;
 import org.atteo.filtering.XmlPropertyResolver;
 import org.atteo.moonshine.directories.FileAccessor;
+import org.atteo.moonshine.services.Service;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Charsets;
 
 public class ConfigurationReader {
@@ -81,6 +93,47 @@ public class ConfigurationReader {
 
 	public PropertyResolver getPropertyResolver() {
 		return propertyResolver;
+	}
+
+	public void combineImplicitConfiguration() throws IncorrectConfigurationException {
+		Iterable<Class<? extends Service>> services = ClassFilter.only()
+				.topLevel()
+				.withoutModifiers(Modifier.ABSTRACT)
+				.satisfying(new ClassFilter.Predicate() {
+					@Override
+					public boolean matches(Class<?> type) {
+						return TopLevelService.class.isAssignableFrom(type);
+					}
+				})
+				.satisfying(new ClassFilter.Predicate() {
+					@Override
+					public boolean matches(Class<?> type) {
+						return !containsRequiredFieldWithoutDefault(type);
+					}
+				})
+				.satisfying(new ClassFilter.Predicate() {
+					@Override
+					public boolean matches(Class<?> type) {
+						return !type.isAnnotationPresent(ExplicitService.class);
+					}
+				})
+				.from(ClassIndex.getSubclasses(Service.class));
+
+		StringBuilder builder = new StringBuilder();
+		builder.append("<config>\n");
+		for (Class<? extends Service> service : services) {
+			String name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, service.getSimpleName());
+			XmlRootElement xmlRootElement = service.getAnnotation(XmlRootElement.class);
+			if (xmlRootElement != null && !"##default".equals(xmlRootElement.name())) {
+				name = xmlRootElement.name();
+			}
+			builder.append("\t<");
+			builder.append(name);
+			builder.append("/>\n");
+		}
+		builder.append("</config>\n");
+
+		combineConfigurationFromString(builder.toString());
 	}
 
 	/**
@@ -186,5 +239,29 @@ public class ConfigurationReader {
 					+ " xsi:noNamespaceSchemaLocation=\"" + SCHEMA_FILE_NAME
 					+ "\">\n</config>\n");
 		}
+	}
+
+	private static boolean containsRequiredFieldWithoutDefault(Class<?> type) {
+		while (type != Object.class) {
+			for (Field field : type.getDeclaredFields()) {
+				if (field.isAnnotationPresent(XmlDefaultValue.class)) {
+					continue;
+				}
+				XmlElement annotation = field.getAnnotation(XmlElement.class);
+				XmlElementRef annotation2 = field.getAnnotation(XmlElementRef.class);
+				XmlAttribute annotation3 = field.getAnnotation(XmlAttribute.class);
+				if (annotation != null && annotation.required()) {
+					return true;
+				}
+				if (annotation2 != null && annotation2.required()) {
+					return true;
+				}
+				if (annotation3 != null && annotation3.required()) {
+					return true;
+				}
+			}
+			type = type.getSuperclass();
+		}
+		return false;
 	}
 }

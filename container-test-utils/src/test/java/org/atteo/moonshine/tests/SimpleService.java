@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.TopLevelService;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
@@ -27,7 +28,7 @@ import com.google.inject.name.Names;
 @XmlRootElement(name = "simple")
 @Singleton
 public class SimpleService extends TopLevelService {
-	@XmlAttribute
+	@XmlAttribute(required = true)
 	private String message;
 
 	@Override

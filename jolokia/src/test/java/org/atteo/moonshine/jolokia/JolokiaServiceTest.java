@@ -34,8 +34,6 @@ import com.google.common.io.CharStreams;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <jmx/>"
-		+ "    <servlet-container/>"
 		+ "    <jetty>"
 		+ "        <connectors>"
 		+ "            <serverconnector>"
@@ -43,7 +41,6 @@ import com.google.common.io.CharStreams;
 		+ "            </serverconnector>"
 		+ "        </connectors>"
 		+ "    </jetty>"
-		+ "    <jolokia/>"
 		+ "</config>")
 public class JolokiaServiceTest extends MoonshineTest {
 	@Inject

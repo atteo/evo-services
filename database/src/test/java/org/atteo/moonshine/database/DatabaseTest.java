@@ -33,8 +33,6 @@ import org.junit.Test;
 		+ "    <atomikos>"
 		+ "        <transactionTimeout>5</transactionTimeout>"
 		+ "    </atomikos>"
-		+ "    <transactional/>"
-		+ "    <migration-service/>"
 		+ "</config>")
 public abstract class DatabaseTest extends MoonshineTest {
 	@Inject

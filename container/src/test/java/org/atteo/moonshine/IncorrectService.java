@@ -17,12 +17,12 @@ package org.atteo.moonshine;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
 
 @XmlRootElement(name = "incorrect")
+@ExplicitService
 public class IncorrectService extends TopLevelService {
 	@Override
 	public Module configure() {

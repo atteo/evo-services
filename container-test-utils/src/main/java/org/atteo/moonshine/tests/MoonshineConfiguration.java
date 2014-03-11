@@ -25,6 +25,15 @@ public @interface MoonshineConfiguration {
 	String fromString() default "";
 
 	/**
+	 * Skips implicit configuration.
+	 * <p>
+	 * Implicit configuration is automatically generated and consist of every top-level service found on classpath
+	 * which does not require any configuration.
+	 * </p>
+	 */
+	boolean skipImplicit() default false;
+
+	/**
 	 * Skip reading default configuration from '/default-config.xml' classpath resource.
 	 */
 	boolean skipDefault() default false;

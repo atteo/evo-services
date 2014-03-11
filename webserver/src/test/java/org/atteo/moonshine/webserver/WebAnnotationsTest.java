@@ -22,7 +22,6 @@ import java.net.URL;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
@@ -30,11 +29,6 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <servlet-container/>"
-		+ "    <web-annotations/>"
-		+ "</config>")
 public abstract class WebAnnotationsTest extends MoonshineTest {
 	@Inject
 	private WebServerAddress webServerAddress;

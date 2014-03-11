@@ -23,6 +23,7 @@ import com.google.inject.PrivateModule;
 import com.google.inject.name.Names;
 
 @XmlRootElement(name = "incorrect-private")
+@ExplicitService
 public class PrivateIncorrectService extends TopLevelService {
 	@Override
 	public Module configure() {

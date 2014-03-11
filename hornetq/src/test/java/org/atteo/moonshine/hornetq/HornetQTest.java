@@ -36,13 +36,11 @@ import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <atomikos/>"
 		+ "    <hornetq-server>"
 		+ "        <queues>"
 		+ "            <queue>testQueue</queue>"
 		+ "        </queues>"
 		+ "    </hornetq-server>"
-		+ "    <hornetq/>"
 		+ "</config>")
 public class HornetQTest extends MoonshineTest {
 	@Inject

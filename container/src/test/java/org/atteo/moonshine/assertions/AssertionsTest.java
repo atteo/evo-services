@@ -26,6 +26,7 @@ public class AssertionsTest {
 	public void shouldStartWithHomeSet() throws MoonshineException, IOException {
 		try (Moonshine moonshine = Moonshine.Factory.builder()
 				.homeDirectory("target/test-home/")
+				.skipImplicitConfiguration()
 				.addConfigurationFromResource("/assertions.xml")
 				.build()) {
 			moonshine.start();

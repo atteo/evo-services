@@ -89,11 +89,14 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 				}
 			}
 
-			if (annotation.skipDefault() || !annotation.fromString().isEmpty()
+			if (annotation.skipImplicit() || annotation.skipDefault() || !annotation.fromString().isEmpty()
 					|| annotation.arguments().length != 0) {
 				MoonshineConfigurator configurator = new MoonshineConfigurator() {
 					@Override
 					public void configureMoonshine(Moonshine.Builder builder) {
+						if (annotation.skipImplicit()) {
+							builder.skipImplicitConfiguration();
+						}
 						if (annotation.skipDefault()) {
 							builder.skipDefaultConfigurationFiles();
 						}

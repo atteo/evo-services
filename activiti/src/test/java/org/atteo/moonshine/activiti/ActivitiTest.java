@@ -43,11 +43,9 @@ import com.google.inject.Inject;
         + "             </handler>"
         + "         </bpmn-parse-handlers>"
         + "    </activiti>"
-        + "    <transactional/>"
         + "    <atomikos>"
         + "        <transactionTimeout>5</transactionTimeout>"
         + "    </atomikos>"
-        + "    <h2/>"
         + "</config>")
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ActivitiTest extends MoonshineTest {

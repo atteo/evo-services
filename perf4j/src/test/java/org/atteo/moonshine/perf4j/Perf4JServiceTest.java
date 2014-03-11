@@ -15,7 +15,6 @@
  */
 package org.atteo.moonshine.perf4j;
 
-import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -28,10 +27,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <perf4j/>"
-		+ "</config>")
 public class Perf4JServiceTest extends MoonshineTest {
 	@Profiled
 	protected void profiledMethod() {

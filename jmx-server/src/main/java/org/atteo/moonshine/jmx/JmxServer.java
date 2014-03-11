@@ -16,7 +16,6 @@
 package org.atteo.moonshine.jmx;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 
@@ -29,23 +28,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ImportService;
 
 /**
- * Publishes JMX MBeanServer through RMI.
+ * Publishes Jmx MBeanServer through RMI.
  *
- * @see <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html">Monitoring and Management Using JMX Technology</a>
+ * @see <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/management/agent.html">Monitoring and Management Using Jmx Technology</a>
  */
-@XmlRootElement(name = "publishJmx")
-public class PublishJmx extends TopLevelService {
+@XmlRootElement(name = "jmx-server")
+public class JmxServer extends TopLevelService {
 	/**
-	 * JMX MBeanServer to publish.
+	 * Jmx MBeanServer to publish.
 	 */
 	@XmlElement
 	@XmlIDREF
 	@ImportService
-	private JMX jmx;
+	private Jmx jmx;
 
 	/**
 	 * {@link RmiRegistry RMI registry} on publish MBeanServer onto.
@@ -61,6 +60,8 @@ public class PublishJmx extends TopLevelService {
 	@Inject
 	private MBeanServer mbeanServer;
 
+	private JMXConnectorServer connectorServer = null;
+
 	@Override
 	public void start() {
 		JMXServiceURL url;
@@ -71,12 +72,20 @@ public class PublishJmx extends TopLevelService {
 		}
 
 		HashMap<String,Object> environment = new HashMap<>();
-		JMXConnectorServer connectorServer;
 		try {
 			connectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, environment, mbeanServer);
 			connectorServer.start();
 		} catch (IOException e) {
 			throw new RuntimeException("Cannot start JMX connector server", e);
+		}
+	}
+
+	@Override
+	public void stop() {
+		try {
+			connectorServer.stop();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }
