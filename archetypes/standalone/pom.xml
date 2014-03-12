@@ -8,7 +8,7 @@
 		<version>0.9</version>
 	</parent>
 	<artifactId>standalone-archetype</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0.RC1</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>Standalone Moonshine application</name>
