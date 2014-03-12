@@ -52,7 +52,7 @@
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
-		<config.version>1.0-SNAPSHOT</config.version>
+		<config.version>1.2</config.version>
 		<filtering.version>1.0</filtering.version>
 	</properties>
 	<distributionManagement>
