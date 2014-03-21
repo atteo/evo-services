@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://moonshine.atteo.org/1.0 config.xsd">
+	<jetty>
+		<connectors>
+			<local/>
+		</connectors>
+		<constraint-security>
+			<basic-authenticator />
+			<hash-login-service>
+				<name>Security Test</name>
+				<config>/users.config</config>
+			</hash-login-service>
+			<realm-name>Security Test</realm-name>
+			<constraint-mappings>
+				<constraint-mapping>
+					<path-spec>/*</path-spec>
+					<constraint>
+						<authenticate>true</authenticate>
+						<roles>
+							<role>admin</role>
+						</roles>
+					</constraint>
+				</constraint-mapping>
+			</constraint-mappings>
+			<hello />
+		</constraint-security>
+	</jetty>
+</config>
