@@ -412,4 +412,21 @@ public class MoonshineTest {
 				.build()) {
 		}
 	}
+
+	@Test
+	public void shouldDetectCyclicDependencies() throws MoonshineException, IOException {
+		try (Moonshine moonshine = when(Moonshine.Factory.builder()
+				.homeDirectory("target/test-home")
+				.addConfigurationFromString(""
+					+ "<config>"
+					+ "    <cyclic-service-a />"
+					+ "    <cyclic-service-b />"
+					+ "</config>"))
+				.build()) {
+		}
+
+		// then
+		assertThat(caughtException()).isInstanceOf(RuntimeException.class)
+				.hasMessage("Service CyclicServiceA depends on itself: CyclicServiceA -> CyclicServiceB -> CyclicServiceA");
+	}
 }

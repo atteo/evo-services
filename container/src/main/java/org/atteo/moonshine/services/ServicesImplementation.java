@@ -199,7 +199,7 @@ class ServicesImplementation implements Services, Services.Builder {
 	private void registerInJMX() throws ConfigurationException {
 		MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 		try {
-			for (ServiceWrapper service: services) {
+			for (ServiceWrapper service : services) {
 				mbeanServer.registerMBean(service, null);
 			}
 		} catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException e) {
@@ -459,16 +459,47 @@ class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
-	private static void addService(ServiceWrapper service, Set<ServiceWrapper> set, List<ServiceWrapper> sorted) {
+	private static void handleCycle(ServiceWrapper service, List<ServiceWrapper> chain) {
+		boolean cycleStarted = false;
+
+		StringBuilder builder = new StringBuilder();
+		for (ServiceWrapper serviceWrapper : chain) {
+			if (serviceWrapper == service) {
+				cycleStarted = true;
+			}
+
+			if (cycleStarted) {
+				builder.append(serviceWrapper.getName());
+				builder.append(" -> ");
+			}
+		}
+
+		builder.append(service.getName());
+		throw new RuntimeException("Service " + service.getName() + " depends on itself: "
+		    + builder.toString());
+	}
+
+	private static void addService(ServiceWrapper service, Set<ServiceWrapper> set, List<ServiceWrapper> chain,
+	    List<ServiceWrapper> sorted) {
+		// check for cycles
+		if (chain.contains(service)) {
+			handleCycle(service, chain);
+		}
+
 		if (!set.contains(service)) {
 			return;
 		}
+
+		chain.add(service);
+
 		for (ServiceWrapper.Dependency dependency : service.getDependencies()) {
-			addService(dependency.getService(), set, sorted);
+			addService(dependency.getService(), set, chain, sorted);
 		}
-		if (!set.remove(service)) {
-			throw new RuntimeException("Service " + service.getName() + " contains cyclic dependency on itself");
-		}
+
+		chain.remove(service);
+
+		set.remove(service);
+
 		sorted.add(service);
 	}
 
@@ -479,7 +510,7 @@ class ServicesImplementation implements Services, Services.Builder {
 
 		while (!set.isEmpty()) {
 			ServiceWrapper service = set.iterator().next();
-			addService(service, set, sorted);
+			addService(service, set, new ArrayList<ServiceWrapper>(), sorted);
 		}
 		return sorted;
 	}
