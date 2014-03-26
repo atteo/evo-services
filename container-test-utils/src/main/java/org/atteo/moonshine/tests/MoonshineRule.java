@@ -61,6 +61,7 @@ import com.google.inject.servlet.GuiceFilter;
 public class MoonshineRule implements TestRule {
 	public final static String[] DEFAULT_CONFIG = { "/test-config.xml" };
 	private final String[] configs;
+	private String[] optionalConfigs = {};
 	private Moonshine moonshine;
 
 	private final Map<Class<?>, Object> mocks = new HashMap<>();
@@ -86,10 +87,10 @@ public class MoonshineRule implements TestRule {
 	 */
 
 	public MoonshineRule(String... configs) {
+		this.configs = configs;
+
 		if (configs.length == 0) {
-			this.configs = DEFAULT_CONFIG;
-		} else {
-			this.configs = configs;
+			this.optionalConfigs = DEFAULT_CONFIG;
 		}
 	}
 
@@ -112,10 +113,10 @@ public class MoonshineRule implements TestRule {
 	 */
 	public MoonshineRule(List<MoonshineConfigurator> configurators, String... configs) {
 		this.configurators = configurators;
+		this.configs = configs;
+
 		if (configs.length == 0 && configurators.isEmpty()) {
-			this.configs = DEFAULT_CONFIG;
-		} else {
-			this.configs = configs;
+			this.optionalConfigs = DEFAULT_CONFIG;
 		}
 	}
 
@@ -178,9 +179,15 @@ public class MoonshineRule implements TestRule {
 			builder.applicationName(testClass.getSimpleName());
 			builder.homeDirectory("target/test-home");
 			builder.addDataDir("src/main");
+
 			for (String config : configs) {
+				builder.addConfigurationFromResource(config);
+			}
+
+			for (String config : optionalConfigs) {
 				builder.addOptionalConfigurationFromResource(config);
 			}
+
 			builder.addModule(testClassModule);
 			builder.addModule(mocksModule);
 

@@ -69,7 +69,7 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 
 			for (String config : annotation.value()) {
 				if (!config.startsWith("/")) {
-					config = "/" + ancestor.getPackage() .getName().replace(".", "/") + "/" + config;
+					config = "/" + ancestor.getPackage().getName().replace(".", "/") + "/" + config;
 				}
 				configs.add(config);
 			}
