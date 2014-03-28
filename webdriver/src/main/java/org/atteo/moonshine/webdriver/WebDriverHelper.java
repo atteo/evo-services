@@ -18,7 +18,10 @@ package org.atteo.moonshine.webdriver;
 import javax.inject.Inject;
 
 import org.atteo.moonshine.webserver.WebServerAddress;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -46,18 +49,18 @@ public class WebDriverHelper {
 		driver.get(address);
 	}
 
-	public <T> void waitUntil(Function<WebDriver, T> function) {
-		waitUntil(function, null);
+	public <T> T waitUntil(Function<WebDriver, T> function) {
+		return waitUntil(function, null);
 	}
 
-	public <T> void waitUntil(Function<WebDriver, T> function, String message) {
+	public <T> T waitUntil(Function<WebDriver, T> function, String message) {
 		WebDriverWait wait = new WebDriverWait(driver, options.getTimeoutInSeconds(), options.getSleepInMillis());
 
 		if (message != null) {
 			wait.withMessage(message);
 		}
 
-		wait.until(function);
+		return wait.until(function);
 	}
 
 	public void waitUntilPath(final String path) {
@@ -67,5 +70,33 @@ public class WebDriverHelper {
 				return driver.getCurrentUrl().matches(".*" + path);
 			}
 		}, "Path did not change to '" + path + "'");
+	}
+
+	/**
+	 * Tries to click an element. If necessary waits until the element becomes clickable.
+	 *
+	 * Use it for elements which temporarily might not be clickable for some reason (either disabled, hidden or
+	 * having other elements on top of them).
+	 *
+	 * @param elementLocator
+	 */
+	public void waitUntilClickable(final By elementLocator) {
+		waitUntil(new Function<WebDriver, Boolean>() {
+
+			@Override
+			public Boolean apply(WebDriver input) {
+				WebElement element = input.findElement(elementLocator);
+
+				if (element != null && element.isDisplayed() && element.isEnabled()) {
+					try {
+						element.click();
+						return true;
+					} catch(WebDriverException e) {
+					}
+				}
+
+				return false;
+			}
+		}, "Element is not clickable");
 	}
 }
