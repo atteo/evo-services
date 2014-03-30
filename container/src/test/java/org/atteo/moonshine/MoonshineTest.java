@@ -31,7 +31,8 @@ import com.google.inject.CreationException;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static com.googlecode.catchexception.apis.CatchExceptionBdd.when;
+import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
+import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.when;
 
 public class MoonshineTest {
 	@Test
@@ -70,7 +71,7 @@ public class MoonshineTest {
 				.build()) {
 
 			// then
-			assertThat(caughtException()).isInstanceOf(MoonshineException.class)
+			then(caughtException()).isInstanceOf(MoonshineException.class)
 					.hasMessage("Service '\"test\" SingletonService' is marked as singleton, but has an id specified");
 		}
 	}
@@ -88,8 +89,7 @@ public class MoonshineTest {
 				+ "</config>"))
 				.build()) {
 
-			// then
-			assertThat(caughtException()).isInstanceOf(MoonshineException.class)
+			then(caughtException()).isInstanceOf(MoonshineException.class)
 					.hasMessageContaining("Service 'SingletonService' is marked as singleton,"
 					+ " but is declared more than once in configuration file");
 		}
@@ -216,12 +216,12 @@ public class MoonshineTest {
 				+ "</config>")
 				.addPropertyResolver(new PropertyResolver() {
 					@Override
-					public String resolveProperty(String property, PropertyFilter pr)
+					public String resolveProperty(String property, PropertyFilter filter)
 							throws PropertyNotFoundException {
 						if ("property".equals(property)) {
 							return "value";
 						}
-						return null;
+						throw new PropertyNotFoundException(property);
 					}
 				})
 				.build()) {
@@ -348,8 +348,7 @@ public class MoonshineTest {
 				.build()) {
 		}
 
-		// then
-		assertThat(caughtException()).isInstanceOf(IllegalStateException.class)
+		then(caughtException()).isInstanceOf(IllegalStateException.class)
 				.hasMessageContaining("Only services marked with @Singleton can bind with annotation");
 	}
 
@@ -366,8 +365,7 @@ public class MoonshineTest {
 				.build()) {
 		}
 
-		// then
-		assertThat(caughtException()).isInstanceOf(IllegalStateException.class)
+		then(caughtException()).isInstanceOf(IllegalStateException.class)
 				.hasMessageContaining("Only services marked with @Singleton can expose bindings with annotation");
 	}
 
@@ -383,8 +381,7 @@ public class MoonshineTest {
 				.build()) {
 		}
 
-		// then
-		assertThat(caughtException()).isInstanceOf(CreationException.class)
+		then(caughtException()).isInstanceOf(CreationException.class)
 				.hasMessageContaining("Explicit bindings are required and java.lang.String is not explicitly bound.");
 
 		assertThat(MissingDependencyService.configureCount).isEqualTo(1);
@@ -426,7 +423,7 @@ public class MoonshineTest {
 		}
 
 		// then
-		assertThat(caughtException()).isInstanceOf(RuntimeException.class)
+		then(caughtException()).isInstanceOf(RuntimeException.class)
 				.hasMessage("Service CyclicServiceA depends on itself: CyclicServiceA -> CyclicServiceB -> CyclicServiceA");
 	}
 }
