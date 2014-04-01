@@ -14,6 +14,8 @@
 package org.atteo.moonshine.liquibase;
 
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -69,6 +71,16 @@ public class LiquibaseFacade {
 	 * @param contexts contexts, see {@link Liquibase#update(String)}.
 	 */
 	public void migrate(String changelog, String contexts) {
+		migrate(changelog, contexts, null);
+	}
+
+	/**
+	 * Migrate using given migration.
+	 * @param changelog resource with the migration
+	 * @param contexts contexts, see {@link Liquibase#update(String)}.
+	 * @param changelogParameters changelog parameters, can be null
+	 */
+	public void migrate(String changelog, String contexts, Map<String, Object> changelogParameters) {
 		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
 
 		DatabaseConnection databaseConnection = null;
@@ -78,6 +90,13 @@ public class LiquibaseFacade {
 			databaseConnection = new JdbcConnection(dataSource.getConnection());
 			Liquibase liquibase = new Liquibase(changelog, resourceAccessor, databaseConnection);
 			liquibase.tag(BEFORE_LAST_UPDATE);
+
+			if (changelogParameters != null) {
+				for (Entry<String, Object> entry : changelogParameters.entrySet()) {
+					liquibase.setChangeLogParameter(entry.getKey(), entry.getValue());
+				}
+			}
+
 			liquibase.update(contexts);
 		} catch (LiquibaseException | SQLException e) {
 			throw new RuntimeException(e);
@@ -96,7 +115,7 @@ public class LiquibaseFacade {
 	 * @param changelog resource with the migration
 	 */
 	public void rollbackLastUpdate(String changelog) {
-		rollback(changelog, null, BEFORE_LAST_UPDATE);
+		rollbackLastUpdate(changelog, null);
 	}
 
 	/**
@@ -105,16 +124,27 @@ public class LiquibaseFacade {
 	 * @param contexts contexts, see {@link Liquibase#update(String)}.
 	 */
 	public void rollbackLastUpdate(String changelog, String contexts) {
-		rollback(changelog, contexts, BEFORE_LAST_UPDATE) ;
+		rollbackLastUpdate(changelog, contexts, null) ;
 	}
 
 	/**
 	 * Rollbacks given changelog to given tag.
 	 * @param changelog resource with the migration
 	 * @param contexts contexts, see {@link Liquibase#update(String)}.
+	 * @param changelogParameters changelogParameters
+	 */
+	public void rollbackLastUpdate(String changelog, String contexts, Map<String, Object> changelogParameters) {
+		rollback(changelog, contexts, changelogParameters, BEFORE_LAST_UPDATE);
+	}
+
+	/**
+	 * Rollbacks given changelog to given tag.
+	 * @param changelog resource with the migration
+	 * @param contexts contexts, see {@link Liquibase#update(String)}.
+	 * @param changelogParameters changelogParameters
 	 * @param tag tag to rollback to
 	 */
-	private void rollback(String changelog, String contexts, String tag) {
+	private void rollback(String changelog, String contexts, Map<String, Object> changelogParameters, String tag) {
 		changelog = normalizeName(changelog);
 
 		ResourceAccessor resourceAccessor = new ClassLoaderResourceAccessor();
@@ -124,6 +154,13 @@ public class LiquibaseFacade {
 		try {
 			databaseConnection = new JdbcConnection(dataSource.getConnection());
 			Liquibase liquibase = new Liquibase(changelog, resourceAccessor, databaseConnection);
+
+			if (changelogParameters != null) {
+				for (Entry<String, Object> entry : changelogParameters.entrySet()) {
+					liquibase.setChangeLogParameter(entry.getKey(), entry.getValue());
+				}
+			}
+
 			liquibase.rollback(tag, contexts);
 		} catch (LiquibaseException | SQLException e) {
 			throw new RuntimeException(e);

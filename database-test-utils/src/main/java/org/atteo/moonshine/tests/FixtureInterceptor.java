@@ -29,14 +29,18 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 
 public class FixtureInterceptor implements MethodInterceptor {
+
 	@Inject
 	private Injector injector;
 
 	@Override
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
 		final Fixture annotation = invocation.getMethod().getAnnotation(Fixture.class);
-		String fixtureName = annotation.value();
+		String[] fixtureNames = annotation.value();
 		String databaseName = annotation.database();
+		Class<? extends ChangelogParametersProvider> providerClass = annotation.parametersProvider();
+
+		ChangelogParametersProvider provider = providerClass.newInstance();
 
 		DataSource dataSource;
 		try {
@@ -49,19 +53,27 @@ public class FixtureInterceptor implements MethodInterceptor {
 			throw new RuntimeException("Cannot find database for annotation " + annotation, e);
 		}
 
-		if (!fixtureName.startsWith("/")) {
-			fixtureName = "/" + invocation.getMethod().getDeclaringClass().getPackage().getName()
-					.replace('.', '/')
-					+ "/" + fixtureName;
+		for (int i = 0; i < fixtureNames.length; i++) {
+			if (!fixtureNames[i].startsWith("/")) {
+				fixtureNames[i] = "/" + invocation.getMethod().getDeclaringClass().getPackage().getName()
+				    .replace('.', '/')
+				    + "/" + fixtureNames[i];
+			}
 		}
 
 		LiquibaseFacade liquibase = new LiquibaseFacade(dataSource);
-		liquibase.migrate(fixtureName);
+
+		for (String fixtureName : fixtureNames) {
+			liquibase.migrate(fixtureName, null, provider.getChangelogParameters());
+		}
+
 		Object o = null;
 		try {
 			o = invocation.proceed();
 		} finally {
-			liquibase.rollbackLastUpdate(fixtureName);
+			for (int i = fixtureNames.length - 1; i >= 0; i--) {
+				liquibase.rollbackLastUpdate(fixtureNames[i], null, provider.getChangelogParameters());
+			}
 		}
 		return o;
 	}

@@ -15,18 +15,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-    <changeSet id="2" author="sentinel" runInTransaction="false">
-        <insert tableName="users">
-            <column name="name">john</column>
-        </insert>
-        <rollback>
-            <delete tableName="users"></delete>
-        </rollback>
-    </changeSet>
+
+	<preConditions>
+		<changeLogPropertyDefined property="username" />
+	</preConditions>
+
+	<changeSet id="2" author="sentinel" runInTransaction="false">
+		<insert tableName="users">
+			<column name="name">${username}</column>
+		</insert>
+		<rollback>
+			<delete tableName="users"></delete>
+		</rollback>
+	</changeSet>
 </databaseChangeLog>

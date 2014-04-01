@@ -33,7 +33,7 @@ public class FixtureInterceptorTest extends MoonshineTest {
 	@Inject
 	private DataSource dataSource;
 
-	@Fixture("/fixture.xml")
+	@Fixture(value = "/fixture.xml", parametersProvider = UsernameProvider.class)
 	protected void annotatedWithOneFixture() throws SQLException {
 		assertTrue(userExists(dataSource));
 	}

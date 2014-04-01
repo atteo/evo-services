@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 
 import javax.sql.DataSource;
 
+
 /**
  * Executes given Liquibase migration on the given database.
  */
@@ -29,9 +30,9 @@ import javax.sql.DataSource;
 @Target(ElementType.METHOD)
 public @interface Fixture {
 	/**
-	 * Name of the resource with migration.
+	 * Names of the resources containing migrations.
 	 */
-	String value();
+	String[] value();
 
 	/**
 	 * Database ID.
@@ -40,4 +41,11 @@ public @interface Fixture {
 	 * </p>
 	 */
 	String database() default "";
+
+	/**
+	 * Changelog parameters provider
+	 */
+	Class<? extends ChangelogParametersProvider> parametersProvider() default EmptyChangelogParametersProvider.class;
+
+
 }
