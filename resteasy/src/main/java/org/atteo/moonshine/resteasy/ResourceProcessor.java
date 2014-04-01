@@ -1,4 +1,4 @@
-/*
+ /*
  * Contributed by Asaf Shakarchi <asaf000@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -11,15 +11,16 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atteo.moonshine.resteasy.processor;
+package org.atteo.moonshine.resteasy;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
 import org.atteo.classindex.processor.ClassIndexProcessor;
 
-public class ResourceClassIndexProcessor extends ClassIndexProcessor {
-	public ResourceClassIndexProcessor() {
+public class ResourceProcessor extends ClassIndexProcessor {
+	public ResourceProcessor() {
 		super(Path.class, Provider.class);
 	}
+
 }

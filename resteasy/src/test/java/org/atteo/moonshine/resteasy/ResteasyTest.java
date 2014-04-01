@@ -27,39 +27,35 @@ import org.eclipse.jetty.server.LocalConnector;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
+
 @MoonshineConfiguration(skipImplicit = true, fromString = ""
-		+ "<config>"
-		+ "    <servlet-container>"
-        + "        <registerGuiceFilter>true</registerGuiceFilter>"
-        + "    </servlet-container>"
-		+ "    <jetty>"
-		+ "        <connectors>"
-		+ "            <local/>"
-		+ "        </connectors>"
-		+ "    </jetty>"
-		+ "    <resteasy>"
-		+ "        <prefix>/rest</prefix>"
-		+ "    </resteasy>"
-		+ "</config>")
+    + "<config>"
+    + "    <servlet-container />"
+    + "    <jetty>"
+    + "        <connectors>"
+    + "            <local/>"
+    + "        </connectors>"
+    + "    </jetty>"
+    + "    <resteasy>"
+    + "        <prefix>/rest</prefix>"
+    + "        <discoverResources>true</discoverResources>"
+    + "    </resteasy>"
+    + "</config>")
 public class ResteasyTest extends MoonshineTest {
 	@Inject
 	private LocalConnector localConnector;
 
-	private void request(String url) throws Exception {
+	@Test
+	public void shouldRespond() throws Exception {
 		HttpTester.Request request = HttpTester.newRequest();
 		request.setHeader("Host", "tester");
 		request.setMethod("GET");
-		request.setURI(url);
+		request.setURI("/rest/resource");
 
 		ByteBuffer responses = localConnector.getResponses(request.generate());
 
 		Response response = HttpTester.parseResponse(responses);
 
 		assertEquals("Hello World", response.getContent());
-	}
-
-	@Test
-	public void test() throws Exception {
-		request("/rest/resource");
 	}
 }
