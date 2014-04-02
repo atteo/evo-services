@@ -67,7 +67,7 @@ public class WebDriverHelper {
 		waitUntil(new Function<WebDriver, Boolean>() {
 			@Override
 			public Boolean apply(WebDriver driver) {
-				return driver.getCurrentUrl().matches(".*" + path);
+				return driver.getCurrentUrl().matches(".*" + path + "/?");
 			}
 		}, "Path did not change to '" + path + "'");
 	}
