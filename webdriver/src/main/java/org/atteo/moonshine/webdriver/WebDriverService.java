@@ -25,6 +25,7 @@ import org.atteo.classindex.ClassIndex;
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.webdriver.browsers.Browser;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.google.inject.AbstractModule;
@@ -51,6 +52,12 @@ public class WebDriverService extends TopLevelService {
 	@XmlElement
 	private long timeoutInSeconds = 2;
 
+	@XmlElement
+	private int windowWidth = 1024;
+
+	@XmlElement
+	private int windowHeight = 768;
+
 	private Browser browser;
 	private RemoteWebDriver driver;
 
@@ -61,6 +68,7 @@ public class WebDriverService extends TopLevelService {
 			protected void configure() {
 				browser = getSelectedBrowser();
 				driver = browser.createDriver();
+				driver.manage().window().setSize(new Dimension(windowWidth, windowHeight));
 				driver.manage().timeouts().implicitlyWait(timeoutInSeconds, TimeUnit.SECONDS);
 				bind(RemoteWebDriver.class).toInstance(driver);
 			}
