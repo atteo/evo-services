@@ -18,14 +18,19 @@ package org.atteo.moonshine.activiti;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.delegate.JavaDelegate;
+import org.activiti.engine.delegate.TaskListener;
 import org.activiti.engine.impl.cfg.JtaProcessEngineConfiguration;
 import org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl;
+import org.activiti.engine.impl.delegate.DelegateInvocation;
+import org.activiti.engine.impl.interceptor.DelegateInterceptor;
 import org.activiti.engine.parse.BpmnParseHandler;
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
@@ -91,6 +96,9 @@ public class Activiti extends TopLevelService {
         @Inject
         private DataSource dataSource;
 
+        @Inject
+        Injector injector;
+
         @Override
         public ProcessEngine get() {
             ProcessEngineConfiguration processEngineConfiguration =
@@ -104,6 +112,17 @@ public class Activiti extends TopLevelService {
                     ProcessEngineConfigurationImpl pec = (ProcessEngineConfigurationImpl) processEngineConfiguration;
                     if (pec.getPostBpmnParseHandlers() == null) {
                         pec.setPostBpmnParseHandlers(createAndGetHandlers());
+                        pec.setDelegateInterceptor(new DelegateInterceptor() {
+                            @Override
+                            public void handleInvocation(DelegateInvocation invocation) throws Exception {
+                                Object target = invocation.getTarget();
+                                if ((target instanceof JavaDelegate || target instanceof TaskListener ) ) {
+                                    injector.injectMembers(target);
+                                }
+
+                                invocation.proceed();
+                            }
+                        });
                     }
                 } else {
                     log.info("BPMN parse handlers are ignored since handlers are only supported with " +
@@ -116,22 +135,25 @@ public class Activiti extends TopLevelService {
 
             return pe;
         }
-    }
 
-    private List<BpmnParseHandler> createAndGetHandlers() {
-        List<BpmnParseHandler> handlers = Lists.newArrayList();
-        if (bpmnParseHandlers != null) {
-            for (BpmnParseHandlerConf hc : bpmnParseHandlers) {
-                try {
-                    handlers.add(hc.getInstance());
-                } catch (Exception e) {
-                    log.warn("Could not create handler {}: {}", hc.className, e);
+        private List<BpmnParseHandler> createAndGetHandlers() {
+            List<BpmnParseHandler> handlers = Lists.newArrayList();
+            if (bpmnParseHandlers != null) {
+                for (BpmnParseHandlerConf hc : bpmnParseHandlers) {
+                    try {
+                        BpmnParseHandler parseHandler = hc.getInstance();
+                        injector.injectMembers(parseHandler);
+                        handlers.add(parseHandler);
+                    } catch (Exception e) {
+                        log.warn("Could not create handler {}: {}", hc.className, e);
+                    }
                 }
             }
-        }
 
-        return handlers;
+            return handlers;
+        }
     }
+
 
 
     @Override
