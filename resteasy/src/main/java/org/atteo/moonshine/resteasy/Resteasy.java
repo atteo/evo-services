@@ -38,6 +38,8 @@ import com.google.inject.Module;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Starts RESTEasy JAXRS implementation.
@@ -45,6 +47,7 @@ import com.google.inject.Singleton;
 @XmlRootElement(name = "resteasy")
 @Singleton
 public class Resteasy extends TopLevelService {
+    Logger log = LoggerFactory.getLogger(Resteasy.class);
 
 	@XmlElement
 	@XmlIDREF
@@ -70,7 +73,10 @@ public class Resteasy extends TopLevelService {
 	@XmlElement
 	private boolean discoverResources = false;
 
-	private final List<ResourceFactory> resourceFactories = new ArrayList<>();
+    @Inject
+    private FilterDispatcher filterDispatcher;
+
+    private final List<ResourceFactory> resourceFactories = new ArrayList<>();
 
 	private final List<com.google.inject.Provider<?>> restProviders = new ArrayList<>();
 
@@ -92,9 +98,9 @@ public class Resteasy extends TopLevelService {
 							final ResourceFactory resourceFactory = new GuiceResourceFactory(getProvider(klass), klass);
 							resourceFactories.add(resourceFactory);
 						} else {
-							throw new RuntimeException("Interface " + klass.getCanonicalName() +
-							    " was marked with @Path, skipping bindings as interfaces"
-							    + " are currently not supported.");
+							log.info("Interface " + klass.getCanonicalName() +
+                                    " was marked with @Path, skipping bindings as interfaces"
+                                    + " are currently not supported.");
 						}
 					}
 
@@ -107,9 +113,6 @@ public class Resteasy extends TopLevelService {
 			}
 		};
 	}
-
-	@Inject
-	private FilterDispatcher filterDispatcher;
 
 	public <T> void addResource(Provider<T> provider, Class<T> klass) {
 		final ResourceFactory resourceFactory = new GuiceResourceFactory(provider, klass);

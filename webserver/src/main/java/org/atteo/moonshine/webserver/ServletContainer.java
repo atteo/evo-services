@@ -180,6 +180,10 @@ public class ServletContainer extends TopLevelService {
 	private class Initializer implements ServletContainerInitializer {
 		@Override
 		public void onStartup(Set<Class<?>> c, ServletContext context) throws ServletException {
+            if (registerGuiceFilter) {
+                FilterRegistration.Dynamic registration = context.addFilter("guice-filter", GuiceFilter.class);
+                registration.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/*");
+            }
 			int counter = 0;
 			for (ServletOrFilterDefinition<? extends Filter> filter : filters) {
 				String name = "filter" + counter;
@@ -200,11 +204,6 @@ public class ServletContainer extends TopLevelService {
 
 			for (Provider<? extends EventListener> listener : listeners) {
 				context.addListener(listener.get());
-			}
-
-			if (registerGuiceFilter) {
-				FilterRegistration.Dynamic registration = context.addFilter("guice-filter", GuiceFilter.class);
-				registration.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 			}
 		}
 	}

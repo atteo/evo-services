@@ -19,7 +19,11 @@ import java.nio.ByteBuffer;
 
 import javax.inject.Inject;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.servlet.RequestScoped;
+import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.tests.MoonshineConfigurator;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpTester.Response;
@@ -30,7 +34,9 @@ import org.junit.Test;
 
 @MoonshineConfiguration(skipImplicit = true, fromString = ""
     + "<config>"
-    + "    <servlet-container />"
+    + "    <servlet-container>"
+    + "        <registerGuiceFilter>true</registerGuiceFilter>"
+    + "    </servlet-container>"
     + "    <jetty>"
     + "        <connectors>"
     + "            <local/>"
@@ -40,7 +46,7 @@ import org.junit.Test;
     + "        <prefix>/rest</prefix>"
     + "        <discoverResources>true</discoverResources>"
     + "    </resteasy>"
-    + "</config>")
+    + "</config>", configurator = ResteasyTest.Configurator.class)
 public class ResteasyTest extends MoonshineTest {
 	@Inject
 	private LocalConnector localConnector;
@@ -58,4 +64,16 @@ public class ResteasyTest extends MoonshineTest {
 
 		assertEquals("Hello World", response.getContent());
 	}
+
+    public static class Configurator implements MoonshineConfigurator {
+        @Override
+        public void configureMoonshine(Moonshine.Builder builder) {
+            builder.addModule(new AbstractModule() {
+                @Override
+                protected void configure() {
+                    bind(RequestScopeComponent.class).in(RequestScoped.class);
+                }
+            });
+        }
+    }
 }
