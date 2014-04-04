@@ -15,13 +15,20 @@
  */
 package org.atteo.moonshine.resteasy;
 
+import com.google.inject.Inject;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import static org.junit.Assert.assertNotNull;
 
 @Path("/resource")
 public class HelloWorldResource {
+    @Inject
+    RequestScopeComponent requestScopeComponent;
+
 	@GET
 	public String get() {
-		return "Hello World";
+        assertNotNull(requestScopeComponent);
+        return "Hello World";
 	}
 }
