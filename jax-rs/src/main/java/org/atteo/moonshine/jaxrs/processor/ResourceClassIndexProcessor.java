@@ -1,5 +1,5 @@
- /*
- * Contributed by Asaf Shakarchi <asaf000@gmail.com>
+/*
+ * Copyright 2011 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -11,15 +11,16 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atteo.moonshine.resteasy.processor;
+package org.atteo.moonshine.jaxrs.processor;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
 import org.atteo.classindex.processor.ClassIndexProcessor;
 
-public class ResourceProcessor extends ClassIndexProcessor {
-	public ResourceProcessor() {
+public class ResourceClassIndexProcessor extends ClassIndexProcessor {
+
+	public ResourceClassIndexProcessor() {
 		super(Path.class, Provider.class);
 	}
 

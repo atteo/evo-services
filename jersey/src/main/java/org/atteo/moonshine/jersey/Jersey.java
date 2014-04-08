@@ -24,10 +24,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.ServiceConfiguration;
-import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.jaxrs.Jaxrs;
 import org.atteo.moonshine.services.ImportService;
 
-import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
 import com.sun.jersey.core.util.FeaturesAndProperties;
@@ -40,8 +39,9 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
  */
 @XmlRootElement(name = "jersey")
 @ServiceConfiguration(autoConfiguration = ""
-		+ "<prefix>${oneof:${jetty.prefix},}</prefix>")
-public class Jersey extends TopLevelService {
+		+ "<prefix>${oneof:${jetty.prefix},}</prefix>"
+		+ "<discoverResources>true</discoverResources>")
+public class Jersey extends Jaxrs {
 	@XmlElement
 	@XmlIDREF
 	@ImportService
@@ -52,14 +52,6 @@ public class Jersey extends TopLevelService {
 	 */
 	@XmlElement
 	private String prefix = "";
-
-	/**
-	 * Automatically register in Jersey any class marked with
-	 * &#064;{@link Path} or &#064;{@link Provider} annotations.
-	 * To manually register them simply {@link Binder#bind(Class) bind} them in Guice.
-	 */
-	@XmlElement
-	private boolean discoverResources = true;
 
 	/**
 	 * If true, returned XML documents will be formatted for human readability.

@@ -25,28 +25,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.classindex.ClassIndex;
 import org.atteo.config.XmlDefaultValue;
-import org.atteo.evo.classindex.ClassIndex;
-import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.jaxrs.Jaxrs;
 import org.atteo.moonshine.services.ImportService;
 import org.jboss.resteasy.plugins.guice.GuiceResourceFactory;
 import org.jboss.resteasy.plugins.server.servlet.FilterDispatcher;
 import org.jboss.resteasy.spi.ResourceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Starts RESTEasy JAXRS implementation.
  */
 @XmlRootElement(name = "resteasy")
 @Singleton
-public class Resteasy extends TopLevelService {
+public class Resteasy extends Jaxrs {
     Logger log = LoggerFactory.getLogger(Resteasy.class);
 
 	@XmlElement
@@ -60,18 +60,6 @@ public class Resteasy extends TopLevelService {
 	@XmlElement
 	@XmlDefaultValue("/")
 	private String prefix;
-
-	/**
-	 * Automatically register in RESTEasy any class marked with &#064;
-	 * {@link Path} or &#064;{@link Provider} annotations.
-	 *
-	 * Instances of auto-registered resources are created inside the RESTEasy service so they
-	 * can't depend on any bindings from outside of it.
-	 *
-	 * Either all resources have to be discovered or all have to be added manually.
-	 */
-	@XmlElement
-	private boolean discoverResources = false;
 
     @Inject
     private FilterDispatcher filterDispatcher;

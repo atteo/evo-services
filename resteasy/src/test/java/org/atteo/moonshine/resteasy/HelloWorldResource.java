@@ -15,10 +15,10 @@
  */
 package org.atteo.moonshine.resteasy;
 
-import com.google.inject.Inject;
-
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+
 import static org.junit.Assert.assertNotNull;
 
 @Path("/resource")
