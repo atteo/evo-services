@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo</groupId>
-		<version>1.8</version>
+		<version>1-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 	<groupId>org.atteo.moonshine</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Moonshine</name>
 	<description>Moonshine provides infrastructure commonly found in application containers.
@@ -82,7 +82,6 @@
 	</scm>
 	<properties>
 		<blueprints.version>2.4.0</blueprints.version>
-		<config.version>1.2</config.version>
 		<jetty.version>9.1.1.v20140108</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
 		<skipMoreTests>true</skipMoreTests>
@@ -93,12 +92,12 @@
 			<dependency>
 				<groupId>org.atteo.classindex</groupId>
 				<artifactId>classindex</artifactId>
-				<version>3.1</version>
+				<version>3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.config</groupId>
 				<artifactId>config</artifactId>
-				<version>${config.version}</version>
+				<version>1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
