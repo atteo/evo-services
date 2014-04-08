@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
+@MoonshineConfiguration(autoConfiguration = true, fromString = ""
 		+ "<config>"
 		+ "    <hornetq-server>"
 		+ "        <queues>"

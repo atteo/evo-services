@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
-@MoonshineConfiguration(fromString = ""
+@MoonshineConfiguration(autoConfiguration = true, fromString = ""
 		+ "<config>"
 		+ "    <hibernate>"
 		+ "        <initSchema>create</initSchema>"

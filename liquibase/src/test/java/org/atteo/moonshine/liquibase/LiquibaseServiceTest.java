@@ -21,11 +21,13 @@ import java.sql.SQLException;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
+@MoonshineConfiguration(autoConfiguration = true)
 public class LiquibaseServiceTest extends MoonshineTest {
 	@Inject
 	private DataSource dataSource;

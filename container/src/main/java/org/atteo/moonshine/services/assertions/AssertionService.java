@@ -18,6 +18,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.injection.InjectMembers;
 
@@ -36,6 +37,7 @@ import org.atteo.moonshine.injection.InjectMembers;
  * </p>
  */
 @XmlRootElement(name = "assertions")
+@ServiceConfiguration(auto = false)
 public class AssertionService extends TopLevelService {
 	/**
 	 * List of assertions.

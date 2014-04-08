@@ -30,7 +30,6 @@ import java.nio.file.StandardOpenOption;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.classindex.ClassFilter;
@@ -39,6 +38,7 @@ import org.atteo.config.Configuration;
 import org.atteo.config.IncorrectConfigurationException;
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.config.XmlUtils;
+import org.atteo.config.xmlmerge.CombineSelf;
 import org.atteo.filtering.CompoundPropertyResolver;
 import org.atteo.filtering.EnvironmentPropertyResolver;
 import org.atteo.filtering.OneOfPropertyResolver;
@@ -56,6 +56,7 @@ import com.google.common.base.Charsets;
 public class ConfigurationReader {
 	public final static String SCHEMA_FILE_NAME = "schema.xsd";
 	public final static String CONFIG_FILE_NAME = "config.xml";
+	public final static String AUTO_CONFIG_FILE_NAME = "auto-config.xml";
 	public final static String DEFAULT_CONFIG_RESOURCE_NAME = "/default-config.xml";
 
 	private final Configuration configuration = new Configuration();
@@ -95,7 +96,10 @@ public class ConfigurationReader {
 		return propertyResolver;
 	}
 
-	public void combineImplicitConfiguration() throws IncorrectConfigurationException {
+	/**
+	 * Generate auto-config.xml.
+	 */
+	public void generateAutoConfiguration() throws IncorrectConfigurationException, IOException {
 		Iterable<Class<? extends Service>> services = ClassFilter.only()
 				.topLevel()
 				.withoutModifiers(Modifier.ABSTRACT)
@@ -114,26 +118,58 @@ public class ConfigurationReader {
 				.satisfying(new ClassFilter.Predicate() {
 					@Override
 					public boolean matches(Class<?> type) {
-						return !type.isAnnotationPresent(ExplicitService.class);
+						ServiceConfiguration annotation = type.getAnnotation(ServiceConfiguration.class);
+						return annotation == null || annotation.auto();
 					}
 				})
 				.from(ClassIndex.getSubclasses(Service.class));
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("<config>\n");
+		builder.append("<config xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+				+ " xsi:noNamespaceSchemaLocation=\"" + SCHEMA_FILE_NAME + "\">\n");
 		for (Class<? extends Service> service : services) {
+			ServiceConfiguration annotation = service.getAnnotation(ServiceConfiguration.class);
 			String name = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_CAMEL, service.getSimpleName());
 			XmlRootElement xmlRootElement = service.getAnnotation(XmlRootElement.class);
 			if (xmlRootElement != null && !"##default".equals(xmlRootElement.name())) {
 				name = xmlRootElement.name();
 			}
-			builder.append("\t<");
-			builder.append(name);
-			builder.append("/>\n");
+			builder.append("\t<").append(name);
+			builder.append(" combine.self='").append(CombineSelf.OVERRIDABLE_BY_TAG.name().toLowerCase());
+			if (annotation == null || annotation.autoConfiguration().isEmpty()) {
+				builder.append("'/>\n");
+			} else {
+				builder.append("'>\n");
+				builder.append(annotation.autoConfiguration());
+				builder.append("\n</").append(name).append(">\n");
+			}
 		}
 		builder.append("</config>\n");
 
-		combineConfigurationFromString(builder.toString());
+		Path autoConfigPath = fileAccessor.getWritableConfigFile(AUTO_CONFIG_FILE_NAME);
+		try (Writer writer = Files.newBufferedWriter(autoConfigPath, Charsets.UTF_8)) {
+			writer.write(builder.toString());
+		}
+	}
+
+	/**
+	 * Removes auto-config.xml file.
+	 */
+	public void removeAutoConfiguration() throws IOException {
+		Path autoConfigPath = fileAccessor.getWritableConfigFile(AUTO_CONFIG_FILE_NAME);
+		Files.deleteIfExists(autoConfigPath);
+	}
+
+	/**
+	 * Reads automatic configuration from auto-config.xml file.
+	 * @throws IncorrectConfigurationException when configuration is incorrect
+	 * @throws IOException when cannot read resource
+	 */
+	public void combineAutoConfiguration() throws IncorrectConfigurationException, IOException {
+		Path path = fileAccessor.getConfigFile(AUTO_CONFIG_FILE_NAME);
+		try (InputStream stream = Files.newInputStream(path, StandardOpenOption.READ)) {
+			combineConfigurationFromStream(stream);
+		}
 	}
 
 	/**
@@ -226,11 +262,11 @@ public class ConfigurationReader {
 	}
 
 	public void generateTemplateConfigurationFile() throws FileNotFoundException, IOException {
-		Path schemaPath = fileAccessor.getWritebleConfigFile(SCHEMA_FILE_NAME);
+		Path schemaPath = fileAccessor.getWritableConfigFile(SCHEMA_FILE_NAME);
 		Files.createDirectories(schemaPath.getParent());
 		configuration.generateSchema(schemaPath.toFile());
 
-		Path configPath = fileAccessor.getWritebleConfigFile(CONFIG_FILE_NAME);
+		Path configPath = fileAccessor.getWritableConfigFile(CONFIG_FILE_NAME);
 		if (Files.exists(configPath)) {
 			return;
 		}
@@ -248,15 +284,11 @@ public class ConfigurationReader {
 					continue;
 				}
 				XmlElement annotation = field.getAnnotation(XmlElement.class);
-				XmlElementRef annotation2 = field.getAnnotation(XmlElementRef.class);
-				XmlAttribute annotation3 = field.getAnnotation(XmlAttribute.class);
+				XmlAttribute annotation2 = field.getAnnotation(XmlAttribute.class);
 				if (annotation != null && annotation.required()) {
 					return true;
 				}
 				if (annotation2 != null && annotation2.required()) {
-					return true;
-				}
-				if (annotation3 != null && annotation3.required()) {
 					return true;
 				}
 			}

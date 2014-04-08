@@ -31,8 +31,7 @@ import org.eclipse.jetty.server.LocalConnector;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
-
-@MoonshineConfiguration(skipImplicit = true, fromString = ""
+@MoonshineConfiguration(fromString = ""
     + "<config>"
     + "    <servlet-container>"
     + "        <registerGuiceFilter>true</registerGuiceFilter>"

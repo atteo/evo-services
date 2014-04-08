@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.moonshine.services.ImportService;
 
 @XmlRootElement(name = "cyclic-service-b")
-@ExplicitService
+@ServiceConfiguration(auto = false)
 public class CyclicServiceB extends TopLevelService {
 	@ImportService
 	private CyclicServiceA service;

@@ -156,7 +156,7 @@ public class DefaultFileAccessor implements FileAccessorFactory {
 			}
 
 			@Override
-			public Path getWritebleConfigFile(String fileName) {
+			public Path getWritableConfigFile(String fileName) {
 				return configHome.resolve(fileName);
 			}
 

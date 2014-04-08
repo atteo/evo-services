@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.assertions;
 
-import java.io.IOException;
+package org.atteo.moonshine.jetty;
 
-import org.atteo.moonshine.Moonshine;
-import org.atteo.moonshine.MoonshineException;
-import org.junit.Test;
+import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.webserver.WebAnnotationsTest;
 
-public class AssertionsTest {
-	@Test
-	public void shouldStartWithHomeSet() throws MoonshineException, IOException {
-		try (Moonshine moonshine = Moonshine.Factory.builder()
-				.homeDirectory("target/test-home/")
-				.addConfigurationFromResource("/assertions.xml")
-				.build()) {
-			moonshine.start();
-		}
-	}
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <jetty>"
+		+ "	       <connectors>"
+		+ "            <serverconnector>"
+		+ "                 <provideAddress>true</provideAddress>"
+		+ "            </serverconnector>"
+		+ "        </connectors>"
+		+ "    </jetty>"
+		+ "</config>")
+public class JettyWebAnnotationsTest extends WebAnnotationsTest {
+
 }

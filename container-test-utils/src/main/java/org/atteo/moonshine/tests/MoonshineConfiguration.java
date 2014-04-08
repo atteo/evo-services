@@ -25,13 +25,14 @@ public @interface MoonshineConfiguration {
 	String fromString() default "";
 
 	/**
-	 * Skips implicit configuration.
+	 * Allows to enable auto-configuration.
 	 * <p>
-	 * Implicit configuration is automatically generated and consist of every top-level service found on classpath
-	 * which does not require any configuration.
+	 * Auto configuration is automatically generated and consists of every top-level service found on classpath
+	 * which does not require any configuration. It is always stored in ${configHome}/auto-config.xml
+	 * file.
 	 * </p>
 	 */
-	boolean skipImplicit() default false;
+	boolean autoConfiguration() default false;
 
 	/**
 	 * Skip reading default configuration from '/default-config.xml' classpath resource.

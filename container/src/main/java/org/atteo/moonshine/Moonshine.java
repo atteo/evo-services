@@ -112,13 +112,13 @@ public interface Moonshine extends AutoCloseable {
 		RestrictedBuilder homeDirectory(String homeDirectory);
 
 		/**
-		 * Skips implicit configuration.
+		 * Enables auto configuration.
 		 * <p>
-		 * Implicit configuration is automatically generated and consist of every top-level service found on classpath
+		 * Automatic configuration automatically adds one instance of every top-level service found on classpath
 		 * which does not require any configuration.
 		 * </p>
 		 */
-		Builder skipImplicitConfiguration();
+		Builder autoConfiguration();
 
 		/**
 		 * Skips default configuration files.
@@ -216,7 +216,7 @@ public interface Moonshine extends AutoCloseable {
 		Builder homeDirectory(String homeDirectory);
 
 		@Override
-		Builder skipImplicitConfiguration();
+		Builder autoConfiguration();
 
 		@Override
 		Builder skipDefaultConfigurationFiles();

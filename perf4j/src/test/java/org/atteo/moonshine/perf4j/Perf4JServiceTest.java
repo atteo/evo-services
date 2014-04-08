@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine.perf4j;
 
+import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -27,6 +28,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 
+@MoonshineConfiguration(autoConfiguration = true)
 public class Perf4JServiceTest extends MoonshineTest {
 	@Profiled
 	protected void profiledMethod() {
@@ -65,11 +67,7 @@ public class Perf4JServiceTest extends MoonshineTest {
 				}
 				int time = Integer.parseInt(message.substring(startIndex + "time[".length(), endIndex));
 
-				if (time < 100) {
-					return false;
-				}
-
-				return true;
+				return time >= 100;
 			}
 		}));
 	}

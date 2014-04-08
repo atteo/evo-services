@@ -16,5 +16,13 @@
 package org.atteo.moonshine;
 
 public class Head {
+	private final String name;
 
+	public Head(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
 }

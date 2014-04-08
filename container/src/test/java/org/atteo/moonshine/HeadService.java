@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.inject.AbstractModule;
@@ -25,13 +26,18 @@ import com.google.inject.Module;
  * Robot head service.
  */
 @XmlRootElement(name = "head")
+@ServiceConfiguration(autoConfiguration = ""
+		+ "<name>default-name</name>")
 public class HeadService extends TopLevelService {
+	@XmlElement
+	private String name;
+
 	@Override
 	public Module configure() {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(Head.class);
+				bind(Head.class).toInstance(new Head(name));
 			}
 		};
 	}

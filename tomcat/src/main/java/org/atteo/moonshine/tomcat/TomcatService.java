@@ -33,6 +33,7 @@ import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.startup.Tomcat;
 import org.atteo.config.XmlDefaultValue;
+import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.atteo.moonshine.webserver.WebServerService;
@@ -49,6 +50,12 @@ import com.google.inject.servlet.GuiceFilter;
  * </p>
  */
 @XmlRootElement(name = "tomcat")
+@ServiceConfiguration(autoConfiguration = ""
+		+ "<connectors>"
+		+ "    <connector>"
+		+ "        <port>${oneof:${tomcat.port},}</port>"
+		+ "    </connector>"
+		+ "</connectors>")
 public class TomcatService extends WebServerService {
 	/**
 	 * Tomcat base directory.

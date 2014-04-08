@@ -28,7 +28,7 @@ import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
 
-@MoonshineConfiguration(fromString = ""
+@MoonshineConfiguration(autoConfiguration = true, fromString = ""
 		+ "<config>"
 		+ "    <atomikos>"
 		+ "        <transactionTimeout>5</transactionTimeout>"

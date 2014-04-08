@@ -22,10 +22,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks service that should never be implicitly enabled.
+ * Specifies additional service configuration.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface ExplicitService {
+public @interface ServiceConfiguration {
+	/**
+	 * Whether the service should be considered for auto configuration.
+	 */
+	boolean auto() default true;
 
+	/**
+	 * Default service configuration used for auto configuration mechanism.
+	 */
+	String autoConfiguration() default "";
 }

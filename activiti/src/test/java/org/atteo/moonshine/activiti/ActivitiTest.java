@@ -48,7 +48,7 @@ public class ActivitiTest extends MoonshineTest {
 
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("employeeName", "Kermit");
-		variables.put("numberOfDays", new Integer(4));
+		variables.put("numberOfDays", 4);
 		variables.put("vacationMotivation", "I'm really tired!");
 		RuntimeService runtimeService = processEngine.getRuntimeService();
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("vacationRequest", variables);

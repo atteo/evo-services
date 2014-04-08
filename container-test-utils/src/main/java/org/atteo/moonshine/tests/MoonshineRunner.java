@@ -33,7 +33,7 @@ import com.google.common.reflect.TypeToken;
  * Runs the tests inside {@link Moonshine} container.
  *
  * <p>
- * You can configure the container by annotating the class with {@link MoonshineConfiguration}.
+ You can configure the container by anautoConfigurationtating the class with {@link MoonshineConfiguration}.
  * </p>
  * <p>
  * The test class will be instantiated using global Guice injector of the Moonshine container.
@@ -89,13 +89,13 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 				}
 			}
 
-			if (annotation.skipImplicit() || annotation.skipDefault() || !annotation.fromString().isEmpty()
+			if (annotation.autoConfiguration() || annotation.skipDefault() || !annotation.fromString().isEmpty()
 					|| annotation.arguments().length != 0) {
 				MoonshineConfigurator configurator = new MoonshineConfigurator() {
 					@Override
 					public void configureMoonshine(Moonshine.Builder builder) {
-						if (annotation.skipImplicit()) {
-							builder.skipImplicitConfiguration();
+						if (annotation.autoConfiguration()) {
+							builder.autoConfiguration();
 						}
 						if (annotation.skipDefault()) {
 							builder.skipDefaultConfigurationFiles();

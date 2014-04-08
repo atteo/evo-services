@@ -32,16 +32,7 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 
-@MoonshineConfiguration(fromString = ""
-		+ "<config>"
-		+ "    <jetty>"
-		+ "        <connectors>"
-		+ "            <serverconnector>"
-		+ "                <provideAddress>true</provideAddress>"
-		+ "            </serverconnector>"
-		+ "        </connectors>"
-		+ "    </jetty>"
-		+ "</config>")
+@MoonshineConfiguration(autoConfiguration = true)
 public class JolokiaServiceTest extends MoonshineTest {
 	@Inject
 	private WebServerAddress address;

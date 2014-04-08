@@ -28,6 +28,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
+@MoonshineConfiguration(autoConfiguration = true)
 public class FixtureInterceptorTest extends MoonshineTest {
 
 	@Inject

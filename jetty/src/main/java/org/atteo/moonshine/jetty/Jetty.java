@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.jetty.connectors.ConnectorConfig;
 import org.atteo.moonshine.jetty.connectors.ServerConnectorConfig;
 import org.atteo.moonshine.jetty.connectors.SslContextFactoryConfig;
@@ -42,6 +43,14 @@ import com.google.inject.Inject;
  * Starts Jetty web server instance.
  */
 @XmlRootElement(name = "jetty")
+@ServiceConfiguration(autoConfiguration = ""
+		+ "<connectors>"
+		+ "    <serverconnector>"
+		+ "        <provideAddress>true</provideAddress>"
+		+ "        <host>${oneof:${jetty.host},}</host>"
+		+ "        <port>${oneof:${jetty.port},}</port>"
+		+ "    </serverconnector>"
+		+ "</connectors>")
 public class Jetty extends WebServerService {
 	@XmlElementWrapper(name = "sslcontextfactories")
 	@XmlElementRef

@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import com.google.inject.Module;
 
 @XmlRootElement(name = "missing-dependency-service")
-@ExplicitService
+@ServiceConfiguration(auto = false)
 public class MissingDependencyService extends TopLevelService {
 	@Inject
 	private String someNotExistingBinding;

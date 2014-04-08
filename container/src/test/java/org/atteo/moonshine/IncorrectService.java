@@ -22,7 +22,7 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 
 @XmlRootElement(name = "incorrect")
-@ExplicitService
+@ServiceConfiguration(auto = false)
 public class IncorrectService extends TopLevelService {
 	@Override
 	public Module configure() {

@@ -8,7 +8,6 @@
 		<version>1-SNAPSHOT</version>
 	</parent>
 	<artifactId>standalone-archetype</artifactId>
-	<version>1-SNAPSHOT</version>
 	<packaging>maven-archetype</packaging>
 
 	<name>Standalone Moonshine application</name>
@@ -62,3 +61,4 @@
 		</pluginManagement>
 	</build>
 </project>
+

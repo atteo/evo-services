@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.classindex.ClassIndex;
+import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
 
@@ -38,6 +39,8 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
  * Starts Jersey JAX-RS implementation.
  */
 @XmlRootElement(name = "jersey")
+@ServiceConfiguration(autoConfiguration = ""
+		+ "<prefix>${oneof:${jetty.prefix},}</prefix>")
 public class Jersey extends TopLevelService {
 	@XmlElement
 	@XmlIDREF

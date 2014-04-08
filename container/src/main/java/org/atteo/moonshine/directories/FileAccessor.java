@@ -35,7 +35,7 @@ public interface FileAccessor {
 	 * Return the path where config file with given name should exist.
 	 * The file may or may not exist.
 	 */
-	Path getWritebleConfigFile(String fileName);
+	Path getWritableConfigFile(String fileName);
 
 	/**
 	 * Returns the first existing data file found with given name.
