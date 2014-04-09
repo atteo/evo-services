@@ -28,6 +28,6 @@ import org.junit.runner.RunWith;
  * &#064;RunWith({@link MoonshineRunner}.class).
  * </p>
  */
-@RunWith(MoonshineRunner.class)
+@RunWith(MoonshineSuiteRunner.class)
 public class MoonshineTest {
 }

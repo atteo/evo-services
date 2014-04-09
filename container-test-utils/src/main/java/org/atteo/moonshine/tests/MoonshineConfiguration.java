@@ -8,16 +8,28 @@ import java.lang.annotation.Target;
 import org.atteo.moonshine.Moonshine;
 
 /**
- * Can be specified on a test class extending {@link MoonshineTest}.
- * Allows to specify configuration resources to use when starting {@link Moonshine} framework.
+ * Can be specified on a test class extending {@link MoonshineTest}. Allows to
+ * specify configuration resources to use when starting {@link Moonshine}
+ * framework.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface MoonshineConfiguration {
+
+	public @interface Config {
+		String[] value();
+	}
+
 	/**
 	 * List of resources to use as configuration for {@link Moonshine}.
 	 */
 	String[] value() default {};
+
+	/**
+	 * Lists of configs. One configuration file will be taken from each @Config list and
+ the test will be run for every possible combination of configuration files.
+	 */
+	Config[] forEachConfig() default {};
 
 	/**
 	 * In-place configuration.
@@ -39,11 +51,11 @@ public @interface MoonshineConfiguration {
 	 */
 	boolean skipDefault() default false;
 
-    /**
-     * If true, a request (scope) per entire test class will be created,
-     * default means that a request is created per method.
-     */
-    boolean oneRequestPerClass() default false;
+	/**
+	 * If true, a request (scope) per entire test class will be created,
+	 * default means that a request is created per method.
+	 */
+	boolean oneRequestPerClass() default false;
 
 	/**
 	 * Command line arguments.

@@ -15,8 +15,10 @@
  */
 package org.atteo.moonshine.tests;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -28,23 +30,37 @@ import org.junit.runners.model.InitializationError;
 
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
 /**
  * Runs the tests inside {@link Moonshine} container.
  *
  * <p>
- You can configure the container by anautoConfigurationtating the class with {@link MoonshineConfiguration}.
+ * You can configure the container by annotating the class with
+ * {@link MoonshineConfiguration}.
  * </p>
  * <p>
- * The test class will be instantiated using global Guice injector of the Moonshine container.
+ * The test class will be instantiated using global Guice injector of the
+ * Moonshine container.
  * </p>
  */
 public class MoonshineRunner extends BlockJUnit4ClassRunner {
+
 	private MoonshineRule moonshineRule = null;
-	private	boolean requestPerClass = false;
+
+	private boolean requestPerClass = false;
+
+	private List<String> selectedConfigs = Collections.emptyList();
 
 	public MoonshineRunner(Class<?> klass) throws InitializationError {
 		super(klass);
+	}
+
+	public MoonshineRunner(Class<?> klass, List<String> configs) throws InitializationError {
+		this(klass);
+
+		this.selectedConfigs = configs;
 	}
 
 	@Override
@@ -111,7 +127,35 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 			}
 		}
 
+		boolean useDefaultConfigs = configs.isEmpty() && configurators.isEmpty();
+
+		configurators.add(new MoonshineConfigurator() {
+			@Override
+			public void configureMoonshine(Moonshine.Builder builder) {
+				builder.addModule(new AbstractModule() {
+					@Override
+					protected void configure() {
+						bind(new TypeLiteral<List<String>>() {
+						}).annotatedWith(SelectedConfigs.class).toInstance(selectedConfigs);
+					}
+				});
+			}
+		});
+
+		for (String externalConfig : selectedConfigs) {
+			if (!externalConfig.startsWith("/")) {
+				externalConfig = "/" + getTestClass().getJavaClass().getPackage().getName().replace(".", "/")
+				    + "/" + externalConfig;
+			}
+			configs.add(externalConfig);
+		}
+
 		moonshineRule = new MoonshineRule(configurators, configs.toArray(new String[configs.size()]));
+		moonshineRule.setApplicationName(getTestName());
+
+		if (!useDefaultConfigs) {
+			moonshineRule.skipDefaultTestConfigurationFiles();
+		}
 
 		List<TestRule> rules = super.classRules();
 		if (requestPerClass) {
@@ -138,4 +182,20 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 		rules.add(new MockitoRule());
 		return rules;
 	}
+
+	private String getTestName() {
+		return getTestClass().getJavaClass().getSimpleName() + selectedConfigsString(selectedConfigs);
+	}
+
+	private String selectedConfigsString(List<String> selectedConfigs) {
+		StringBuilder string = new StringBuilder();
+
+		for (String selectedConfig : selectedConfigs) {
+			string.append(".");
+			string.append(new File(selectedConfig).getName().replace(".xml", ""));
+		}
+
+		return string.toString();
+	}
+
 }

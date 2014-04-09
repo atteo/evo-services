@@ -13,6 +13,7 @@
  */
 package org.atteo.moonshine.tests;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -41,9 +42,10 @@ import com.google.inject.servlet.GuiceFilter;
  * JUnit {@link TestRule rule} which initializes {@link Moonshine} container.
  *
  * <p>
- * It is better for your test class to extend {@link MoonshineTest} or have it annotated with
- * &#064;{@link RunWith}({@link MoonshineRunner MoonshineRunner.class}). With those solutions
- * the test class is created using Guice injector.
+ * It is better for your test class to extend {@link MoonshineTest} or have it
+ * annotated with
+ * &#064;{@link RunWith}({@link MoonshineRunner MoonshineRunner.class}). With
+ * those solutions the test class is created using Guice injector.
  * </p>
  *
  * <p>
@@ -59,12 +61,19 @@ import com.google.inject.servlet.GuiceFilter;
  * </p>
  */
 public class MoonshineRule implements TestRule {
-	public final static String[] DEFAULT_CONFIG = { "/test-config.xml" };
+
+	public final static String[] DEFAULT_CONFIG = {"/test-config.xml"};
+
 	private final String[] configs;
-	private String[] optionalConfigs = {};
+
+	private boolean useDefaultConfigs = true;
+
+	private String applicationName = null;
+
 	private Moonshine moonshine;
 
 	private final Map<Class<?>, Object> mocks = new HashMap<>();
+
 	private List<MoonshineConfigurator> configurators = Collections.emptyList();
 
 	Map<Class<?>, Object> getMocks() {
@@ -83,19 +92,17 @@ public class MoonshineRule implements TestRule {
 	 * }
 	 * </pre>
 	 * </p>
-	 * @param configs resource path to the configuration files, by default "/test-config.xml"
+	 *
+	 * @param configs resource path to the configuration files, by default
+	 * "/test-config.xml"
 	 */
-
 	public MoonshineRule(String... configs) {
 		this.configs = configs;
-
-		if (configs.length == 0) {
-			this.optionalConfigs = DEFAULT_CONFIG;
-		}
 	}
 
 	/**
-	 * Initializes {@link Moonshine} environment from given configuration files.
+	 * Initializes {@link Moonshine} environment from given configuration
+	 * files.
 	 *
 	 * @param configurator configurator for Moonshine
 	 * @param configs resource path to the configuration files
@@ -106,7 +113,8 @@ public class MoonshineRule implements TestRule {
 	}
 
 	/**
-	 * Initializes {@link Moonshine} environment from given configuration files.
+	 * Initializes {@link Moonshine} environment from given configuration
+	 * files.
 	 *
 	 * @param configurators list of configurators for Moonshine
 	 * @param configs resource path to the configuration files
@@ -114,10 +122,10 @@ public class MoonshineRule implements TestRule {
 	public MoonshineRule(List<MoonshineConfigurator> configurators, String... configs) {
 		this.configurators = configurators;
 		this.configs = configs;
+	}
 
-		if (configs.length == 0 && configurators.isEmpty()) {
-			this.optionalConfigs = DEFAULT_CONFIG;
-		}
+	public void skipDefaultTestConfigurationFiles() {
+		this.useDefaultConfigs = false;
 	}
 
 	@Override
@@ -176,7 +184,7 @@ public class MoonshineRule implements TestRule {
 				}
 			};
 
-			builder.applicationName(testClass.getSimpleName());
+			builder.applicationName(applicationName != null ? applicationName : testClass.getSimpleName());
 			builder.homeDirectory("target/test-home");
 			builder.addDataDir("src/main");
 
@@ -184,8 +192,10 @@ public class MoonshineRule implements TestRule {
 				builder.addConfigurationFromResource(config);
 			}
 
-			for (String config : optionalConfigs) {
-				builder.addOptionalConfigurationFromResource(config);
+			if (useDefaultConfigs) {
+				for (String config : DEFAULT_CONFIG) {
+					builder.addOptionalConfigurationFromResource(config);
+				}
 			}
 
 			builder.addModule(testClassModule);
@@ -221,6 +231,7 @@ public class MoonshineRule implements TestRule {
 	 * }
 	 * </pre>
 	 * </p>
+	 *
 	 * @param object object to inject members into
 	 * @return the method rule to use with JUnit
 	 */
@@ -231,7 +242,7 @@ public class MoonshineRule implements TestRule {
 				return new Statement() {
 					@Override
 					public void evaluate() throws Throwable {
-						if (getGlobalInjector()!= null) {
+						if (getGlobalInjector() != null) {
 							getGlobalInjector().injectMembers(target);
 						}
 						base.evaluate();
@@ -240,4 +251,9 @@ public class MoonshineRule implements TestRule {
 			}
 		};
 	}
+
+	public void setApplicationName(String applicationName) {
+		this.applicationName = applicationName;
+	}
+
 }
