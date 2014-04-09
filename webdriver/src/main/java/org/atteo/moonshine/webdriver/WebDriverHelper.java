@@ -15,10 +15,14 @@
  */
 package org.atteo.moonshine.webdriver;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import javax.inject.Inject;
 
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -26,22 +30,40 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Function;
+import com.google.common.io.Files;
 
 /**
  * WebDriver helper functions.
  */
 public class WebDriverHelper {
-	@Inject
-	private WebServerAddress webServerAddress;
+
+	private final WebServerAddress webServerAddress;
+
+	private final RemoteWebDriver driver;
+
+	private final WebDriverHelperOptions options;
+
+	private Path screenshotDirectory;
 
 	@Inject
-	private RemoteWebDriver driver;
+	public WebDriverHelper(WebServerAddress webServerAddress, RemoteWebDriver driver,
+	    WebDriverHelperOptions options, @ScreenshotDirectory Path screenshotDirectory) {
+		this.webServerAddress = webServerAddress;
+		this.driver = driver;
+		this.options = options;
+		this.screenshotDirectory = screenshotDirectory;
+	}
 
-	@Inject
-	private WebDriverHelperOptions options;
+	public Path getScreenshotDirectory() {
+		return screenshotDirectory;
+	}
+
+	public void setScreenshotDirectory(Path screenshotDirectory) {
+		this.screenshotDirectory = screenshotDirectory;
+	}
 
 	/**
-	 * Loads the specified path from websever;
+	 * Loads the specified path from webserver;
 	 */
 	public void go(String path) {
 		String host = (webServerAddress.getHost() == null) ? "localhost" : webServerAddress.getHost();
@@ -73,10 +95,12 @@ public class WebDriverHelper {
 	}
 
 	/**
-	 * Tries to click an element. If necessary waits until the element becomes clickable.
+	 * Tries to click an element. If necessary waits until the element
+	 * becomes clickable.
 	 *
-	 * Use it for elements which temporarily might not be clickable for some reason (either disabled, hidden or
-	 * having other elements on top of them).
+	 * Use it for elements which temporarily might not be clickable for some
+	 * reason (either disabled, hidden or having other elements on top of
+	 * them).
 	 *
 	 * @param elementLocator
 	 */
@@ -91,12 +115,17 @@ public class WebDriverHelper {
 					try {
 						element.click();
 						return true;
-					} catch(WebDriverException e) {
+					} catch (WebDriverException e) {
 					}
 				}
 
 				return false;
 			}
-		}, "Element is not clickable");
+		}, "Element is not clickable: " + elementLocator.toString());
+	}
+
+	public void screenshot(String name) throws IOException {
+		File file = driver.getScreenshotAs(OutputType.FILE);
+		Files.copy(file, new File(screenshotDirectory.toFile(), name + ".png"));
 	}
 }

@@ -15,16 +15,24 @@
  */
 package org.atteo.moonshine.webdriver;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.webserver.WebServerService;
 
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
+import com.google.inject.Singleton;
 
 @XmlRootElement(name = "webdriver-helper")
 public class WebDriverHelperService extends TopLevelService {
@@ -50,13 +58,28 @@ public class WebDriverHelperService extends TopLevelService {
 	@XmlElement
 	private int sleepInMillis = 10;
 
+	@XmlElement
+	@XmlDefaultValue("target/screenshots")
+	private String screenshotDirectory;
+
 	@Override
 	public Module configure() {
 		return new PrivateModule() {
 			@Override
 			protected void configure() {
-				bind(WebDriverHelper.class);
+				Path path = FileSystems.getDefault().getPath(screenshotDirectory);
+
+				try {
+					Files.createDirectories(path);
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
+
+				bind(Path.class).annotatedWith(ScreenshotDirectory.class).toInstance(path);
+
+				bind(WebDriverHelper.class).in(Singleton.class);
 				expose(WebDriverHelper.class);
+
 				bind(WebDriverHelperOptions.class).toInstance(new WebDriverHelperOptions() {
 					@Override
 					public int getTimeoutInSeconds() {
