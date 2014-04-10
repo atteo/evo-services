@@ -17,6 +17,7 @@ package org.atteo.moonshine.webdriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.inject.Inject;
 
@@ -30,7 +31,6 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Function;
-import com.google.common.io.Files;
 
 /**
  * WebDriver helper functions.
@@ -126,6 +126,7 @@ public class WebDriverHelper {
 
 	public void screenshot(String name) throws IOException {
 		File file = driver.getScreenshotAs(OutputType.FILE);
-		Files.copy(file, new File(screenshotDirectory.toFile(), name + ".png"));
+		Files.createDirectories(screenshotDirectory);
+		Files.copy(file.toPath(), screenshotDirectory.resolve(name + ".png"));
 	}
 }
