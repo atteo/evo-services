@@ -18,17 +18,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 import com.google.inject.BindingAnnotation;
 
 /**
  * Configuration files that were selected for the current test run as a result of using
- * the selectConfigs annotation are bound for the duration of the current test using this annotation:
- * \@SelectedConfigs List<String> selectedConfigs
+ the selectConfigs annotation are bound for the duration of the current test using this annotation:
+ \@EnabledConfigs List<String> enabledConfigs
  */
-@Target({ ElementType.PARAMETER})
+@Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(value=RetentionPolicy.RUNTIME)
 @BindingAnnotation
-public @interface SelectedConfigs {
+public @interface EnabledConfigs {
 
 }

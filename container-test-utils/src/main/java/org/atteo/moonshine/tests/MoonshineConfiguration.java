@@ -16,8 +16,31 @@ import org.atteo.moonshine.Moonshine;
 @Target(ElementType.TYPE)
 public @interface MoonshineConfiguration {
 
+	/**
+	 * Represents one possible configuration.
+	 */
 	public @interface Config {
-		String[] value();
+		/**
+		 * Configuration name.
+		 */
+		String id();
+
+		/**
+		 * List of resources to use as configuration for {@link Moonshine}.
+		 */
+		String[] value() default {};
+
+		/**
+		 * In-place configuration.
+		 */
+		String fromString() default "";
+	}
+
+	/**
+	 * Represents a list of configurations from which at most only one will be used at given time.
+	 */
+	public @interface Alternatives {
+		Config[] value() default {};
 	}
 
 	/**
@@ -26,10 +49,51 @@ public @interface MoonshineConfiguration {
 	String[] value() default {};
 
 	/**
-	 * Lists of configs. One configuration file will be taken from each @Config list and
- the test will be run for every possible combination of configuration files.
+	 * Executes the test multiple times. Once for each provided {@link Config}.
+	 * <p>
+	 * <pre>
+	 * For instance:
+	 * &#064;MoonshineConfiguration(forEach =
+	 *     &#064;Config("/a.xml"),
+	 *     &#064;Config("/b.xml")
+	 * )
+	 * </pre>
+	 * This will execute the test 2 times. Once with a.xml and the second tiem with b.xml configuration file.
+	 * </p>
 	 */
-	Config[] forEachConfig() default {};
+	Config[] forEach() default {};
+
+	/**
+	 * Executes the test multiple times. For each execution one {@link Config} will be taken from
+	 * each {@link Alternatives} list. The test will be run for every possible combination of Configs.
+	 * <p>
+	 * For instance:
+	 * <pre>
+	 * &#064;MoonshineConfiguration(forCartesianProductOf =
+	 *      &#064;Alternatives(
+	 *          &#064;Config("/a.xml"),
+	 *          &#064;Config("/b.xml")
+	 *      ),
+	 *      &#064;Alternatives(
+	 *          &#064;Config("/1.xml"),
+	 *          &#064;Config("/2.xml"),
+	 *          &#064;Config("/3.xml")
+	 *      )
+	 * )
+	 * </pre>
+	 *
+	 * This will execute the test 6 times for
+	 * <ol>
+	 *     <li>a.xml combined with 1.xml</li>
+	 *     <li>a.xml combined with 2.xml</li>
+	 *     <li>a.xml combined with 3.xml</li>
+	 *     <li>b.xml combined with 1.xml</li>
+	 *     <li>b.xml combined with 2.xml</li>
+	 *     <li>b.xml combined with 3.xml</li>
+	 * </p>
+	 *
+	 */
+	Alternatives[] forCartesianProductOf() default {};
 
 	/**
 	 * In-place configuration.

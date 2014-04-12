@@ -56,14 +56,13 @@ public class Jetty extends WebServerService {
 	@XmlElementRef
 	private SslContextFactoryConfig[] sslContextFactories;
 
-
 	/**
 	 * List of connectors.
 	 */
 	@XmlElementWrapper(name = "connectors")
 	@XmlElementRef
 	private ConnectorConfig[] connectors = new ConnectorConfig[] {
-		new ServerConnectorConfig()
+		new ServerConnectorConfig(true)
 	};
 
 	/**

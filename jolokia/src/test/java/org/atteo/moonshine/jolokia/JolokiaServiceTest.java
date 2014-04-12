@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
+import org.atteo.moonshine.tests.MoonshineConfiguration.Config;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.junit.Test;
@@ -32,7 +33,23 @@ import org.junit.Test;
 import com.google.common.base.Charsets;
 import com.google.common.io.CharStreams;
 
-@MoonshineConfiguration(autoConfiguration = true)
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <servlet-container/>"
+		+ "    <jmx/>"
+		+ "    <jolokia/>"
+		+ "</config>",
+		forEach = {
+			@Config(id = "jetty", fromString = ""
+					+ "<config>"
+					+ "    <jetty/>"
+					+ "</config>"),
+			@Config(id = "tomcat", fromString = ""
+					+ "<config>"
+					+ "    <tomcat/>"
+					+ "</config>"
+			)
+		})
 public class JolokiaServiceTest extends MoonshineTest {
 	@Inject
 	private WebServerAddress address;

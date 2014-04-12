@@ -25,9 +25,9 @@ import org.junit.runner.RunWith;
  * </p>
  * <p>
  * If you don't want to extend this class you can equivalently annotate your class with
- * &#064;RunWith({@link MoonshineRunner}.class).
+ * &#064;RunWith({@link MoonshineMultiRunner}.class).
  * </p>
  */
-@RunWith(MoonshineSuiteRunner.class)
+@RunWith(MoonshineMultiRunner.class)
 public class MoonshineTest {
 }

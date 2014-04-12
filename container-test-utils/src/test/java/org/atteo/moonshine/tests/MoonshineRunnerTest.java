@@ -34,5 +34,4 @@ public class MoonshineRunnerTest {
 		// then
 		assertThat(propertyResolver).isNotNull();
 	}
-
 }

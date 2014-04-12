@@ -13,7 +13,6 @@
  */
 package org.atteo.moonshine.tests;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -61,19 +60,10 @@ import com.google.inject.servlet.GuiceFilter;
  * </p>
  */
 public class MoonshineRule implements TestRule {
-
 	public final static String[] DEFAULT_CONFIG = {"/test-config.xml"};
-
 	private final String[] configs;
-
-	private boolean useDefaultConfigs = true;
-
-	private String applicationName = null;
-
 	private Moonshine moonshine;
-
 	private final Map<Class<?>, Object> mocks = new HashMap<>();
-
 	private List<MoonshineConfigurator> configurators = Collections.emptyList();
 
 	Map<Class<?>, Object> getMocks() {
@@ -101,10 +91,9 @@ public class MoonshineRule implements TestRule {
 	}
 
 	/**
-	 * Initializes {@link Moonshine} environment from given configuration
-	 * files.
+	 * Initializes {@link Moonshine} environment.
 	 *
-	 * @param configurator configurator for Moonshine
+	 * @param configurator {@link MoonshineConfigurator configurator} for Moonshine
 	 * @param configs resource path to the configuration files
 	 */
 	public MoonshineRule(MoonshineConfigurator configurator, String... configs) {
@@ -113,19 +102,14 @@ public class MoonshineRule implements TestRule {
 	}
 
 	/**
-	 * Initializes {@link Moonshine} environment from given configuration
-	 * files.
+	 * Initializes {@link Moonshine} environment.
 	 *
-	 * @param configurators list of configurators for Moonshine
+	 * @param configurators list of {@link MoonshineConfigurator configurators} for Moonshine
 	 * @param configs resource path to the configuration files
 	 */
 	public MoonshineRule(List<MoonshineConfigurator> configurators, String... configs) {
 		this.configurators = configurators;
 		this.configs = configs;
-	}
-
-	public void skipDefaultTestConfigurationFiles() {
-		this.useDefaultConfigs = false;
 	}
 
 	@Override
@@ -184,7 +168,7 @@ public class MoonshineRule implements TestRule {
 				}
 			};
 
-			builder.applicationName(applicationName != null ? applicationName : testClass.getSimpleName());
+			builder.applicationName(testClass.getSimpleName());
 			builder.homeDirectory("target/test-home");
 			builder.addDataDir("src/main");
 
@@ -192,7 +176,7 @@ public class MoonshineRule implements TestRule {
 				builder.addConfigurationFromResource(config);
 			}
 
-			if (useDefaultConfigs) {
+			if (configs.length == 0) {
 				for (String config : DEFAULT_CONFIG) {
 					builder.addOptionalConfigurationFromResource(config);
 				}
@@ -251,9 +235,4 @@ public class MoonshineRule implements TestRule {
 			}
 		};
 	}
-
-	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
-
 }

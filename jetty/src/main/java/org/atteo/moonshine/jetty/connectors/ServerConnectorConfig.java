@@ -57,6 +57,14 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 	@XmlElement
 	private boolean provideAddress = false;
 
+	public ServerConnectorConfig() {
+	}
+
+	public ServerConnectorConfig(boolean provideAddress) {
+		this.provideAddress = provideAddress;
+	}
+
+
 	@Override
 	public AbstractNetworkConnector createConnector(Server server) {
 		ConnectionFactory[] connectionFactories = new ConnectionFactory[connections.length];
