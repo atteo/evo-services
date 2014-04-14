@@ -60,11 +60,12 @@ import com.google.inject.servlet.GuiceFilter;
  * </p>
  */
 public class MoonshineRule implements TestRule {
-	public final static String[] DEFAULT_CONFIG = {"/test-config.xml"};
+	public final static String TEST_CONFIG = "/test-config.xml";
 	private final String[] configs;
 	private Moonshine moonshine;
 	private final Map<Class<?>, Object> mocks = new HashMap<>();
 	private List<MoonshineConfigurator> configurators = Collections.emptyList();
+	private boolean loadTestConfigXml;
 
 	Map<Class<?>, Object> getMocks() {
 		return mocks;
@@ -88,6 +89,7 @@ public class MoonshineRule implements TestRule {
 	 */
 	public MoonshineRule(String... configs) {
 		this.configs = configs;
+		loadTestConfigXml = configs.length == 0;
 	}
 
 	/**
@@ -99,6 +101,7 @@ public class MoonshineRule implements TestRule {
 	public MoonshineRule(MoonshineConfigurator configurator, String... configs) {
 		this.configurators = Lists.newArrayList(configurator);
 		this.configs = configs;
+		loadTestConfigXml = configs.length == 0;
 	}
 
 	/**
@@ -110,6 +113,11 @@ public class MoonshineRule implements TestRule {
 	public MoonshineRule(List<MoonshineConfigurator> configurators, String... configs) {
 		this.configurators = configurators;
 		this.configs = configs;
+		loadTestConfigXml = configs.length == 0;
+	}
+
+	public void setLoadTestConfigXml(boolean loadTestConfigXml) {
+		this.loadTestConfigXml = loadTestConfigXml;
 	}
 
 	@Override
@@ -176,10 +184,8 @@ public class MoonshineRule implements TestRule {
 				builder.addConfigurationFromResource(config);
 			}
 
-			if (configs.length == 0) {
-				for (String config : DEFAULT_CONFIG) {
-					builder.addOptionalConfigurationFromResource(config);
-				}
+			if (loadTestConfigXml) {
+				builder.addOptionalConfigurationFromResource(TEST_CONFIG);
 			}
 
 			builder.addModule(testClassModule);

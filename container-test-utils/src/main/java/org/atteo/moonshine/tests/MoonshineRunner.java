@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.tests.MoonshineConfiguration.Config;
@@ -87,14 +88,16 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 
 		final List<String> configPaths = new ArrayList<>();
 		List<MoonshineConfigurator> configurators = new ArrayList<>();
+		AtomicBoolean loadTestConfigXml = new AtomicBoolean(true);
 
 		for (Class<?> ancestor : ancestors) {
-			analyseAncestor(ancestor, configPaths, configurators);
+			analyseAncestor(ancestor, configPaths, configurators, loadTestConfigXml);
 		}
 
 		analyseIterationConfigs(configPaths, configurators);
 
 		moonshineRule = new MoonshineRule(configurators, configPaths.toArray(new String[configPaths.size()]));
+		moonshineRule.setLoadTestConfigXml(loadTestConfigXml.get());
 
 		List<TestRule> rules = super.classRules();
 		if (requestPerClass) {
@@ -171,11 +174,12 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 	}
 
 	private void analyseAncestor(Class<?> ancestor, final List<String> configs,
-			List<MoonshineConfigurator> configurators) {
+			List<MoonshineConfigurator> configurators, final AtomicBoolean loadTestConfigXml) {
 		final MoonshineConfiguration annotation = ancestor.getAnnotation(MoonshineConfiguration.class);
 		if (annotation == null) {
 			return;
 		}
+		loadTestConfigXml.set(false);
 		for (String config : annotation.value()) {
 			configs.add(getPathToResource(ancestor, config));
 		}
