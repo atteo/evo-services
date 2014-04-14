@@ -16,13 +16,10 @@ package org.atteo.moonshine.jersey;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.jaxrs.Jaxrs;
 import org.atteo.moonshine.services.ImportService;
@@ -39,7 +36,7 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
  */
 @XmlRootElement(name = "jersey")
 @ServiceConfiguration(autoConfiguration = ""
-		+ "<prefix>${oneof:${jetty.prefix},}</prefix>"
+		+ "<prefix>${oneof:${jersey.prefix},}</prefix>"
 		+ "<discoverResources>true</discoverResources>")
 public class Jersey extends Jaxrs {
 	@XmlElement
@@ -75,14 +72,7 @@ public class Jersey extends Jaxrs {
 				bind(GuiceContainer.class);
 				servletContainer.addFilter(getProvider(GuiceContainer.class), params, prefix + "/*");
 
-				if (discoverResources) {
-					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {
-						bind(klass);
-					}
-					for (Class<?> klass : ClassIndex.getAnnotated(Provider.class)) {
-						bind(klass);
-					}
-				}
+				registerResources(binder());
 			}
 		};
 	}

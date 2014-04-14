@@ -16,16 +16,22 @@
 
 package org.atteo.moonshine.jaxrs;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Provider;
 import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
+
+import com.google.inject.Binder;
 
 public abstract class Jaxrs extends TopLevelService {
 	/**
-	 * Automatically register in RESTEasy any class marked with &#064;
-	 * {@link Path} or &#064;{@link Provider} annotations.
+	 * Automatically register in JAX-RS any class marked with &#064;
+	 * {@link Path} or &#064;{@link javax.ws.rs.ext.Provider} annotations.
 	 *
 	 * Instances of auto-registered resources are created inside the RESTEasy service so they
 	 * can't depend on any bindings from outside of it.
@@ -33,5 +39,55 @@ public abstract class Jaxrs extends TopLevelService {
 	 * Either all resources have to be discovered or all have to be added manually.
 	 */
 	@XmlElement
-	protected boolean discoverResources = false;
+	private boolean discoverResources = false;
+
+	private final List<JaxrsResource<?>> resources = new ArrayList<>();
+
+	/**
+	 * Adds new resource.
+	 * @param <T> resource class
+	 * @param klass resource class
+	 * @param provider resource provider
+	 */
+	public <T> void addResource(Class<T> klass, Provider<T> provider) {
+		resources.add(new JaxrsResource<>(klass, provider));
+	}
+
+	private <T> void addResource(Class<T> annotated, Binder binder) {
+		addResource(annotated, binder.getProvider(annotated));
+	}
+
+	/**
+	 * Registers discovered resources.
+	 */
+	protected void registerResources(Binder binder) {
+		if (discoverResources) {
+			for (Class<?> annotated : ClassIndex.getAnnotated(Path.class)) {
+				binder.bind(annotated);
+				addResource(annotated, binder);
+			}
+		}
+	}
+
+	protected List<JaxrsResource<?>> getResources() {
+		return resources;
+	}
+
+	protected static class JaxrsResource<T> {
+		private final Class<T> klass;
+		private final Provider<T> provider;
+
+		public JaxrsResource(Class<T> klass, Provider<T> provider) {
+			this.klass = klass;
+			this.provider = provider;
+		}
+
+		public Class<T> getKlass() {
+			return klass;
+		}
+
+		public Provider<T> getProvider() {
+			return provider;
+		}
+	}
 }

@@ -16,18 +16,15 @@
 package org.atteo.moonshine.jersey;
 
 
+import org.atteo.moonshine.jaxrs.JaxrsTest;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
-import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
 		+ "    <jersey>"
+		+ "        <discoverResources>true</discoverResources>"
 		+ "        <prefix>/rest</prefix>"
 		+ "    </jersey>"
 		+ "</config>")
-public class JerseyTest extends CommonTest {
-	@Test
-	public void test() throws Exception {
-		request("/rest/resource");
-	}
+public class JerseyTest extends JaxrsTest {
 }

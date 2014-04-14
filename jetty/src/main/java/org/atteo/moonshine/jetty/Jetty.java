@@ -47,8 +47,8 @@ import com.google.inject.Inject;
 		+ "<connectors>"
 		+ "    <serverconnector>"
 		+ "        <provideAddress>true</provideAddress>"
-		+ "        <host>${oneof:${jetty.host},}</host>"
-		+ "        <port>${oneof:${jetty.port},}</port>"
+		+ "        <host>${oneof:${jetty.host},${webserver.host},}</host>"
+		+ "        <port>${oneof:${jetty.port},${webserver.host},}</port>"
 		+ "    </serverconnector>"
 		+ "</connectors>")
 public class Jetty extends WebServerService {

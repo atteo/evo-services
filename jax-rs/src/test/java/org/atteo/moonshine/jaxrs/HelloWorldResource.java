@@ -1,5 +1,5 @@
 /*
- * Contributed by Asaf Shakarchi <asaf000@gmail.com>
+ * Copyright 2013 Atteo.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.resteasy;
+package org.atteo.moonshine.jaxrs;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import static org.junit.Assert.assertNotNull;
-
-@Path("/resource")
+@Path("/hello")
 public class HelloWorldResource {
-    @Inject
-    RequestScopeComponent requestScopeComponent;
-
 	@GET
 	public String get() {
-        assertNotNull(requestScopeComponent);
-        return "Hello World";
+		return "Hello World";
 	}
 }

@@ -15,64 +15,15 @@
  */
 package org.atteo.moonshine.resteasy;
 
-import java.nio.ByteBuffer;
-
-import javax.inject.Inject;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.servlet.RequestScoped;
-import org.atteo.moonshine.Moonshine;
+import org.atteo.moonshine.jaxrs.JaxrsTest;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
-import org.atteo.moonshine.tests.MoonshineConfigurator;
-import org.atteo.moonshine.tests.MoonshineTest;
-import org.eclipse.jetty.http.HttpTester;
-import org.eclipse.jetty.http.HttpTester.Response;
-import org.eclipse.jetty.server.LocalConnector;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
     + "<config>"
-    + "    <servlet-container>"
-    + "        <registerGuiceFilter>true</registerGuiceFilter>"
-    + "    </servlet-container>"
-    + "    <jetty>"
-    + "        <connectors>"
-    + "            <local/>"
-    + "        </connectors>"
-    + "    </jetty>"
     + "    <resteasy>"
-    + "        <prefix>/rest</prefix>"
     + "        <discoverResources>true</discoverResources>"
+	+ "        <prefix>/rest</prefix>"
     + "    </resteasy>"
-    + "</config>", configurator = ResteasyTest.Configurator.class)
-public class ResteasyTest extends MoonshineTest {
-	@Inject
-	private LocalConnector localConnector;
-
-	@Test
-	public void shouldRespond() throws Exception {
-		HttpTester.Request request = HttpTester.newRequest();
-		request.setHeader("Host", "tester");
-		request.setMethod("GET");
-		request.setURI("/rest/resource");
-
-		ByteBuffer responses = localConnector.getResponses(request.generate());
-
-		Response response = HttpTester.parseResponse(responses);
-
-		assertEquals("Hello World", response.getContent());
-	}
-
-    public static class Configurator implements MoonshineConfigurator {
-        @Override
-        public void configureMoonshine(Moonshine.Builder builder) {
-            builder.addModule(new AbstractModule() {
-                @Override
-                protected void configure() {
-                    bind(RequestScopeComponent.class).in(RequestScoped.class);
-                }
-            });
-        }
-    }
+    + "</config>")
+public class ResteasyTest extends JaxrsTest {
 }

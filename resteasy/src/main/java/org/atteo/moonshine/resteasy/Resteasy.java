@@ -15,37 +15,36 @@
  */
 package org.atteo.moonshine.resteasy;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.Path;
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.classindex.ClassIndex;
 import org.atteo.config.XmlDefaultValue;
+import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.jaxrs.Jaxrs;
 import org.atteo.moonshine.services.ImportService;
+import org.atteo.moonshine.webserver.WebServerService;
 import org.jboss.resteasy.plugins.guice.GuiceResourceFactory;
 import org.jboss.resteasy.plugins.server.servlet.FilterDispatcher;
 import org.jboss.resteasy.spi.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
  * Starts RESTEasy JAXRS implementation.
  */
 @XmlRootElement(name = "resteasy")
-@Singleton
+@ServiceConfiguration(autoConfiguration = ""
+		+ "<prefix>${oneof:${resteasy.prefix},}</prefix>"
+		+ "<discoverResources>true</discoverResources>")
 public class Resteasy extends Jaxrs {
     Logger log = LoggerFactory.getLogger(Resteasy.class);
 
@@ -54,19 +53,17 @@ public class Resteasy extends Jaxrs {
 	@ImportService
 	private org.atteo.moonshine.webserver.ServletContainer servletContainer;
 
+	@XmlElement
+	@XmlIDREF
+	@ImportService
+	private WebServerService webServer;
+
 	/**
 	 * Prefix under which JAXRS resources should be registered.
 	 */
 	@XmlElement
 	@XmlDefaultValue("/")
 	private String prefix;
-
-    @Inject
-    private FilterDispatcher filterDispatcher;
-
-    private final List<ResourceFactory> resourceFactories = new ArrayList<>();
-
-	private final List<com.google.inject.Provider<?>> restProviders = new ArrayList<>();
 
 	@Override
 	public Module configure() {
@@ -79,54 +76,27 @@ public class Resteasy extends Jaxrs {
 				bind(FilterDispatcher.class).in(Singleton.class);
 				servletContainer.addFilter(getProvider(FilterDispatcher.class), params, prefix + "/*");
 
-				if (discoverResources) {
-					for (Class<?> klass : ClassIndex.getAnnotated(Path.class)) {
-						if (!klass.isInterface()) {
-							bind(klass);
-							final ResourceFactory resourceFactory = new GuiceResourceFactory(getProvider(klass), klass);
-							resourceFactories.add(resourceFactory);
-						} else {
-							log.info("Interface " + klass.getCanonicalName() +
-                                    " was marked with @Path, skipping bindings as interfaces"
-                                    + " are currently not supported.");
-						}
-					}
-
-					for (Class<?> klass : ClassIndex.getAnnotated(javax.ws.rs.ext.Provider.class)) {
-						bind(klass);
-						restProviders.add(getProvider(klass));
-					}
-				}
-
+				registerResources(binder());
 			}
 		};
 	}
 
-	public <T> void addResource(Provider<T> provider, Class<T> klass) {
-		final ResourceFactory resourceFactory = new GuiceResourceFactory(provider, klass);
-		resourceFactories.add(resourceFactory);
-	}
-
-	public <T> void addProvider(Provider<T> provider) {
-		restProviders.add(provider);
-	}
-
-	List<ResourceFactory> getResourceFactories() {
-		return resourceFactories;
-	}
-
-	List<Provider<?>> getRestProviders() {
-		return restProviders;
-	}
+    @Inject
+    private FilterDispatcher filterDispatcher;
 
 	@Override
 	public void start() {
-		for (ResourceFactory resourceFactory : resourceFactories) {
+		for (final JaxrsResource<?> resourceWithProvider : getResources()) {
+			final ResourceFactory resourceFactory = new GuiceResourceFactory(
+					new com.google.inject.Provider<Object>() {
+						@Override
+						public Object get() {
+							return resourceWithProvider.getProvider().get();
+						}
+					}, resourceWithProvider.getKlass());
 			filterDispatcher.getDispatcher().getRegistry().addResourceFactory(resourceFactory);
 		}
 
-		for (com.google.inject.Provider<?> provider : restProviders) {
-			filterDispatcher.getDispatcher().getProviderFactory().registerProviderInstance(provider.get());
-		}
+	//filterDispatcher.getDispatcher().getProviderFactory().registerProviderInstance(provider.get());
 	}
 }

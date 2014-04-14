@@ -53,7 +53,7 @@ import com.google.inject.servlet.GuiceFilter;
 @ServiceConfiguration(autoConfiguration = ""
 		+ "<connectors>"
 		+ "    <connector>"
-		+ "        <port>${oneof:${tomcat.port},}</port>"
+		+ "        <port>${oneof:${tomcat.port},${webserver.port},}</port>"
 		+ "    </connector>"
 		+ "</connectors>")
 public class TomcatService extends WebServerService {
