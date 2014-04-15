@@ -26,7 +26,7 @@
 	<packaging>pom</packaging>
 	<name>Moonshine BOM</name>
 	<description>Moonshine Bill of Materials POM</description>
-	<url>http://atteo.org/static/moonshine</url>
+	<url>http://moonshine.atteo.org</url>
 	<organization>
 		<name>Atteo</name>
 		<url>http://www.atteo.com</url>
