@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.classindex.ClassIndex;
+import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.jpa.JpaService;
 import org.atteo.moonshine.jpa.TransactionScopedEntityManager;
 import org.hibernate.cfg.AvailableSettings;
@@ -59,6 +60,8 @@ import com.google.inject.binder.ScopedBindingBuilder;
  * HibernateService - JPA implementation.
  */
 @XmlRootElement(name = "hibernate")
+@ServiceConfiguration(autoConfiguration = ""
+		+ "<initSchema>update</initSchema>")
 public class HibernateService extends JpaService {
 	/**
 	 * Automatically initialize database schema.
