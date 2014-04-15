@@ -93,10 +93,13 @@ public class Resteasy extends Jaxrs {
 						public Object get() {
 							return resourceWithProvider.getProvider().get();
 						}
-					}, resourceWithProvider.getKlass());
+					}, resourceWithProvider.getResourceClass());
 			filterDispatcher.getDispatcher().getRegistry().addResourceFactory(resourceFactory);
 		}
 
-	//filterDispatcher.getDispatcher().getProviderFactory().registerProviderInstance(provider.get());
+		for (JaxrsResource<?> provider : getProviders()) {
+			filterDispatcher.getDispatcher().getProviderFactory().registerProviderInstance(
+					provider.getProvider().get());
+		}
 	}
 }

@@ -16,6 +16,8 @@ package org.atteo.moonshine.jersey;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Provider;
+import javax.ws.rs.WebApplicationException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,9 +28,17 @@ import org.atteo.moonshine.services.ImportService;
 
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
+import com.google.inject.ProvisionException;
+import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.core.spi.component.ComponentContext;
+import com.sun.jersey.core.spi.component.ComponentScope;
+import com.sun.jersey.core.spi.component.ioc.IoCComponentProvider;
+import com.sun.jersey.core.spi.component.ioc.IoCComponentProviderFactory;
+import com.sun.jersey.core.spi.component.ioc.IoCManagedComponentProvider;
 import com.sun.jersey.core.util.FeaturesAndProperties;
 import com.sun.jersey.freemarker.FreemarkerViewProcessor;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 /**
@@ -70,10 +80,76 @@ public class Jersey extends Jaxrs {
 				params.put(FreemarkerViewProcessor.FREEMARKER_TEMPLATES_BASE_PATH, "templates");
 
 				bind(GuiceContainer.class);
-				servletContainer.addFilter(getProvider(GuiceContainer.class), params, prefix + "/*");
+				servletContainer.addFilter(new javax.inject.Provider<JerseyContainer>() {
+					@Override
+					public JerseyContainer get() {
+						return new JerseyContainer();
+					}
+				}, params, prefix + "/*");
 
 				registerResources(binder());
 			}
 		};
+	}
+
+	private class JerseyContainer extends ServletContainer {
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		protected void initiate(ResourceConfig config, WebApplication webapp) {
+			webapp.initiate(config, new JerseyFactory(config));
+		}
+	}
+
+	private class JerseyFactory implements IoCComponentProviderFactory {
+		private Map<Class<?>,Provider<?>> providers = new HashMap<>();
+
+		private JerseyFactory(ResourceConfig config) {
+			for (JaxrsResource<?> jaxrsResource : getResources()) {
+				config.getClasses().add(jaxrsResource.getResourceClass());
+				providers.put(jaxrsResource.getResourceClass(), jaxrsResource.getProvider());
+			}
+			for (JaxrsResource<?> provider : getProviders()) {
+				config.getClasses().add(provider.getResourceClass());
+				providers.put(provider.getResourceClass(), provider.getProvider());
+			}
+		}
+
+		@Override
+		public IoCComponentProvider getComponentProvider(Class<?> c) {
+			return getComponentProvider(null, c);
+		}
+
+		@Override
+		public IoCComponentProvider getComponentProvider(ComponentContext cc, Class<?> c) {
+			final Provider<?> provider = providers.get(c);
+			if (provider == null) {
+				return null;
+			}
+
+			return new IoCManagedComponentProvider() {
+				@Override
+				public Object getInstance() {
+					try {
+						return provider.get();
+					} catch (ProvisionException e) {
+						if (e.getCause() instanceof WebApplicationException) {
+							throw (WebApplicationException)e.getCause();
+						}
+						throw e;
+					}
+				}
+
+				@Override
+				public Object getInjectableInstance(Object o) {
+					return o;
+				}
+
+				@Override
+				public ComponentScope getScope() {
+					return ComponentScope.PerRequest;
+				}
+			};
+		}
 	}
 }

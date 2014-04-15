@@ -16,6 +16,7 @@
 
 package org.atteo.moonshine.jaxrs;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import javax.inject.Provider;
 import javax.ws.rs.Path;
 import javax.xml.bind.annotation.XmlElement;
 
+import org.atteo.classindex.ClassFilter;
 import org.atteo.classindex.ClassIndex;
 import org.atteo.moonshine.TopLevelService;
 
@@ -42,19 +44,34 @@ public abstract class Jaxrs extends TopLevelService {
 	private boolean discoverResources = false;
 
 	private final List<JaxrsResource<?>> resources = new ArrayList<>();
+	private final List<JaxrsResource<?>> providers = new ArrayList<>();
 
 	/**
-	 * Adds new resource.
+	 * Registers resource.
 	 * @param <T> resource class
 	 * @param klass resource class
 	 * @param provider resource provider
 	 */
-	public <T> void addResource(Class<T> klass, Provider<T> provider) {
+	public <T> void registerResource(Class<T> klass, Provider<T> provider) {
 		resources.add(new JaxrsResource<>(klass, provider));
 	}
 
-	private <T> void addResource(Class<T> annotated, Binder binder) {
-		addResource(annotated, binder.getProvider(annotated));
+	private <T> void registerResource(Class<T> annotated, Binder binder) {
+		registerResource(annotated, binder.getProvider(annotated));
+	}
+
+	/**
+	 * Registers JAX-RS provider.
+	 *
+	 * <p>
+	 * JAX-RS {@link javax.ws.rs.ext.Provider provider} is a different concept
+	 * than a Google Guice {@link Provider provider}. This method expects Guice provider
+	 * to the object which is a valid JAX-RS provider.
+	 * </p>
+	 * @param provider Guice provider of the object representing JAX-RS provider
+	 */
+	public <T> void registerProvider(Class<T> klass, Provider<T> provider) {
+		providers.add(new JaxrsResource<>(klass, provider));
 	}
 
 	/**
@@ -62,15 +79,20 @@ public abstract class Jaxrs extends TopLevelService {
 	 */
 	protected void registerResources(Binder binder) {
 		if (discoverResources) {
-			for (Class<?> annotated : ClassIndex.getAnnotated(Path.class)) {
+			for (Class<?> annotated : ClassFilter.only().topLevel().withModifiers(Modifier.PUBLIC)
+					.from(ClassIndex.getAnnotated(Path.class))) {
 				binder.bind(annotated);
-				addResource(annotated, binder);
+				registerResource(annotated, binder);
 			}
 		}
 	}
 
 	protected List<JaxrsResource<?>> getResources() {
 		return resources;
+	}
+
+	protected List<JaxrsResource<?>> getProviders() {
+		return providers;
 	}
 
 	protected static class JaxrsResource<T> {
@@ -82,7 +104,7 @@ public abstract class Jaxrs extends TopLevelService {
 			this.provider = provider;
 		}
 
-		public Class<T> getKlass() {
+		public Class<T> getResourceClass() {
 			return klass;
 		}
 
