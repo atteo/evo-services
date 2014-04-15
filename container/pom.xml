@@ -63,11 +63,6 @@
 			<artifactId>jcommander</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.atteo.urlhandlers</groupId>
-			<artifactId>urlhandlers</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
 			<groupId>org.codehaus.janino</groupId>
 			<artifactId>janino</artifactId>
 			<version>2.6.1</version>

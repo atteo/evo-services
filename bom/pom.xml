@@ -257,6 +257,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>webjars</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>webserver</artifactId>
 				<version>${project.version}</version>
 			</dependency>
