@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.ServiceConfiguration;
+import org.atteo.moonshine.jetty.connectors.AbstractNetworkConnectorConfig;
 import org.atteo.moonshine.jetty.connectors.ConnectorConfig;
 import org.atteo.moonshine.jetty.connectors.ServerConnectorConfig;
 import org.atteo.moonshine.jetty.connectors.SslContextFactoryConfig;
@@ -35,6 +36,8 @@ import org.atteo.moonshine.webserver.WebServerService;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -112,6 +115,8 @@ public class Jetty extends WebServerService {
 
 		try {
 			server.start();
+
+			printPorts();
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -128,6 +133,22 @@ public class Jetty extends WebServerService {
 			server.stop();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void printPorts() {
+		Logger logger = LoggerFactory.getLogger("Moonshine");
+
+		for (ConnectorConfig config : connectors) {
+			if (config instanceof AbstractNetworkConnectorConfig) {
+				AbstractNetworkConnectorConfig networkConfig = (AbstractNetworkConnectorConfig) config;
+
+				String host = networkConfig.getHost();
+				if (host == null) {
+					host = "0.0.0.0";
+				}
+				logger.info("    Jetty connector started on {}:{}", host, networkConfig.getPort());
+			}
 		}
 	}
 }

@@ -37,6 +37,8 @@ import org.atteo.moonshine.ServiceConfiguration;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.atteo.moonshine.webserver.WebServerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -179,6 +181,7 @@ public class TomcatService extends WebServerService {
 					throw new RuntimeException("Cannot start Tomcat, check logs");
 				}
 			}
+			printPorts();
 		} catch (LifecycleException e) {
 			throw new RuntimeException(e);
 		}
@@ -210,6 +213,12 @@ public class TomcatService extends WebServerService {
 			}
 		}
 		return result;
+	}
+
+	private void printPorts() {
+		Logger logger = LoggerFactory.getLogger("Moonshine");
+		logger.info("    Tomcat started on {}:{}",tomcat.getHost().getName(),
+				tomcat.getConnector().getLocalPort());
 	}
 
 }
