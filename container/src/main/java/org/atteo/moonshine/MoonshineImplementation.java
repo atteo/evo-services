@@ -17,6 +17,8 @@ package org.atteo.moonshine;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -193,6 +195,12 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		try {
 			setupConfiguration(moonshineParameters, configuration);
 			configuration.addCustomPropertyResolver(new PropertiesPropertyResolver(fileAccessorProperties));
+			Path configPropertiesFile = fileAccessor.getConfigFile("config.properties");
+			if (configPropertiesFile != null) {
+				Properties configProperties = new Properties();
+				configProperties.load(Files.newBufferedReader(configPropertiesFile, StandardCharsets.UTF_8));
+				configuration.addCustomPropertyResolver(new PropertiesPropertyResolver(configProperties));
+			}
 
 			if (moonshineParameters.isPrintConfig()) {
 				logger.info("Configuration is:\n" + configuration.printCombinedXml());

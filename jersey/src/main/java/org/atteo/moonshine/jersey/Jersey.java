@@ -46,7 +46,7 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
  */
 @XmlRootElement(name = "jersey")
 @ServiceConfiguration(autoConfiguration = ""
-		+ "<prefix>${oneof:${jersey.prefix},}</prefix>"
+		+ "<prefix>${oneof:${jersey.prefix},${jaxrs.prefix},}</prefix>"
 		+ "<discoverResources>true</discoverResources>")
 public class Jersey extends Jaxrs {
 	@XmlElement

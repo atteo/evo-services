@@ -43,7 +43,7 @@ import com.google.inject.Singleton;
  */
 @XmlRootElement(name = "resteasy")
 @ServiceConfiguration(autoConfiguration = ""
-		+ "<prefix>${oneof:${resteasy.prefix},}</prefix>"
+		+ "<prefix>${oneof:${resteasy.prefix},${jaxrs.prefix},}</prefix>"
 		+ "<discoverResources>true</discoverResources>")
 public class Resteasy extends Jaxrs {
     Logger log = LoggerFactory.getLogger(Resteasy.class);
