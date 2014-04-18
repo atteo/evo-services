@@ -15,7 +15,6 @@
  */
 package org.atteo.moonshine.services;
 
-import java.lang.annotation.Annotation;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -48,7 +47,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.inject.Binding;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -337,7 +335,8 @@ class ServicesImplementation implements Services, Services.Builder {
 			for (Class<?> ancestorClass : ReflectionUtils.getAncestors(metadata.getService().getClass())) {
 				metadata.setSingleton(ReflectionTools.isSingleton(ancestorClass));
 				for (final Field field : ancestorClass.getDeclaredFields()) {
-					if (!field.isAnnotationPresent(ImportService.class)) {
+					ImportService importAnnotation = field.getAnnotation(ImportService.class);
+					if (importAnnotation == null) {
 						continue;
 					}
 
@@ -385,8 +384,8 @@ class ServicesImplementation implements Services, Services.Builder {
 								throw new RuntimeException("Unknown service imported");
 							}
 						}
-						Annotation annotation = findBindingAnnotation(field);
-						metadata.addDependency(importedServiceMetadata, annotation);
+
+						metadata.addDependency(importedServiceMetadata, importAnnotation.bindWith());
 					} catch (IllegalAccessException | IllegalArgumentException e) {
 						throw new RuntimeException("Cannot access field", e);
 					}
@@ -420,25 +419,6 @@ class ServicesImplementation implements Services, Services.Builder {
 					throw new ConfigurationException("Service of type '" + type + "' is not unique");
 				}
 				result = service;
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Find annotation on the field which is itself annotated with {@link BindingAnnotation}.
-	 * @param field field with {@link Field#setAccessible(boolean)} already called
-	 * @return binding annotation or null, if not found
-	 */
-	private static Annotation findBindingAnnotation(Field field) {
-		Annotation result = null;
-		for (Annotation annotation : field.getAnnotations()) {
-			if (annotation.annotationType().isAnnotationPresent(BindingAnnotation.class)) {
-				if (result == null) {
-					result = annotation;
-				} else {
-					throw new RuntimeException("More than one binding annotation specified");
-				}
 			}
 		}
 		return result;

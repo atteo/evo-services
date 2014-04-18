@@ -168,8 +168,8 @@ public class ServiceModuleRewriter {
 					private <T> void bindKey(Key<T> key) {
 						Key<T> sourceKey;
 
-						Annotation annotation = dependency.getAnnotation();
-						if (annotation == null) {
+						Class<? extends Annotation> annotation = dependency.getAnnotation();
+						if (annotation == ImportService.NoAnnotation.class) {
 							sourceKey = Key.get(key.getTypeLiteral());
 						} else {
 							sourceKey = Key.get(key.getTypeLiteral(), annotation);

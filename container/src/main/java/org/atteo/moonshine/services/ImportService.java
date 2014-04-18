@@ -15,6 +15,7 @@
  */
 package org.atteo.moonshine.services;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,25 +34,23 @@ import com.google.inject.PrivateModule;
  * available in this service {@link Module module} as private bindings.
  * </p>
  * <p>
- * You can additionally annotate the field with any {@link BindingAnnotation binding annotation} to register
- * the binding as annotated with this annotation.
+ * You can additionally provide the {@link BindingAnnotation binding annotation} to register
+ * imported bindings as annotated with this annotation.
  * </p>
  * <p>
  * Example:
  * <pre>
  * class Robot {
- *     // LegService provides binding for Leg class
+ *     // First register LegServices, each provides binding for Leg class
  *     &#064;XmlIDREF
- *     &#064;ImportService
- *     &#064;Left
+ *     &#064;ImportService(bindWith = Left.class)
  *     LegService legService;
  *
  *     &#064;XmlIDREF
- *     &#064;ImportService
- *     &#064;Right
+ *     &#064;ImportService(bindWith = Right.class)
  *     LegService legService;
  *
- *     // Leg class can be injected locally
+ *     // Then both Legs classes can be injected locally
  *     &#064;Inject
  *     &#064;Left
  *     Leg leg;
@@ -66,4 +65,14 @@ import com.google.inject.PrivateModule;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface ImportService {
+	/**
+	 * Annotation to bind imported bindings with.
+	 * <p>
+	 * By default bindings are imported without any binding annotation.
+	 * </p>
+	 */
+	Class<? extends Annotation> bindWith() default NoAnnotation.class;
+
+	public @interface NoAnnotation {
+	}
 }

@@ -21,22 +21,18 @@ import org.atteo.moonshine.services.ImportService;
 
 public abstract class HeadLessRobotService extends TopLevelService{
 	@XmlIDREF
-	@ImportService
-	@Left
+	@ImportService(bindWith = Left.class)
 	protected LegService leftLeg;
 
 	@XmlIDREF
-	@ImportService
-	@Right
+	@ImportService(bindWith = Right.class)
 	protected LegService rightLeg;
 
 	@XmlIDREF
-	@ImportService
-	@Left
+	@ImportService(bindWith = Left.class)
 	protected HandService leftHand;
 
 	@XmlIDREF
-	@ImportService
-	@Right
+	@ImportService(bindWith = Right.class)
 	protected HandService rightHand;
 }

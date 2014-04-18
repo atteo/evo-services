@@ -62,7 +62,7 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 		this.closeImplemented = isImplemented(service.getClass(), "close");
 	}
 
-	public void addDependency(ServiceWrapper service, Annotation annotation) {
+	public void addDependency(ServiceWrapper service, Class<? extends Annotation> annotation) {
 		dependencies.add(new Dependency(service, annotation));
 	}
 
@@ -224,14 +224,14 @@ public class ServiceWrapper implements ServiceInfo, ServiceMXBean, MBeanRegistra
 
 	public static class Dependency {
 		private final ServiceWrapper service;
-		private final Annotation annotation;
+		private final Class<? extends Annotation> annotation;
 
-		public Dependency(ServiceWrapper service, Annotation annotation) {
+		public Dependency(ServiceWrapper service, Class<? extends Annotation> annotation) {
 			this.service = service;
 			this.annotation = annotation;
 		}
 
-		public Annotation getAnnotation() {
+		public Class<? extends Annotation> getAnnotation() {
 			return annotation;
 		}
 
