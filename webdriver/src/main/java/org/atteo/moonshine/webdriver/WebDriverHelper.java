@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import org.atteo.moonshine.webserver.WebServerAddress;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
@@ -75,14 +76,27 @@ public class WebDriverHelper {
 		return waitUntil(function, null);
 	}
 
-	public <T> T waitUntil(Function<WebDriver, T> function, String message) {
+	public <T> T waitUntil(final Function<WebDriver, T> function, String message) {
 		WebDriverWait wait = new WebDriverWait(driver, options.getTimeoutInSeconds(), options.getSleepInMillis());
 
 		if (message != null) {
 			wait.withMessage(message);
 		}
 
-		return wait.until(function);
+		return wait.until(new Function<WebDriver, T>() {
+
+			@Override
+			public T apply(WebDriver input) {
+				try {
+					return function.apply(input);
+				} catch (StaleElementReferenceException e) {
+					// Every now and then elements may be destroyed during the evaluation of 'function'
+					// and this exception might be thrown. It's safe to ignore here as 'function' will be
+					// called multiple times as long as it does not return true.
+					return null;
+				}
+			}
+		});
 	}
 
 	public void waitUntilPath(final String path) {
