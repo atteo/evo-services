@@ -83,7 +83,8 @@
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
-		<blueprints.version>2.4.0</blueprints.version>
+		<blueprints.version>2.5.0</blueprints.version>
+		<config.version>1.2</config.version>
 		<jetty.version>9.1.1.v20140108</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
 		<skipMoreTests>true</skipMoreTests>
