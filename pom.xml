@@ -60,6 +60,7 @@
 		<module>logback-jmx</module>
 		<module>liquibase</module>
 		<module>metrics</module>
+		<module>orientdb</module>
 		<module>perf4j</module>
 		<module>postgresql</module>
 		<module>reflection-utils</module>
