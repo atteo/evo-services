@@ -81,11 +81,25 @@ public abstract class Jaxrs extends TopLevelService {
 		if (discoverResources) {
 			for (Class<?> annotated : ClassFilter.only().topLevel().withModifiers(Modifier.PUBLIC)
 					.from(ClassIndex.getAnnotated(Path.class))) {
-				binder.bind(annotated);
-				registerResource(annotated, binder);
+                if (!annotated.isInterface()) {
+                    binder.bind(annotated);
+                    registerResource(annotated, binder);
+                }
 			}
 		}
 	}
+
+    protected void registerProviders(Binder binder) {
+        if (discoverResources) {
+            for (Class annotated : ClassFilter.only().topLevel().withModifiers(Modifier.PUBLIC)
+                    .from(ClassIndex.getAnnotated(javax.ws.rs.ext.Provider.class))) {
+                if (!annotated.isInterface()) {
+                    binder.bind(annotated);
+                    registerProvider(annotated, binder.getProvider(annotated));
+                }
+            }
+        }
+    }
 
 	protected List<JaxrsResource<?>> getResources() {
 		return resources;

@@ -77,6 +77,7 @@ public class Resteasy extends Jaxrs {
 				servletContainer.addFilter(getProvider(FilterDispatcher.class), params, prefix + "/*");
 
 				registerResources(binder());
+                registerProviders(binder());
 			}
 		};
 	}
