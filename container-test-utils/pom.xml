@@ -63,7 +63,7 @@
 									</files>
 								</requireFilesSize>
 							</rules>
-							<fail>true</fail>
+							<skip>${skipTests}</skip>
 						</configuration>
 					</execution>
 					<execution>
@@ -82,7 +82,7 @@
 									</files>
 								</requireFilesSize>
 							</rules>
-							<fail>true</fail>
+							<skip>${skipTests}</skip>
 						</configuration>
 					</execution>
 				</executions>
