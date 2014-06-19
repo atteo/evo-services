@@ -25,6 +25,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
+			<artifactId>resteasy</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo.moonshine</groupId>
+			<artifactId>jetty</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo.moonshine</groupId>
 			<artifactId>container-test-utils</artifactId>
 			<scope>test</scope>
 		</dependency>

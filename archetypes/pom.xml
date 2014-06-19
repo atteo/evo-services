@@ -10,7 +10,8 @@
 	<packaging>pom</packaging>
 	<name>Moonshine Archetypes</name>
 	<modules>
+		<module>distribution</module>
+		<module>hibernate</module>
 		<module>service</module>
-		<module>standalone</module>
 	</modules>
 </project>

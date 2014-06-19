@@ -7,10 +7,10 @@
 		<groupId>org.atteo.moonshine</groupId>
 		<version>1-SNAPSHOT</version>
 	</parent>
-	<artifactId>service-archetype</artifactId>
+	<artifactId>hibernate-archetype</artifactId>
 	<packaging>maven-archetype</packaging>
 
-	<name>Simple Service Archetype</name>
+	<name>Hibernate Archetype</name>
 
 	<licenses>
 		<license>
@@ -27,8 +27,23 @@
 		</dependency>
 		<dependency>
 			<groupId>org.atteo.moonshine</groupId>
+			<artifactId>hibernate</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo.moonshine</groupId>
 			<artifactId>container-test-utils</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<!-- Dummy dependency forbidding Maven to build in parallel with service-archetype project.
+				 Without it the following error is thrown by archetype-plugin:
+				 Archetype IT 'basic' failed: org.apache.maven.archetype.exception.ArchetypeGenerationFailure: Error merging velocity templates: null
+			-->
+			<groupId>${project.groupId}</groupId>
+			<artifactId>service-archetype</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

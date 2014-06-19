@@ -8,19 +8,26 @@ package ${package};
 
 import javax.inject.Inject;
 
+import javax.persistence.EntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import org.atteo.moonshine.Moonshine;
+import org.atteo.moonshine.jta.Transactional;
 import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
 @MoonshineConfiguration(autoConfiguration = true)
-public class MessageProviderServiceTest extends MoonshineTest {
+public class UserTest extends MoonshineTest {
 	@Inject
-	private MessageProvider provider;
+	private EntityManager entityManager;
 
 	@Test
-	public void shouldReturnSpecifiedMessage() {
-		assertThat(provider.getMessage()).isEqualTo("Hello World!");
+	@Transactional
+	public void shouldStoreUser() {
+		User user = new User();
+		user.setName("Test Name");
+
+		entityManager.persist(user);
 	}
 }

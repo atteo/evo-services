@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.TopLevelService;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.PrivateModule;
 import com.google.inject.Module;
 
 /**
@@ -21,16 +21,19 @@ public class MessageProviderService extends TopLevelService {
 	@XmlDefaultValue("Hello World!")
 	private String message;
 
+	private class MessageProviderImpl implements MessageProvider {
+		public String getMessage() {
+			return message;
+		}
+	}
+
 	@Override
 	public Module configure() {
-		return new AbstractModule() {
+		return new PrivateModule() {
 			@Override
 			protected void configure() {
-				bind(MessageProvider.class).toInstance(new MessageProvider() {
-					public String getMessage() {
-						return message;
-					}
-				});
+				bind(MessageProvider.class).toInstance(new MessageProviderImpl());
+				expose(MessageProvider.class);
 			}
 		};
 	}

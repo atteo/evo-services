@@ -5,12 +5,13 @@
 	<parent>
 		<artifactId>archetypes</artifactId>
 		<groupId>org.atteo.moonshine</groupId>
-		<version>1-SNAPSHOT</version>
+		<version>0.9</version>
 	</parent>
 	<artifactId>service-archetype</artifactId>
+	<version>1.0-SNAPSHOT</version>
 	<packaging>maven-archetype</packaging>
 
-	<name>Simple Service Archetype</name>
+	<name>Moonshine Service Archetype</name>
 
 	<licenses>
 		<license>
@@ -51,4 +52,3 @@
 		</pluginManagement>
 	</build>
 </project>
-
