@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.atteo.config.IncorrectConfigurationException;
+import org.atteo.filtering.Filtering;
 import org.atteo.filtering.PropertiesPropertyResolver;
+import org.atteo.filtering.PropertyFilter;
 import org.atteo.filtering.PropertyResolver;
 import org.atteo.moonshine.directories.DefaultFileAccessor;
 import org.atteo.moonshine.directories.FileAccessor;
@@ -225,6 +227,8 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 			@Override
 			protected void configure() {
 				bind(Key.get(PropertyResolver.class, ApplicationProperties.class)).toInstance(propertyResolver);
+				bind(Key.get(PropertyFilter.class, ApplicationProperties.class)).toInstance(
+						Filtering.getFilter(propertyResolver));
 			}
 		});
 

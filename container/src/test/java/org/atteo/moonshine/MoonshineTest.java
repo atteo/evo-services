@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import com.beust.jcommander.Parameter;
 import com.google.inject.AbstractModule;
 import com.google.inject.CreationException;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import static com.googlecode.catchexception.CatchException.caughtException;
@@ -418,5 +419,22 @@ public class MoonshineTest {
 		// then
 		then(caughtException()).isInstanceOf(RuntimeException.class)
 				.hasMessage("Service CyclicServiceA depends on itself: CyclicServiceA -> CyclicServiceB -> CyclicServiceA");
+	}
+
+	@Test
+	public void shouldProvidePropertyFilter() throws MoonshineException, IOException, PropertyNotFoundException {
+		// given
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.homeDirectory("target/test-home")
+				.build()) {
+
+			// when
+			Injector injector = moonshine.getGlobalInjector();
+			PropertyFilter filter = injector.getInstance(Key.get(PropertyFilter.class, ApplicationProperties.class));
+
+			// then
+			assertThat(filter).isNotNull();
+			assertThat(filter.getProperty("dataHome")); // throws exception when the test fails
+		}
 	}
 }
