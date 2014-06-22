@@ -2,10 +2,12 @@ package org.atteo.moonshine.tests;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.atteo.moonshine.Moonshine;
 import org.atteo.moonshine.tests.MoonshineConfiguration.Alternatives;
 import org.atteo.moonshine.tests.MoonshineConfiguration.Config;
 import org.junit.runner.Description;
@@ -15,6 +17,7 @@ import org.junit.runners.ParentRunner;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.reflect.TypeToken;
@@ -32,6 +35,7 @@ import com.google.common.reflect.TypeToken;
  * </p>
  */
 public class MoonshineMultiRunner extends ParentRunner<Runner> {
+	private final static String CONFIG_IDS = "configIds";
 	private final List<Runner> runners = new ArrayList<>();
 	private final Class<?> klass;
 
@@ -39,11 +43,43 @@ public class MoonshineMultiRunner extends ParentRunner<Runner> {
 		super(null);
 		this.klass = klass;
 
+		String configIdsProperty = System.getProperty(CONFIG_IDS, "");
+		List<String> configIds = Splitter.on(",").trimResults().omitEmptyStrings().splitToList(configIdsProperty);
+
 		List<Set<Config>> alternatives = collectAlternatives(klass);
+
+		if (!configIds.isEmpty()) {
+			filterAlternatives(alternatives, configIds);
+		}
 
 		for (List<Config> list : Sets.cartesianProduct(alternatives)) {
 			runners.add(new MoonshineRunner(klass, list));
 		}
+	}
+
+	private void filterAlternatives(List<Set<Config>> alternatives, List<String> configIds) {
+		for (Set<Config> alternative : alternatives) {
+			if (containsAnyConfigId(alternative, configIds)) {
+				Iterator<Config> iterator = alternative.iterator();
+
+				while (iterator.hasNext()) {
+					Config config = iterator.next();
+					if (!configIds.contains(config.id())) {
+						iterator.remove();
+					}
+				}
+			}
+		}
+	}
+
+	private boolean containsAnyConfigId(Set<Config> alternative, List<String> configIds) {
+		for (Config config : alternative) {
+			if (configIds.contains(config.id())) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static List<Set<Config>> collectAlternatives(Class<?> klass) {

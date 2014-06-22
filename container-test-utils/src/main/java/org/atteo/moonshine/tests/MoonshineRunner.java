@@ -119,10 +119,10 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 
 	@Override
 	public Description getDescription() {
-        Description description = Description.createTestDescription(klass, getName(), getRunnerAnnotations());
-        for (FrameworkMethod child : getChildren()) {
-            description.addChild(describeChild(child));
-        }
+		Description description = Description.createTestDescription(klass, getName(), getRunnerAnnotations());
+		for (FrameworkMethod child : getChildren()) {
+			description.addChild(describeChild(child));
+		}
 		return description;
 	}
 
@@ -130,7 +130,6 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 		if (iterationConfigs.isEmpty()) {
 			return;
 		}
-
 		for (Config config : iterationConfigs) {
 			if (config.value().length != 0) {
 				configs.addAll(Arrays.asList(config.value()));
