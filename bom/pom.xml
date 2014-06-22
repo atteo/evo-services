@@ -68,17 +68,17 @@
 			<dependency>
 				<groupId>org.atteo.config</groupId>
 				<artifactId>config</artifactId>
-				<version>1-SNAPSHOT</version>
+				<version>1.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.filtering</groupId>
 				<artifactId>filtering</artifactId>
-				<version>1-SNAPSHOT</version>
+				<version>1.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.filtering</groupId>
 				<artifactId>janino</artifactId>
-				<version>1-SNAPSHOT</version>
+				<version>1.3</version>
 			</dependency>
             <dependency>
                 <groupId>org.atteo.moonshine</groupId>

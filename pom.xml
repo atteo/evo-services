@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo</groupId>
-		<version>1-SNAPSHOT</version>
+		<version>1.10</version>
 		<relativePath />
 	</parent>
 	<groupId>org.atteo.moonshine</groupId>
@@ -37,6 +37,7 @@
 		<module>container</module>
 		<module>container-test-utils</module>
 		<module>services</module>
+		<module>reflection-utils</module>
 	</modules>
 	<scm>
 		<connection>https://github.com/atteo/moonshine</connection>
@@ -44,7 +45,7 @@
 	</scm>
 	<properties>
 		<blueprints.version>2.5.0</blueprints.version>
-		<config.version>1.2</config.version>
+		<config.version>1.3</config.version>
 		<jetty.version>9.1.1.v20140108</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
 		<skipMoreTests>true</skipMoreTests>
@@ -55,12 +56,12 @@
 			<dependency>
 				<groupId>org.atteo.classindex</groupId>
 				<artifactId>classindex</artifactId>
-				<version>3-SNAPSHOT</version>
+				<version>3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.config</groupId>
 				<artifactId>config</artifactId>
-				<version>1-SNAPSHOT</version>
+				<version>${config.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
