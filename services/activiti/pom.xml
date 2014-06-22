@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>parent</artifactId>
+		<artifactId>services</artifactId>
 		<groupId>org.atteo.moonshine</groupId>
 		<version>1-SNAPSHOT</version>
 	</parent>
@@ -16,7 +16,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>container</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.activiti</groupId>
@@ -26,19 +25,16 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>h2</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>atomikos</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>container-test-utils</artifactId>
-			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -112,6 +112,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>database</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>database-test-utils</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -164,6 +170,17 @@
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>janino</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>jax-rs</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>jax-rs</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
@@ -272,8 +289,20 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>webserver</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>websocket</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>websocket</artifactId>
+				<version>${project.version}</version>
+				<type>test-jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
