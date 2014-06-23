@@ -135,7 +135,7 @@ public class ConfigurationReader {
 				name = xmlRootElement.name();
 			}
 			builder.append("\t<").append(name);
-			builder.append(" combine.self='").append(CombineSelf.OVERRIDABLE_BY_TAG.name().toLowerCase());
+			builder.append(" combine.self='").append(CombineSelf.OVERRIDABLE_BY_TAG.name());
 			if (annotation == null || annotation.autoConfiguration().isEmpty()) {
 				builder.append("'/>\n");
 			} else {

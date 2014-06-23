@@ -400,7 +400,6 @@ public class MoonshineTest {
 			// then
 			assertThat(instance).isNotNull();
 			assertThat(instance.getName()).isEqualTo("default-name");
-
 		}
 	}
 

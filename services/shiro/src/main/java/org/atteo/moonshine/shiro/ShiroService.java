@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresGuest;
@@ -150,6 +151,8 @@ public class ShiroService extends TopLevelService {
 	}
 
 	@Inject
+	// TODO: why @XmlTransient is needed?
+	@XmlTransient
 	private SecurityManager securityManager;
 
 	@Override
