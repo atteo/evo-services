@@ -27,6 +27,7 @@ import org.atteo.moonshine.TopLevelService;
 import org.atteo.moonshine.webdriver.browsers.Browser;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.UnreachableBrowserException;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -94,8 +95,12 @@ public class WebDriverService extends TopLevelService {
 
 	@Override
 	public void close() {
-		if (driver != null) {
-			driver.close();
+		try {
+			if (driver != null) {
+				driver.close();
+			}
+		} catch (UnreachableBrowserException e) {
+			// ignore, might be already killed
 		}
 		if (browser != null) {
 			browser.close();
