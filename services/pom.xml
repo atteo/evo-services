@@ -46,6 +46,7 @@
 		<module>transactional-filter</module>
 		<module>tomcat</module>
 		<module>webdriver</module>
+		<module>webdriver-helper</module>
 		<module>webjars</module>
 		<module>webserver</module>
 		<module>websocket</module>
