@@ -26,7 +26,7 @@ import org.atteo.moonshine.services.Service;
 import org.w3c.dom.Element;
 
 /**
- * Root class for the {@link Moonshine} configuration file.
+ * Root class for the Moonshine configuration file.
  */
 @XmlRootElement
 public class Config extends ConfigurableService {

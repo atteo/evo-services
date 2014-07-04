@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Provider;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
@@ -52,6 +53,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.ServletModule;
 import com.google.inject.spi.DefaultElementVisitor;
 import com.google.inject.spi.Element;
@@ -108,6 +110,13 @@ class ServicesImplementation implements Services, Services.Builder {
 			@Override
 			public void configureServlets() {
 				binder().requireExplicitBindings();
+				binder().bind(new TypeLiteral<List<? extends ServiceInfo>>() {})
+						.toProvider(new Provider<List<? extends ServiceWrapper>>() {
+							@Override
+							public List<? extends ServiceWrapper> get() {
+								return getServiceElements();
+							}
+						});
 			}
 		});
 
@@ -119,7 +128,7 @@ class ServicesImplementation implements Services, Services.Builder {
 		// because when it is installed from some private module it doesn't have an access to all
 		// registered servlets and filters.
 		//
-		// The line below makes sure first instance of ServletModule is rewritten in global scope
+		// The line below makes sure the first instance of ServletModule is rewritten in global scope
 		modules.add(Elements.getModule(Elements.getElements(servletsModule)));
 
 		for (Module module : extraModules) {
@@ -258,7 +267,7 @@ class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	@Override
-	public List<ServiceWrapper> getServiceElements() {
+	public List<? extends ServiceWrapper> getServiceElements() {
 		return services;
 	}
 

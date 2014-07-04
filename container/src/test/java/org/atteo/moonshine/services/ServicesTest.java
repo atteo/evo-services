@@ -16,6 +16,8 @@
 
 package org.atteo.moonshine.services;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,8 +27,10 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
+import com.google.inject.TypeLiteral;
 
 public class ServicesTest {
 	@Test
@@ -263,6 +267,20 @@ public class ServicesTest {
 				})
 				.build()) {
 			services.start();
+		}
+	}
+
+	@Test
+	public void shouldBindListOfServices() throws ConfigurationException {
+		// given
+		try (Services services = Services.Factory.builder()
+				.build()) {
+			// when
+			List<? extends ServiceInfo> servicesInfo = services.getGlobalInjector()
+					.getInstance(Key.get(new TypeLiteral<List<? extends ServiceInfo>>() {}));
+
+			// then
+			assertThat(servicesInfo).isNotEmpty();
 		}
 	}
 }

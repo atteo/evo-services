@@ -27,12 +27,16 @@ import javax.script.ScriptException;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.atteo.moonshine.TopLevelService;
+import org.atteo.moonshine.services.ServiceInfo;
 
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.PrivateModule;
+import com.google.inject.spi.DefaultElementVisitor;
+import com.google.inject.spi.Element;
+import com.google.inject.spi.PrivateElements;
 
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
@@ -53,6 +57,9 @@ public class NashornConsole extends TopLevelService {
 
 	@Inject
 	private Injector injector;
+
+	@Inject
+	private List<? extends ServiceInfo> services;
 
 	public class SimpleInjector {
 		public Object get(String name) {
@@ -94,16 +101,43 @@ public class NashornConsole extends TopLevelService {
 		}
 
 		private String getBindingsList() {
-			StringBuilder builder = new StringBuilder();
-			for (Key<?> key : injector.getParent().getAllBindings().keySet()) {
-				if (key.getAnnotation() != null) {
-					builder.append(key.getAnnotation().toString());
-				}
-				builder.append(" | ");
-				builder.append(key.getTypeLiteral().toString());
-				builder.append("\n");
-			}
+			final StringBuilder builder = new StringBuilder();
 
+			for (ServiceInfo service : services) {
+				builder.append(service.getName());
+				builder.append("\n");
+
+				for (Element element : service.getElements()) {
+					element.acceptVisitor(new DefaultElementVisitor<Void>() {
+						@Override
+						public <T> Void visit(Binding<T> binding) {
+							builder.append("    ");
+							builder.append(binding.getKey());
+							builder.append("\n");
+							return null;
+						}
+
+						@Override
+						public Void visit(PrivateElements elements) {
+							for (Element element : elements.getElements()) {
+								if (element instanceof Binding<?>
+										&& elements.getExposedKeys().contains(((Binding)element).getKey())) {
+									Binding<?> binding = ((Binding)element);
+									builder.append("    ");
+									if (binding.getKey().getAnnotation() != null) {
+										builder.append(binding.getKey().getAnnotation());
+										builder.append(" ");
+									}
+									builder.append(binding.getKey().getTypeLiteral());
+									builder.append("\n");
+								}
+							}
+							return null;
+						}
+					});
+				}
+			}
+		
 			builder.append("\nUse injector.get(...) to retrieve");
 
 			return builder.toString();
