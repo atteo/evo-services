@@ -186,6 +186,13 @@ public class NashornConsole extends TopLevelService {
 			} finally {
 				try {
 					TerminalFactory.get().restore();
+				} catch (InterruptedException e) {
+					// First execution of restore() can catch InterruptedException, so let's repeat it
+					try {
+						TerminalFactory.get().restore();
+					} catch (Exception f) {
+						throw new RuntimeException(f);
+					}
 				} catch (Exception e) {
 					throw new RuntimeException(e);
 				}
