@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
 import javax.inject.Inject;
 
 import org.atteo.moonshine.webserver.WebServerAddress;
@@ -32,6 +33,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 
 /**
  * WebDriver helper functions.
@@ -67,7 +69,7 @@ public class WebDriverHelper {
 	 * Loads the specified path from webserver;
 	 */
 	public void go(String path) {
-		String host = (webServerAddress.getHost() == null) ? "localhost" : webServerAddress.getHost();
+		String host = Strings.isNullOrEmpty(webServerAddress.getHost()) ? "localhost" : webServerAddress.getHost();
 		String address = "http://" + host + ":" + webServerAddress.getPort() + path;
 		driver.get(address);
 	}
