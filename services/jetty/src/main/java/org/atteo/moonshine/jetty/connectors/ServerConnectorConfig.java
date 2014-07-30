@@ -15,6 +15,9 @@
  */
 package org.atteo.moonshine.jetty.connectors;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -47,15 +50,20 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 	 */
 	@XmlElementWrapper(name = "connections")
 	@XmlElementRef
-	private ConnectionFactoryConfig[] connections = new ConnectionFactoryConfig[] {
-		new HttpConnectionFactoryConfig()
-	};
+	private List<ConnectionFactoryConfig> connections;
 
 	/**
 	 * Register {@link WebServerAddress} in Guice with port and hostname assigned to this connector.
 	 */
 	@XmlElement
 	private boolean provideAddress = false;
+
+	public final void addDefaultConnections() {
+		if (connections == null) {
+			connections = new ArrayList<>();
+			connections.add(new HttpConnectionFactoryConfig());
+		}
+	}
 
 	public ServerConnectorConfig() {
 	}
@@ -64,10 +72,10 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 		this.provideAddress = provideAddress;
 	}
 
-
 	@Override
 	public AbstractNetworkConnector createConnector(Server server) {
-		ConnectionFactory[] connectionFactories = new ConnectionFactory[connections.length];
+		addDefaultConnections();
+		ConnectionFactory[] connectionFactories = new ConnectionFactory[connections.size()];
 		int i = 0;
 		for (ConnectionFactoryConfig connectionConfig : connections) {
 			connectionFactories[i] = connectionConfig.getConnectionFactory();
@@ -78,6 +86,7 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 
 	@Override
 	public Module configure() {
+		addDefaultConnections();
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -106,7 +115,7 @@ public class ServerConnectorConfig extends AbstractNetworkConnectorConfig {
 				if (host == null) {
 					host = "localhost";
 				}
-				return connections[0].getProtocolString() + "://" + host + ":" + ServerConnectorConfig.this.getPort();
+				return connections.get(0).getProtocolString() + "://" + host + ":" + ServerConnectorConfig.this.getPort();
 			}
 		};
 	}

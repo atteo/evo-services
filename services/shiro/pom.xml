@@ -24,6 +24,16 @@
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-guice</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>guice</artifactId>
+					<groupId>com.google.inject</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>guice-multibindings</artifactId>
+					<groupId>com.google.inject.extensions</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.sisu</groupId>
@@ -54,4 +64,3 @@
 		</dependency>
 	</dependencies>
 </project>
-

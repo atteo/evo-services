@@ -25,7 +25,7 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.atteo.moonshine.services.ImportService;
 import org.atteo.moonshine.services.Service;
 import org.atteo.moonshine.webserver.ServletContainer;
@@ -35,7 +35,7 @@ import com.google.inject.Module;
 /**
  * Context configuration.
  */
-public class ContextConfig extends Configurable implements Service {
+public class ContextConfig extends AbstractConfigurable implements Service {
 	@ImportService
 	@XmlIDREF
 	@XmlElement

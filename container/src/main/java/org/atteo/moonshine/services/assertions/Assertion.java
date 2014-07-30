@@ -13,11 +13,11 @@
  */
 package org.atteo.moonshine.services.assertions;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 
 /**
  * Assertion.
  */
-public abstract class Assertion extends Configurable {
+public abstract class Assertion extends AbstractConfigurable {
 	public abstract void check();
 }

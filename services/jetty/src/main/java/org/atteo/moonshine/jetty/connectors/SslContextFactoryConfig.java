@@ -20,13 +20,13 @@ import java.io.File;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.moonshine.webserver.crypto.Crypto;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 @XmlRootElement(name = "sslcontextfactory")
-public class SslContextFactoryConfig extends Configurable {
+public class SslContextFactoryConfig extends AbstractConfigurable {
 	@XmlElement
 	@XmlDefaultValue("${configHome}/keystore.jks")
 	private String keyStorePath;

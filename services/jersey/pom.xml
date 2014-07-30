@@ -41,6 +41,14 @@
 					<artifactId>asm</artifactId>
 					<groupId>asm</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>guice</artifactId>
+					<groupId>com.google.inject</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>guice-servlet</artifactId>
+					<groupId>com.google.inject.extensions</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>

@@ -16,12 +16,15 @@
 package org.atteo.moonshine.activiti;
 
 
-import com.google.common.collect.Lists;
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
@@ -37,12 +40,12 @@ import org.atteo.moonshine.TopLevelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 /**
  * Starts Activiti database
@@ -52,7 +55,8 @@ public class Activiti extends TopLevelService {
     private final Logger log = LoggerFactory.getLogger(Activiti.class);
 
     @XmlDefaultValue("default")
-    String name;
+	@XmlElement
+    private String name;
 
     /**
      * True if to update db schema on boot time:
@@ -63,34 +67,39 @@ public class Activiti extends TopLevelService {
      * @see org.activiti.engine.impl.cfg.ProcessEngineConfigurationImpl
      */
     @XmlDefaultValue("true")
-    String dbSchemaUpdate;
+	@XmlElement
+    private String dbSchemaUpdate;
 
     /**
      * True if the job executor should be activated.
      */
     @XmlDefaultValue("false")
-    Boolean jobExecutorActivate;
+	@XmlElement
+    private Boolean jobExecutorActivate;
 
     /**
      * The host of the mail server
      */
-    String mailServerHost;
+	@XmlElement
+    private String mailServerHost;
 
     /**
      * The port of the mail server
      */
     @XmlDefaultValue("25")
-    Integer mailServerPort;
+	@XmlElement
+    private Integer mailServerPort;
 
     /**
      * History config
      */
     @XmlDefaultValue("audit")
-    String history;
+	@XmlElement
+    private String history;
 
     @XmlElementRef
     @XmlElementWrapper(name = "bpmn-parse-handlers")
-    List<BpmnParseHandlerConf> bpmnParseHandlers;
+    private List<BpmnParseHandlerConf> bpmnParseHandlers;
 
     private class ProcessEngineProvider implements Provider<ProcessEngine> {
         @Inject
@@ -153,8 +162,6 @@ public class Activiti extends TopLevelService {
             return handlers;
         }
     }
-
-
 
     @Override
     public Module configure() {

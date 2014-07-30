@@ -16,10 +16,10 @@ package org.atteo.moonshine.jta;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 
 @XmlRootElement(name = "pool")
-public class PoolOptions extends Configurable {
+public class PoolOptions extends AbstractConfigurable {
 
 	/**
 	 * Sets the minimum pool size.

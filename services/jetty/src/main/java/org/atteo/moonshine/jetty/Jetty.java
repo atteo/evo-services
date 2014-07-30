@@ -14,7 +14,6 @@
 package org.atteo.moonshine.jetty;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.management.MBeanServer;
@@ -57,16 +56,14 @@ import com.google.inject.Inject;
 public class Jetty extends WebServerService {
 	@XmlElementWrapper(name = "sslcontextfactories")
 	@XmlElementRef
-	private SslContextFactoryConfig[] sslContextFactories;
+	private List<SslContextFactoryConfig> sslContextFactories;
 
 	/**
 	 * List of connectors.
 	 */
 	@XmlElementWrapper(name = "connectors")
 	@XmlElementRef
-	private ConnectorConfig[] connectors = new ConnectorConfig[] {
-		new ServerConnectorConfig(true)
-	};
+	private List<ConnectorConfig> connectors;
 
 	/**
 	 * Main handler. Usually a {@link HandlerCollectionConfig collection} or {@link HandlerListConfig list}
@@ -84,12 +81,21 @@ public class Jetty extends WebServerService {
 		}
 	}
 
+	private void addDefaults() {
+		if (connectors == null) {
+			connectors = new ArrayList<>();
+			connectors.add(new ServerConnectorConfig(true));
+		}
+	}
+
 	@Override
 	public Iterable<? extends Service> getSubServices() {
+		addDefaults();
+
 		List<Service> handlerServices = new ArrayList<>();
 		addRecursively(handlerServices, handler);
 
-		return Iterables.concat(Arrays.asList(connectors), handlerServices);
+		return Iterables.concat(connectors, handlerServices);
 	}
 
 	@Inject(optional = true)
@@ -99,6 +105,7 @@ public class Jetty extends WebServerService {
 
 	@Override
 	public void start() {
+		addDefaults();
 		server = new Server();
 
 		server.setHandler(handler.getHandler());

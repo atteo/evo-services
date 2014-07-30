@@ -18,10 +18,10 @@ package org.atteo.moonshine.jetty.handlers;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 
 @XmlRootElement(name="mimeType")
-public class ResourceHandlerMimeTypeConfig extends Configurable {
+public class ResourceHandlerMimeTypeConfig extends AbstractConfigurable {
 	@XmlElement
 	private String extension;
 

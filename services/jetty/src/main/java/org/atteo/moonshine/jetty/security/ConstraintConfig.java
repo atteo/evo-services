@@ -6,11 +6,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.eclipse.jetty.util.security.Constraint;
 
 @XmlRootElement(name = "constraint")
-public class ConstraintConfig extends Configurable {
+public class ConstraintConfig extends AbstractConfigurable {
 
 	@XmlElement
 	private boolean authenticate = false;

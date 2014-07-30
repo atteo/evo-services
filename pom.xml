@@ -34,17 +34,18 @@
 	<modules>
 		<module>archetypes</module>
 		<module>bom</module>
+		<module>config</module>
 		<module>container</module>
 		<module>container-test-utils</module>
 		<module>services</module>
 		<module>reflection-utils</module>
+		<module>xmlmerge</module>
 	</modules>
 	<scm>
 		<connection>https://github.com/atteo/moonshine</connection>
 		<url>https://github.com/atteo/moonshine</url>
 	</scm>
 	<properties>
-		<config.version>1-SNAPSHOT</config.version>
 		<skipMoreTests>true</skipMoreTests>
 	</properties>
 	<dependencyManagement>
@@ -53,96 +54,6 @@
 				<groupId>org.atteo.classindex</groupId>
 				<artifactId>classindex</artifactId>
 				<version>3.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.atteo.config</groupId>
-				<artifactId>config</artifactId>
-				<version>${config.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlets</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-jmx</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-rewrite</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>test-jetty-servlet</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty.websocket</groupId>
-				<artifactId>javax-websocket-server-impl</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty.websocket</groupId>
-				<artifactId>javax-websocket-client-impl</artifactId>
-				<version>${jetty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.hibernate.javax.persistence</groupId>
-				<artifactId>hibernate-jpa-2.0-api</artifactId>
-				<version>1.0.1.Final</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.shiro</groupId>
-				<artifactId>shiro-core</artifactId>
-				<version>${shiro.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.shiro</groupId>
-				<artifactId>shiro-web</artifactId>
-				<version>${shiro.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.shiro</groupId>
-				<artifactId>shiro-guice</artifactId>
-				<version>${shiro.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-catalina</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-coyote</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-jasper</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.tomcat</groupId>
-				<artifactId>tomcat-websocket</artifactId>
-				<version>${tomcat.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.tinkerpop.blueprints</groupId>
-				<artifactId>blueprints-core</artifactId>
-				<version>${blueprints.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -202,16 +113,6 @@
 								<goals>
 									<goal>aggregate</goal>
 								</goals>
-								<configuration>
-									<doclet>org.atteo.config.doclet.ConfigDoclet</doclet>
-									<docletArtifacts>
-										<docletArtifact>
-											<groupId>org.atteo.config</groupId>
-											<artifactId>config-doclet</artifactId>
-											<version>${config.version}</version>
-										</docletArtifact>
-									</docletArtifacts>
-								</configuration>
 							</execution>
 						</executions>
 					</plugin>

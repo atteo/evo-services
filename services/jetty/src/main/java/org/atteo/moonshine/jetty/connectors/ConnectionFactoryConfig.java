@@ -15,10 +15,10 @@
  */
 package org.atteo.moonshine.jetty.connectors;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.eclipse.jetty.server.ConnectionFactory;
 
-public abstract class ConnectionFactoryConfig extends Configurable {
+public abstract class ConnectionFactoryConfig extends AbstractConfigurable {
 	public abstract ConnectionFactory getConnectionFactory();
 	public abstract String getProtocolString();
 }

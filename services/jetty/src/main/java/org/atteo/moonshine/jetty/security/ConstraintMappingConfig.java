@@ -7,11 +7,11 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.eclipse.jetty.security.ConstraintMapping;
 
 @XmlRootElement(name = "constraint-mapping")
-public class ConstraintMappingConfig extends Configurable {
+public class ConstraintMappingConfig extends AbstractConfigurable {
 
 	@XmlElement
 	private String method;

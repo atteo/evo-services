@@ -17,11 +17,11 @@ package org.atteo.moonshine.jetty.handlers;
 
 import java.util.Collections;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.eclipse.jetty.server.Handler;
 
 
-public abstract class HandlerConfig extends Configurable {
+public abstract class HandlerConfig extends AbstractConfigurable {
 	public abstract Handler getHandler();
 
 	public Iterable<HandlerConfig> getSubHandlers() {

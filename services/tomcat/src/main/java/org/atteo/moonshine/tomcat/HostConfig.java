@@ -21,12 +21,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 
 /**
  * Virtual host configuration.
  */
-public class HostConfig extends Configurable {
+public class HostConfig extends AbstractConfigurable {
 	/**
 	 * Application base directory for virtual host.
 	 */

@@ -15,6 +15,9 @@
  */
 package org.atteo.moonshine.jetty.handlers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -44,7 +47,7 @@ public class ResourceHandlerConfig extends HandlerConfig {
 
 	@XmlElementWrapper(name = "mimeTypes")
 	@XmlElementRef
-	private ResourceHandlerMimeTypeConfig[] mimeTypes = {};
+	private List<ResourceHandlerMimeTypeConfig> mimeTypes = new ArrayList<>();
 
 	@XmlElement
 	private String resourceBase;

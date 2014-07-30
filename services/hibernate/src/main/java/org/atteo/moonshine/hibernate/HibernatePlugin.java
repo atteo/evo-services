@@ -20,13 +20,13 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 
 /**
  * Plugin which extends the functionality of Hibernate.
  */
 @XmlRootElement(name = "hibernateplugin")
-public abstract class HibernatePlugin extends Configurable {
+public abstract class HibernatePlugin extends AbstractConfigurable {
 	/**
 	 * Returns a list of additional properties to add
 	 * when creating {@link EntityManagerFactory}.

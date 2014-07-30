@@ -18,7 +18,7 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.atteo.moonshine.services.EmptyImplementation;
 import org.atteo.moonshine.services.Service;
 
@@ -33,7 +33,7 @@ import com.google.inject.Module;
  * extend {@link TopLevelService}.
  * </p>
  */
-public abstract class ConfigurableService extends Configurable implements Service {
+public abstract class ConfigurableService extends AbstractConfigurable implements Service {
 	@EmptyImplementation
 	@Override
 	public Module configure() {

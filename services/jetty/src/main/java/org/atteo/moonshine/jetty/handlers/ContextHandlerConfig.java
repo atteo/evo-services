@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 import org.eclipse.jetty.server.handler.ContextHandler;
 
 
@@ -31,7 +31,7 @@ import org.eclipse.jetty.server.handler.ContextHandler;
  * </p>
  */
 @XmlRootElement(name = "context")
-public class ContextHandlerConfig extends Configurable {
+public class ContextHandlerConfig extends AbstractConfigurable {
 	/**
 	 * Set the context path. Only requests that have a matching path
 	 * will be passed to the wrapped handler.

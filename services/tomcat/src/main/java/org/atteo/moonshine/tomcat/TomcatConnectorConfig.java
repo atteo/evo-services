@@ -18,10 +18,10 @@ package org.atteo.moonshine.tomcat;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.Configurable;
+import org.atteo.config.AbstractConfigurable;
 
 @XmlRootElement(name = "connector")
-public class TomcatConnectorConfig extends Configurable {
+public class TomcatConnectorConfig extends AbstractConfigurable {
 	/**
 	 * Port on which to listen.
 	 */
