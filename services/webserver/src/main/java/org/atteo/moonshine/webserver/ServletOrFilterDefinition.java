@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.atteo.moonshine.webserver;
 
 import java.util.Map;
 
 import javax.inject.Provider;
 
-public class ServletOrFilterDefinition<T> {
+public class ServletOrFilterDefinition<T> implements Comparable<ServletOrFilterDefinition<?>> {
+
 	private final String[] patterns;
+
 	private final Provider<T> servlet;
+
 	private final Map<String, String> params;
 
-	public ServletOrFilterDefinition(Provider<T> servlet, Map<String, String> params, String[] patterns) {
+	private final int priority;
+
+	public ServletOrFilterDefinition(Provider<T> servlet, Map<String, String> params, String[] patterns, int priority) {
 		this.patterns = patterns;
 		this.servlet = servlet;
 		this.params = params;
+		this.priority = priority;
 	}
 
 	public String[] getPatterns() {
@@ -41,5 +46,14 @@ public class ServletOrFilterDefinition<T> {
 
 	public Map<String, String> getParams() {
 		return params;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	@Override
+	public int compareTo(ServletOrFilterDefinition<?> o) {
+		return ((Integer) priority).compareTo(o.getPriority());
 	}
 }

@@ -38,22 +38,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.atteo.moonshine.TopLevelService;
 
 import com.google.inject.servlet.GuiceFilter;
+import com.google.inject.servlet.ServletModule;
 
 /**
  * Allows configuration of servlets, filters and listeners.
  */
 @XmlRootElement(name = "servlet-container")
 public class ServletContainer extends TopLevelService {
+
 	/**
-	 * Add {@link GuiceFilter}. When true servlets and filters registered using {@link ServletModule}s
-	 * will be accessible under this context.
+	 * Default priority assigned to filters.
+	 */
+	public static final int DEFAULT_PRIORITY = 0;
+
+	/**
+	 * Add {@link GuiceFilter}. When true servlets and filters registered
+	 * using {@link ServletModule}s will be accessible under this context.
 	 */
 	@XmlElement
 	private boolean registerGuiceFilter = false;
 
 	private final List<ServletOrFilterDefinition<? extends Servlet>> servlets = new ArrayList<>();
+
 	private final List<ServletOrFilterDefinition<? extends Filter>> filters = new ArrayList<>();
+
 	private final List<Provider<? extends EventListener>> listeners = new ArrayList<>();
+
 	private final List<ServletContainerInitializer> initializers = new ArrayList<>();
 
 	public ServletContainer() {
@@ -62,6 +72,7 @@ public class ServletContainer extends TopLevelService {
 
 	/**
 	 * Register servlet.
+	 *
 	 * @param patterns URL pattern to register servlet onto
 	 * @param servlet servlet
 	 */
@@ -71,6 +82,7 @@ public class ServletContainer extends TopLevelService {
 
 	/**
 	 * Register servlet.
+	 *
 	 * @param patterns URL pattern to register servlet onto
 	 * @param servlet servlet provider
 	 */
@@ -80,6 +92,7 @@ public class ServletContainer extends TopLevelService {
 
 	/**
 	 * Register servlet.
+	 *
 	 * @param patterns URL pattern to register servlet onto
 	 * @param servlet servlet
 	 * @param params servlet init parameters
@@ -91,65 +104,97 @@ public class ServletContainer extends TopLevelService {
 				return servlet;
 			}
 		};
-		servlets.add(new ServletOrFilterDefinition<>(provider, params, patterns));
+		servlets.add(new ServletOrFilterDefinition<>(provider, params, patterns, DEFAULT_PRIORITY));
 	}
 
 	/**
 	 * Register servlet.
+	 *
 	 * @param patterns URL pattern to register servlet onto
 	 * @param servlet servlet provider
 	 * @param params servlet init parameters
 	 */
 	public <T extends Servlet> void addServlet(Provider<T> servlet, Map<String, String> params, String... patterns) {
-		servlets.add(new ServletOrFilterDefinition<>(servlet, params, patterns));
+		servlets.add(new ServletOrFilterDefinition<>(servlet, params, patterns, DEFAULT_PRIORITY));
 	}
 
 	/**
-	 * Register filter.
+	 * Register filter. It will be assigned the default priority.
+	 *
 	 * @param patterns URL pattern to register filter onto
 	 * @param filter filter
 	 */
 	public <T extends Filter> void addFilter(T filter, String patterns) {
-		addFilter(filter, Collections.<String, String> emptyMap(), patterns);
+		addFilter(filter, Collections.<String, String>emptyMap(), DEFAULT_PRIORITY, patterns);
 	}
 
 	/**
-	 * Register filter.
+	 * Register filter. It will be assigned the default priority.
+	 *
 	 * @param patterns URL pattern to register filter onto
 	 * @param filter filter provider
 	 */
 	public <T extends Filter> void addFilter(Provider<T> filter, String... patterns) {
-		addFilter(filter, Collections.<String, String> emptyMap(), patterns);
+		addFilter(filter, Collections.<String, String>emptyMap(), DEFAULT_PRIORITY, patterns);
 	}
 
 	/**
 	 * Register filter.
+	 *
 	 * @param patterns URL pattern to register filter onto
 	 * @param filter filter
 	 * @param params filter init parameters
 	 */
 	public <T extends Filter> void addFilter(final T filter, Map<String, String> params, String... patterns) {
+		addFilter(filter, params, DEFAULT_PRIORITY, patterns);
+	}
+
+	/**
+	 * Register filter.
+	 *
+	 * @param patterns URL pattern to register filter onto
+	 * @param filter filter provider
+	 * @param params filter init parameters
+	 */
+	public <T extends Filter> void addFilter(Provider<T> filter, Map<String, String> params, String... patterns) {
+		addFilter(filter, params, DEFAULT_PRIORITY, patterns);
+	}
+
+	/**
+	 * Register filter.
+	 *
+	 * @param patterns URL pattern to register filter onto
+	 * @param filter filter
+	 * @param priority filter priority, filters with lower priorities are
+	 * executed first
+	 * @param params filter init parameters
+	 */
+	public <T extends Filter> void addFilter(final T filter, Map<String, String> params, int priority, String... patterns) {
 		Provider<T> provider = new Provider<T>() {
 			@Override
 			public T get() {
 				return filter;
 			}
 		};
-		filters.add(new ServletOrFilterDefinition<>(provider, params, patterns));
+		filters.add(new ServletOrFilterDefinition<>(provider, params, patterns, priority));
 	}
 
 	/**
 	 * Register filter.
+	 *
 	 * @param patterns URL pattern to register filter onto
 	 * @param filter filter provider
+	 * @param priority filter priority, filters with lower priorities are
+	 * executed first
 	 * @param params filter init parameters
 	 */
-	public <T extends Filter> void addFilter(Provider<T> filter, Map<String, String> params, String... patterns) {
-		filters.add(new ServletOrFilterDefinition<>(filter, params, patterns));
+	public <T extends Filter> void addFilter(Provider<T> filter, Map<String, String> params, int priority, String... patterns) {
+		filters.add(new ServletOrFilterDefinition<>(filter, params, patterns, priority));
 	}
 
 	/**
 	 * Register listener.
+	 *
 	 * @param listener listener provider
 	 */
 	public <T extends EventListener> void addListener(Provider<T> listener) {
@@ -158,6 +203,7 @@ public class ServletContainer extends TopLevelService {
 
 	/**
 	 * Register listener.
+	 *
 	 * @param listener listener to register
 	 */
 	public <T extends EventListener> void addListener(final T listener) {
@@ -178,12 +224,17 @@ public class ServletContainer extends TopLevelService {
 	}
 
 	private class Initializer implements ServletContainerInitializer {
+
 		@Override
 		public void onStartup(Set<Class<?>> c, ServletContext context) throws ServletException {
-            if (registerGuiceFilter) {
-                FilterRegistration.Dynamic registration = context.addFilter("guice-filter", GuiceFilter.class);
-                registration.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/*");
-            }
+			if (registerGuiceFilter) {
+				FilterRegistration.Dynamic registration = context.addFilter("guice-filter", GuiceFilter.class);
+				registration.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), false, "/*");
+			}
+
+			// sort filters by priority
+			Collections.sort(filters);
+
 			int counter = 0;
 			for (ServletOrFilterDefinition<? extends Filter> filter : filters) {
 				String name = "filter" + counter;
