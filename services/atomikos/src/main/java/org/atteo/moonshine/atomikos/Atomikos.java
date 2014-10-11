@@ -32,7 +32,6 @@ import org.atteo.moonshine.jta.JtaDataSourceWrapper;
 import org.atteo.moonshine.jta.JtaService;
 import org.atteo.moonshine.jta.PoolOptions;
 
-import com.atomikos.datasource.xa.XID;
 import com.atomikos.icatch.SysException;
 import com.atomikos.icatch.config.UserTransactionServiceImp;
 import com.atomikos.icatch.config.imp.AbstractUserTransactionServiceFactory;
@@ -92,8 +91,8 @@ public class Atomikos extends JtaService {
 			properties.setProperty(AbstractUserTransactionServiceFactory.MAX_ACTIVES_PROPERTY_NAME,
 					Integer.toString(maxActiveTransactions));
 			String tmName = "TM_" + ManagementFactory.getRuntimeMXBean().getName();
-			if (tmName.length() > XID.MAXGTRIDSIZE) {
-				tmName = tmName.substring(0, XID.MAXGTRIDSIZE);
+			if (tmName.length() > 30) {
+				tmName = tmName.substring(0, 30);
 			}
 			properties.setProperty(AbstractUserTransactionServiceFactory.TM_UNIQUE_NAME_PROPERTY_NAME, tmName);
 			properties.setProperty(AbstractUserTransactionServiceFactory.LOG_BASE_NAME_PROPERTY_NAME,
