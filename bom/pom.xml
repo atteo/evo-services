@@ -22,7 +22,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.atteo.moonshine</groupId>
 	<artifactId>bom</artifactId>
-	<version>1-SNAPSHOT</version>
+	<version>2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Moonshine BOM</name>
 	<description>Moonshine Bill of Materials POM</description>

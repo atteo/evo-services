@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>archetypes</artifactId>
 		<groupId>org.atteo.moonshine</groupId>
-		<version>1-SNAPSHOT</version>
+		<version>2-SNAPSHOT</version>
 	</parent>
 	<artifactId>distribution-archetype</artifactId>
 	<packaging>maven-archetype</packaging>

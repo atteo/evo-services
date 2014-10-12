@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo.moonshine</groupId>
-		<version>1-SNAPSHOT</version>
+		<version>2-SNAPSHOT</version>
 	</parent>
 	<artifactId>container</artifactId>
 	<name>Moonshine Container</name>
