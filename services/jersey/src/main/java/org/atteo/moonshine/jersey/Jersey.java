@@ -36,7 +36,6 @@ import com.sun.jersey.core.spi.component.ioc.IoCComponentProvider;
 import com.sun.jersey.core.spi.component.ioc.IoCComponentProviderFactory;
 import com.sun.jersey.core.spi.component.ioc.IoCManagedComponentProvider;
 import com.sun.jersey.core.util.FeaturesAndProperties;
-import com.sun.jersey.freemarker.FreemarkerViewProcessor;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.sun.jersey.spi.container.WebApplication;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
@@ -77,7 +76,6 @@ public class Jersey extends Jaxrs {
 					params.put(FeaturesAndProperties.FEATURE_FORMATTED, "true");
 				}
 				params.put(ServletContainer.PROPERTY_FILTER_CONTEXT_PATH, prefix);
-				params.put(FreemarkerViewProcessor.FREEMARKER_TEMPLATES_BASE_PATH, "templates");
 
 				bind(GuiceContainer.class);
 				servletContainer.addFilter(new javax.inject.Provider<JerseyContainer>() {
