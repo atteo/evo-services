@@ -16,6 +16,7 @@ package org.atteo.moonshine;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.BDDAssertions.then;
 import org.atteo.filtering.PropertyFilter;
 import org.atteo.filtering.PropertyNotFoundException;
 import org.atteo.filtering.PropertyResolver;
@@ -32,8 +33,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
 import static com.googlecode.catchexception.CatchException.caughtException;
-import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
-import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.when;
+import static com.googlecode.catchexception.apis.BDDCatchException.when;
 
 public class MoonshineTest {
 	@Test

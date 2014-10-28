@@ -23,7 +23,6 @@
 		<module>hornetq</module>
 		<module>hsqldb</module>
 		<module>jax-rs</module>
-		<module>jersey</module>
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>jmx</module>
