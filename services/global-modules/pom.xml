@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>services</artifactId>
 		<groupId>org.atteo.moonshine</groupId>
-		<version>1.0</version>
+		<version>1-SNAPSHOT</version>
 	</parent>
 	<artifactId>global-modules</artifactId>
 	<name>Global Modules</name>

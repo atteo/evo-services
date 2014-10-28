@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>org.atteo.moonshine</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.0</version>
+	<version>1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Moonshine</name>
 	<description>Moonshine provides infrastructure commonly found in application containers.
