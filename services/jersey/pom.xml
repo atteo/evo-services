@@ -41,7 +41,19 @@
 					<artifactId>asm</artifactId>
 					<groupId>asm</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>guice</artifactId>
+					<groupId>com.google.inject</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>guice-servlet</artifactId>
+					<groupId>com.google.inject.extensions</groupId>
+				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.sonatype.sisu</groupId>
+			<artifactId>sisu-guice</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
