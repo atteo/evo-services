@@ -120,7 +120,7 @@ public class WebDriverHelper {
 	 *
 	 * @param elementLocator
 	 */
-	public void waitUntilClickable(final By elementLocator) {
+	public void clickWhenReady(final By elementLocator) {
 		waitUntil(new Function<WebDriver, Boolean>() {
 
 			@Override
