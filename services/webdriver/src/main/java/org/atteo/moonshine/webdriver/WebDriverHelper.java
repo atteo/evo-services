@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 import javax.inject.Inject;
 
@@ -143,6 +144,6 @@ public class WebDriverHelper {
 	public void screenshot(String name) throws IOException {
 		File file = driver.getScreenshotAs(OutputType.FILE);
 		Files.createDirectories(screenshotDirectory);
-		Files.copy(file.toPath(), screenshotDirectory.resolve(name + ".png"));
+		Files.move(file.toPath(), screenshotDirectory.resolve(name + ".png"), StandardCopyOption.REPLACE_EXISTING);
 	}
 }
