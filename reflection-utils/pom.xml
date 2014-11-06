@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>org.atteo.moonshine</groupId>
-		<version>1-SNAPSHOT</version>
+		<version>1.1</version>
 	</parent>
 	<artifactId>reflection-utils</artifactId>
 	<name>Reflection Utils</name>
