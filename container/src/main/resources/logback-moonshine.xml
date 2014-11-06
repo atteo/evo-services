@@ -38,5 +38,7 @@
 	</root>
 	<logger name="Moonshine" level="${log.level:-info}"/>
 	<!-- Atomikos throws exception when equals() method is called on connection with INFO enabled -->
-	<logger name="com.atomikos.jdbc.AtomikosConnectionProxy" level="WARN"/>
+	<logger name="com.atomikos.AtomikosConnectionProxy" level="WARN"/>
+	<!-- Anyway Atomikos logs to much INFO messages, so change it to WARN -->
+	<logger name="com.atomikos" level="WARN"/>
 </configuration>
