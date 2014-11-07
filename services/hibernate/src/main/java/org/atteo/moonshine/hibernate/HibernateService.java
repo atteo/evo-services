@@ -136,11 +136,14 @@ public class HibernateService extends JpaService {
 			PersistenceUnitInfo info = new PersistenceUnitInfo() {
 				@Override
 				public String getPersistenceUnitName() {
+					String name = Thread.currentThread().getName();
 					String id = getId();
 					if (id == null) {
-						id = "default";
+						name += "-default";
+					} else {
+						name += "-" + id;
 					}
-					return id;
+					return name;
 				}
 
 				@Override
