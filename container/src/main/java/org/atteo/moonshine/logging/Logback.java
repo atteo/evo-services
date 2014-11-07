@@ -40,6 +40,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.selector.ContextSelector;
+import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
@@ -59,17 +60,7 @@ public class Logback implements Logging {
 	private final LoggingCommandLineParameters parameters = new LoggingCommandLineParameters();
 
 	public static class MoonshineContextSelector implements ContextSelector {
-		private static final InheritableThreadLocal<LoggerContext> context =
-				new InheritableThreadLocal<LoggerContext>() {
-
-			@Override
-			protected LoggerContext initialValue() {
-				LoggerContext context = new LoggerContext();
-				context.setName(Thread.currentThread().getName());
-				return context;
-			}
-
-		};
+		private static final InheritableThreadLocal<LoggerContext> context = new InheritableThreadLocal<>();
 
 		public MoonshineContextSelector(LoggerContext c) {
 			context.set(c);
@@ -79,7 +70,17 @@ public class Logback implements Logging {
 		 * Starts new Logback context for this thread and all threads created from this thread.
 		 */
 		public static void initNewContext() {
-			context.remove();
+			LoggerContext c= new LoggerContext();
+			c.setName(Thread.currentThread().getName());
+
+			// load logback.xml for a moment
+			try {
+				new ContextInitializer(c).autoConfig();
+			} catch (JoranException e) {
+				throw new RuntimeException(e);
+			}
+
+			context.set(c);
 		}
 
 		@Override
