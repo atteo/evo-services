@@ -41,4 +41,5 @@
 	<logger name="com.atomikos.AtomikosConnectionProxy" level="WARN"/>
 	<!-- Anyway Atomikos logs to much INFO messages, so change it to WARN -->
 	<logger name="com.atomikos" level="WARN"/>
+	<logger name="org.hibernate.ejb.packaging.FileZippedJarVisitor" level="ERROR"/>
 </configuration>
