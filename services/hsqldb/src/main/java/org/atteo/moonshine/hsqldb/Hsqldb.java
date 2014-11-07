@@ -59,8 +59,10 @@ public class Hsqldb extends DatabaseService {
 			} catch (SQLException e) {
 				throw new RuntimeException("Cannot create data source", e);
 			}
-			String name = "defaultDataSource";
-			if (getId() != null) {
+			String name = Thread.currentThread().getName();
+			if (getId() == null) {
+				name += "-defaultDataSource";
+			} else {
 				name = getId();
 			}
 			xaDataSource.setUrl(url);

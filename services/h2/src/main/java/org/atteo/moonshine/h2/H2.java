@@ -92,11 +92,13 @@ public class H2 extends DatabaseService {
 			xaDataSource.setURL(url + ";DB_CLOSE_ON_EXIT=FALSE");
 			xaDataSource.setUser(username);
 			xaDataSource.setPassword(password);
-			String name = "defaultDataSource";
-			if (getId() != null) {
+			String name = Thread.currentThread().getName();
+			if (getId() == null) {
+				name += "-defaultDataSource";
+			} else {
 				name = getId();
-				xaDataSource.setDescription(name);
 			}
+			xaDataSource.setDescription(name);
 			dataSource = wrapper.wrap(name, xaDataSource, pool, testQuery);
 			executeMigrations(dataSource);
 			return dataSource;
