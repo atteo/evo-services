@@ -128,8 +128,6 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	@Override
 	public Moonshine build() throws IOException, CommandLineParameterException, ConfigurationException {
-		logger.info("Bootstrapping {}", applicationName != null ? applicationName : "Moonshine");
-
 		if (!skipExceptionHandler) {
 			Thread.currentThread().setUncaughtExceptionHandler(new MoonshineUncaughtExceptionHandler());
 		}
@@ -137,7 +135,11 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		if (logging == null) {
 			logging = new Logback();
 		}
+		// don't log anything before this method
+		// or set property 'logback.ContextSelector' to 'org.atteo.moonshine.logging.Logback$MoonshineContextSelector'
 		logging.earlyBootstrap();
+
+		logger.info("Bootstrapping {}", applicationName != null ? applicationName : "Moonshine");
 
 		fileAccessorFactory = new DefaultFileAccessor();
 

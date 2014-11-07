@@ -177,7 +177,10 @@ public class MoonshineRule implements TestRule {
 			};
 
 			builder.applicationName(testClass.getSimpleName());
-			builder.homeDirectory("target/test-home");
+
+			String threadName = Thread.currentThread().getName();
+
+			builder.homeDirectory("target/test-home-" + threadName);
 			builder.addDataDir("src/main");
 
 			for (String config : configs) {

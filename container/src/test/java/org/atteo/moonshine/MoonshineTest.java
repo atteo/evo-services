@@ -13,6 +13,7 @@
  */
 package org.atteo.moonshine;
 
+import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -436,5 +437,44 @@ public class MoonshineTest {
 			assertThat(filter).isNotNull();
 			assertThat(filter.getProperty("dataHome")); // throws exception when the test fails
 		}
+	}
+
+	@Test
+	public void shouldStartMultipleInstancesInOneVM() throws MoonshineException, IOException, InterruptedException {
+		// given
+		class MoonshineStarter extends Thread {
+			private String name;
+
+			public MoonshineStarter(String name) {
+				this.name = name;
+			}
+
+			@Override
+			public void run() {
+				try (Moonshine moonshine = Moonshine.Factory.builder()
+						.applicationName("moonshine-" + name)
+						.homeDirectory("target/test-home-" + name)
+						.build()) {
+					moonshine.start();
+				} catch (MoonshineException | IOException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+
+		MoonshineStarter s1 = new MoonshineStarter("1");
+		MoonshineStarter s2 = new MoonshineStarter("2");
+
+		// when
+		s1.start();
+		s2.start();
+		s1.join();
+		s2.join();
+
+		// then
+		File log1 = new File("target/test-home-1/logs/moonshine-1.log");
+		File log2 = new File("target/test-home-1/logs/moonshine-1.log");
+
+		assertThat(log1.length()).isEqualTo(log2.length());
 	}
 }
