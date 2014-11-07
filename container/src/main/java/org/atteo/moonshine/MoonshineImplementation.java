@@ -69,7 +69,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		}
 	}
 
-	private final Logger logger = LoggerFactory.getLogger("Moonshine");
+	private Logger logger;
 	private Services services;
 	private Logging logging;
 	private FileAccessorFactory fileAccessorFactory;
@@ -135,10 +135,11 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		if (logging == null) {
 			logging = new Logback();
 		}
-		// don't log anything before this method
+		// don't access logger before this method call
 		// or set property 'logback.ContextSelector' to 'org.atteo.moonshine.logging.Logback$MoonshineContextSelector'
 		logging.earlyBootstrap();
 
+		logger = LoggerFactory.getLogger("Moonshine");
 		logger.info("Bootstrapping {}", applicationName != null ? applicationName : "Moonshine");
 
 		fileAccessorFactory = new DefaultFileAccessor();
@@ -337,6 +338,9 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	@Override
 	public void close() {
+		if (logger == null) {
+			logger = LoggerFactory.getLogger("Moonshine");
+		}
 		logger.info("Shutting down {}", applicationName != null ? applicationName : "Moonshine");
 		try {
 			Runtime.getRuntime().removeShutdownHook(shutdownThread);

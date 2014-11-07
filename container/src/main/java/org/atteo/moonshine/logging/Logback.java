@@ -113,7 +113,7 @@ public class Logback implements Logging {
 		}
 	}
 
-	protected void newLogbackContextForThisThread() {
+	static synchronized protected void newLogbackContextForThisThread() {
 		if (!MoonshineContextSelector.class.getName().equals(
 				System.getProperty(ClassicConstants.LOGBACK_CONTEXT_SELECTOR))) {
 
@@ -129,6 +129,8 @@ public class Logback implements Logging {
 			}
 		}
 		MoonshineContextSelector.initNewContext();
+
+		LoggerFactory.getILoggerFactory();
 	}
 
 	/**
