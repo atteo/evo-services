@@ -15,7 +15,6 @@
  */
 package org.atteo.moonshine.services;
 
-import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -32,6 +31,7 @@ import javax.management.InstanceAlreadyExistsException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
 import javax.management.NotCompliantMBeanException;
 
 import org.atteo.moonshine.ConfigurationException;
@@ -62,12 +62,20 @@ class ServicesImplementation implements Services, Services.Builder {
 	private final Logger logger = LoggerFactory.getLogger("Moonshine");
 	private final List<Module> extraModules = new ArrayList<>();
 
+	private String applicationName;
 	private Injector injector;
 	private Service root;
 	private final List<LifeCycleListener> listeners = new ArrayList<>();
 	private List<ServiceWrapper> services;
+	private MBeanServer mbeanServer;
 
 	public ServicesImplementation() {
+	}
+
+	@Override
+	public Builder applicationName(String applicationName) {
+		this.applicationName = applicationName;
+		return this;
 	}
 
 	@Override
@@ -130,6 +138,7 @@ class ServicesImplementation implements Services, Services.Builder {
 		services = sortTopologically(services);
 		verifySingletonServicesAreUnique(services);
 
+		createMBeanServer();
 		registerInJMX();
 
 		List<String> hints = new ArrayList<>();
@@ -192,8 +201,11 @@ class ServicesImplementation implements Services, Services.Builder {
 		}
 	}
 
+	private void createMBeanServer() {
+		mbeanServer = MBeanServerFactory.createMBeanServer(applicationName);
+	}
+
 	private void registerInJMX() throws ConfigurationException {
-		MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 		try {
 			for (ServiceWrapper service : services) {
 				mbeanServer.registerMBean(service, null);
@@ -204,7 +216,6 @@ class ServicesImplementation implements Services, Services.Builder {
 	}
 
 	private void unregisterFromJMX() {
-		MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
 		for (ServiceWrapper service : services) {
 			try {
 				mbeanServer.unregisterMBean(service.getObjectName());

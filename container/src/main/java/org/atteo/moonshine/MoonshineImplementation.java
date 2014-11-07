@@ -242,6 +242,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		for (LifeCycleListener listener : listeners) {
 			builder.registerListener(listener);
 		}
+		builder.applicationName(applicationName);
 		builder.configuration(config);
 
 		services = builder.build();

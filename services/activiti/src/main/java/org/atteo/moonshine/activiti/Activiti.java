@@ -16,12 +16,14 @@
 package org.atteo.moonshine.activiti;
 
 
-import com.google.common.collect.Lists;
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngineConfiguration;
 import org.activiti.engine.ProcessEngines;
@@ -37,12 +39,12 @@ import org.atteo.moonshine.TopLevelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 /**
  * Starts Activiti database
@@ -154,22 +156,22 @@ public class Activiti extends TopLevelService {
         }
     }
 
-
-
     @Override
     public Module configure() {
-        return new Module() {
+        return new AbstractModule() {
             @Override
-            public void configure(Binder binder) {
-                binder.bind(ProcessEngine.class).toProvider(new ProcessEngineProvider()).in(Singleton.class);
+            public void configure() {
+                bind(ProcessEngine.class).toProvider(new ProcessEngineProvider()).in(Singleton.class);
             }
         };
     }
 
+	@Override
     public void start() {
         ProcessEngines.init();
     }
 
+	@Override
     public void stop() {
         ProcessEngines.destroy();
     }

@@ -34,6 +34,11 @@ public interface Services extends AutoCloseable {
 
 	public static interface Builder {
 		/**
+		 * Sets application name.
+		 */
+		Builder applicationName(String applicationName);
+
+		/**
 		 * Adds custom Guice module.
 		 */
 		Builder addModule(Module module);
