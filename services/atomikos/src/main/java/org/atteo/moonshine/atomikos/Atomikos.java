@@ -45,6 +45,11 @@ import com.google.inject.Provider;
 
 /**
  * Atomikos JTA implementation.
+ * <p>
+ * Note: Atomikos can be started only once in the same JVM. This is because of limitation
+ * of the Atomikos itself. (It used static fields in {@link com.atomikos.icatch.system.Configuration} class.)
+ * You will get {@link IllegalStateException} when started the second time.
+ * </p>
  */
 @XmlRootElement(name = "atomikos")
 public class Atomikos extends JtaService {
@@ -77,10 +82,23 @@ public class Atomikos extends JtaService {
 
 	private UserTransactionManager manager;
 	private UserTransactionServiceImp service;
+	private static boolean initialized = false;
+
+	private synchronized static void turnOn() {
+		if (initialized) {
+			throw new IllegalStateException("Atomikos cannot be started two times in the same JVM");
+		}
+		initialized = true;
+	}
+
+	private synchronized static void turnOff() {
+		initialized = false;
+	}
 
 	public class ManagerProvider implements Provider<UserTransactionManager> {
 		@Override
 		public UserTransactionManager get() {
+			turnOn();
 			System.setProperty(UserTransactionServiceImp.NO_FILE_PROPERTY_NAME, "true");
 			System.setProperty(UserTransactionServiceImp.HIDE_INIT_FILE_PATH_PROPERTY_NAME,
 					"true");
@@ -223,5 +241,6 @@ public class Atomikos extends JtaService {
 		if (service != null) {
 			service.shutdownWait();
 		}
+		turnOff();
 	}
 }
