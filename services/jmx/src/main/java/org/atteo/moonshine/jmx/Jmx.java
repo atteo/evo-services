@@ -65,7 +65,7 @@ public class Jmx extends TopLevelService {
 	@Inject
 	private MBeanServer server;
 
-	private List<ObjectName> registeredNames = new ArrayList<>();
+	private final List<ObjectName> registeredNames = new ArrayList<>();
 
 	@Override
 	public void start() {
@@ -96,7 +96,6 @@ public class Jmx extends TopLevelService {
 				server.unregisterMBean(name);
 			} catch (InstanceNotFoundException e) {
 				// not found? ignore
-				continue;
 			} catch (MBeanRegistrationException e) {
 				throw new RuntimeException(e);
 			}

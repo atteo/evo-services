@@ -13,6 +13,7 @@
  */
 package org.atteo.moonshine.hibernate;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -136,11 +137,14 @@ public class HibernateService extends JpaService {
 			PersistenceUnitInfo info = new PersistenceUnitInfo() {
 				@Override
 				public String getPersistenceUnitName() {
+					String name = Thread.currentThread().getName();
 					String id = getId();
 					if (id == null) {
-						id = "default";
+						name += "-default";
+					} else {
+						name += "-" + id;
 					}
-					return id;
+					return name;
 				}
 
 				@Override
@@ -175,7 +179,11 @@ public class HibernateService extends JpaService {
 
 				@Override
 				public URL getPersistenceUnitRootUrl() {
-					return null;
+					try {
+						return new URL("file:///Moonshine: please ignore this warning");
+					} catch (MalformedURLException e) {
+						throw new RuntimeException(e);
+					}
 				}
 
 				@Override

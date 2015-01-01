@@ -17,11 +17,15 @@ package org.atteo.moonshine.logging;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
@@ -29,10 +33,14 @@ import java.util.logging.LogManager;
 import org.atteo.moonshine.directories.FileAccessor;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import org.slf4j.impl.StaticLoggerBinder;
 
+import ch.qos.logback.classic.ClassicConstants;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
+import ch.qos.logback.classic.selector.ContextSelector;
+import ch.qos.logback.classic.util.ContextInitializer;
 import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
@@ -51,17 +59,102 @@ import ch.qos.logback.core.joran.spi.JoranException;
 public class Logback implements Logging {
 	private final LoggingCommandLineParameters parameters = new LoggingCommandLineParameters();
 
+	public static class MoonshineContextSelector implements ContextSelector {
+		private static final InheritableThreadLocal<LoggerContext> context = new InheritableThreadLocal<>();
+
+		public MoonshineContextSelector(LoggerContext c) {
+			context.set(c);
+		}
+
+		/**
+		 * Starts new Logback context for this thread and all threads created from this thread.
+		 */
+		public static void initNewContext() {
+			LoggerContext c= new LoggerContext();
+			c.setName(Thread.currentThread().getName());
+
+			// load logback.xml for a moment
+			try {
+				new ContextInitializer(c).autoConfig();
+			} catch (JoranException e) {
+				throw new RuntimeException(e);
+			}
+
+			context.set(c);
+		}
+
+		@Override
+		public LoggerContext getLoggerContext() {
+			return context.get();
+		}
+
+		@Override
+		public LoggerContext getLoggerContext(String name) {
+			LoggerContext c = context.get();
+			if (c.getName().equals(name)) {
+				return c;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		public LoggerContext getDefaultLoggerContext() {
+			return context.get();
+		}
+
+		@Override
+		public LoggerContext detachLoggerContext(String loggerContextName) {
+			return context.get();
+		}
+
+		@Override
+		public List<String> getContextNames() {
+			return Arrays.asList(context.get().getName());
+		}
+	}
+
+	static synchronized protected void newLogbackContextForThisThread() {
+		if (!MoonshineContextSelector.class.getName().equals(
+				System.getProperty(ClassicConstants.LOGBACK_CONTEXT_SELECTOR))) {
+
+			System.setProperty(ClassicConstants.LOGBACK_CONTEXT_SELECTOR, MoonshineContextSelector.class.getName());
+			try {
+				Method method = StaticLoggerBinder.class.getDeclaredMethod("reset");
+				method.setAccessible(true);
+				method.invoke(null);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				LoggerFactory.getLogger("Moonshine").warn(
+						"Unrecognized Logback version, cannot install context selector", e);
+			}
+		}
+		MoonshineContextSelector.initNewContext();
+
+		LoggerFactory.getILoggerFactory();
+	}
+
 	/**
 	 * Disable JUL logging and redirect all logs though SLF4J.
+	 *
 	 * @see <a href="http://stackoverflow.com/questions/2533227/how-can-i-disable-the-default-console-handler-while-using-the-java-logging-api>How can I disable the default console handler</a>
 	 * @throws SecurityException
 	 */
 	protected void redirectLogsToSLF4J() {
 		java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+
+		boolean found = false;
 		for (Handler handler : rootLogger.getHandlers()) {
-			rootLogger.removeHandler(handler);
+			if (handler instanceof SLF4JBridgeHandler) {
+				found = true;
+			} else {
+				rootLogger.removeHandler(handler);
+			}
 		}
-		SLF4JBridgeHandler.install();
+		if (!found) {
+			// skipped if another Moonshine instance already registered the bridge
+			SLF4JBridgeHandler.install();
+		}
 	}
 
 	protected void propagateLogbackLevelsToJul() {
@@ -105,6 +198,8 @@ public class Logback implements Logging {
 
 	@Override
 	public void earlyBootstrap() {
+		newLogbackContextForThisThread();
+
 		redirectLogsToSLF4J();
 		propagateLogbackLevelsToJul();
 	}

@@ -26,7 +26,11 @@ import org.atteo.moonshine.tests.MoonshineConfiguration;
 import org.atteo.moonshine.tests.MoonshineTest;
 import org.junit.Test;
 
-@MoonshineConfiguration(autoConfiguration = true)
+@MoonshineConfiguration(fromString = ""
+		+ "<config>"
+		+ "    <transactional/>"
+		+ "    <jta-mock/>"
+		+ "</config>")
 public class TransactionalServiceTest extends MoonshineTest {
     @Inject
     private UserTransaction userTransaction;

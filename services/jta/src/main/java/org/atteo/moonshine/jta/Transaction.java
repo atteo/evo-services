@@ -40,8 +40,13 @@ public class Transaction {
 		T run() throws E;
 	}
 
+	private static final InheritableThreadLocal<Provider<UserTransaction>> userTransactionProviders
+			= new InheritableThreadLocal<>();
+
 	@Inject
-	private static Provider<UserTransaction> userTransactionProvider;
+	private static void injectTransactionProvider(Provider<UserTransaction> provider) {
+		userTransactionProviders.set(provider);
+	}
 
 	public static void require(final Runnable runnable) {
 		require(new ReturningRunnable<Void, RuntimeException>() {
@@ -64,9 +69,9 @@ public class Transaction {
 	}
 
 	public static <T, E extends Throwable> T require(ReturningRunnable<T, E> runnable) throws E {
-		checkNotNull(userTransactionProvider, "Transactions not supported. You need to add <transactional/>"
+		checkNotNull(userTransactionProviders.get(), "Transactions not supported. You need to add <transactional/>"
 				+ " to your configuration file.");
-		UserTransaction userTransaction = userTransactionProvider.get();
+		UserTransaction userTransaction = userTransactionProviders.get().get();
 
 		boolean myTransaction = false;
 

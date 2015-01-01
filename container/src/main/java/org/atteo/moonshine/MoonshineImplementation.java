@@ -69,7 +69,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		}
 	}
 
-	private final Logger logger = LoggerFactory.getLogger("Moonshine");
+	private Logger logger;
 	private Services services;
 	private Logging logging;
 	private FileAccessorFactory fileAccessorFactory;
@@ -128,8 +128,6 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	@Override
 	public Moonshine build() throws IOException, CommandLineParameterException, ConfigurationException {
-		logger.info("Bootstrapping {}", applicationName != null ? applicationName : "Moonshine");
-
 		if (!skipExceptionHandler) {
 			Thread.currentThread().setUncaughtExceptionHandler(new MoonshineUncaughtExceptionHandler());
 		}
@@ -137,7 +135,12 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		if (logging == null) {
 			logging = new Logback();
 		}
+		// don't access logger before this method call
+		// or set property 'logback.ContextSelector' to 'org.atteo.moonshine.logging.Logback$MoonshineContextSelector'
 		logging.earlyBootstrap();
+
+		logger = LoggerFactory.getLogger("Moonshine");
+		logger.info("Bootstrapping {}", applicationName != null ? applicationName : "Moonshine");
 
 		fileAccessorFactory = new DefaultFileAccessor();
 
@@ -239,6 +242,7 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 		for (LifeCycleListener listener : listeners) {
 			builder.registerListener(listener);
 		}
+		builder.applicationName(applicationName);
 		builder.configuration(config);
 
 		services = builder.build();
@@ -335,6 +339,9 @@ class MoonshineImplementation implements Moonshine.Builder, Moonshine {
 
 	@Override
 	public void close() {
+		if (logger == null) {
+			logger = LoggerFactory.getLogger("Moonshine");
+		}
 		logger.info("Shutting down {}", applicationName != null ? applicationName : "Moonshine");
 		try {
 			Runtime.getRuntime().removeShutdownHook(shutdownThread);

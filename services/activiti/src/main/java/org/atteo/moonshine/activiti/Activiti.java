@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Binder;
+import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provider;
@@ -165,18 +165,20 @@ public class Activiti extends TopLevelService {
 
     @Override
     public Module configure() {
-        return new Module() {
+        return new AbstractModule() {
             @Override
-            public void configure(Binder binder) {
-                binder.bind(ProcessEngine.class).toProvider(new ProcessEngineProvider()).in(Singleton.class);
+            public void configure() {
+                bind(ProcessEngine.class).toProvider(new ProcessEngineProvider()).in(Singleton.class);
             }
         };
     }
 
+	@Override
     public void start() {
         ProcessEngines.init();
     }
 
+	@Override
     public void stop() {
         ProcessEngines.destroy();
     }

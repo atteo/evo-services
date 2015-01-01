@@ -229,7 +229,7 @@ public class ServicesTest {
 	@Test
 	public void shouldStartTwoInstancesOfTheSameServiceWithDifferentId() throws ConfigurationException {
 		class Service extends AbstractService {
-			private String id;
+			private final String id;
 
 			public Service(String id) {
 				this.id = id;

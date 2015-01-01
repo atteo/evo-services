@@ -18,7 +18,7 @@ package org.atteo.moonshine.tests;
 import javax.inject.Inject;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import org.atteo.filtering.PropertyResolver;
+import org.atteo.filtering.PropertyFilter;
 import org.atteo.moonshine.ApplicationProperties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +27,11 @@ import org.junit.runner.RunWith;
 public class MoonshineRunnerTest {
 	@Inject
 	@ApplicationProperties
-	private PropertyResolver propertyResolver;
+	private PropertyFilter propertyFilter;
 
 	@Test
 	public void shouldInject() {
 		// then
-		assertThat(propertyResolver).isNotNull();
+		assertThat(propertyFilter).isNotNull();
 	}
 }

@@ -26,11 +26,14 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.atteo.moonshine.ServiceConfiguration;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
 @XmlRootElement(name = "jta-mock")
 @Singleton
+@ServiceConfiguration(auto = false)
 public class JtaMock extends JtaService {
 	@Override
 	public Module configure() {
