@@ -13,6 +13,7 @@
 		<module>activiti</module>
 		<module>atomikos</module>
 		<module>blueprints</module>
+		<module>btm</module>
 		<module>database</module>
 		<module>database-test-utils</module>
 		<module>firebuglogger</module>

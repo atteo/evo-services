@@ -27,9 +27,17 @@ public class JtaTestTemplate extends MoonshineTest {
 	@Inject
 	private UserTransaction userTransaction;
 
+	@Inject
+	private JtaDataSourceWrapper dataSourceWrapper;
+
+	@Inject
+	private JtaConnectionFactoryWrapper connectionFactoryWrapper;
+
 	@Test
-	public void trivial() throws SystemException {
+	public void shouldProvideInjections() throws SystemException {
 		assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_NO_TRANSACTION);
+		assertThat(dataSourceWrapper).isNotNull();
+		assertThat(connectionFactoryWrapper).isNotNull();
 	}
 
 	@Test

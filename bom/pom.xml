@@ -90,11 +90,16 @@
 				<artifactId>atomikos</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>org.atteo.moonshine</groupId>
-                <artifactId>blueprints</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>blueprints</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>btm</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>container</artifactId>
