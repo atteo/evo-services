@@ -39,7 +39,6 @@
 		<module>container-test-utils</module>
 		<module>services</module>
 		<module>reflection-utils</module>
-		<module>xmlmerge</module>
 	</modules>
 	<scm>
 		<connection>https://github.com/atteo/moonshine</connection>

@@ -38,7 +38,6 @@ import org.atteo.config.Configuration;
 import org.atteo.config.IncorrectConfigurationException;
 import org.atteo.config.XmlDefaultValue;
 import org.atteo.config.XmlUtils;
-import org.atteo.config.xmlmerge.CombineSelf;
 import org.atteo.filtering.CompoundPropertyResolver;
 import org.atteo.filtering.EnvironmentPropertyResolver;
 import org.atteo.filtering.OneOfPropertyResolver;
@@ -47,6 +46,7 @@ import org.atteo.filtering.SystemPropertyResolver;
 import org.atteo.filtering.XmlPropertyResolver;
 import org.atteo.moonshine.directories.FileAccessor;
 import org.atteo.moonshine.services.Service;
+import org.atteo.xmlcombiner.CombineSelf;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 

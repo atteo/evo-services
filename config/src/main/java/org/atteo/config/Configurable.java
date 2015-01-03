@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 
 import org.atteo.classindex.IndexSubclasses;
-import org.atteo.config.xmlmerge.CombineChildren;
-import org.atteo.config.xmlmerge.CombineSelf;
+import org.atteo.xmlcombiner.CombineChildren;
+import org.atteo.xmlcombiner.CombineSelf;
 
 /**
  * Any configurable element from the configuration file.

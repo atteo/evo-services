@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.atteo.config.xmlmerge.CombineChildren;
+import org.atteo.xmlcombiner.CombineChildren;
 
 @XmlRootElement
 public class TopLevel extends AbstractConfigurable {

@@ -19,9 +19,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.atteo.config.xmlmerge.CombineChildren;
-import org.atteo.config.xmlmerge.CombineSelf;
-import org.atteo.config.xmlmerge.XmlCombiner;
+import org.atteo.xmlcombiner.CombineChildren;
+import org.atteo.xmlcombiner.CombineSelf;
+import org.atteo.xmlcombiner.XmlCombiner;
 
 /**
  * Specifies how to combine XML nodes corresponding to the annotated class
@@ -50,7 +50,7 @@ import org.atteo.config.xmlmerge.XmlCombiner;
 public @interface XmlCombine {
 	// Using full name in default value because of a bug in Java 6
 	// http://bugs.sun.com/view_bug.do?bug_id=6512707
-	CombineSelf self() default org.atteo.config.xmlmerge.CombineSelf.MERGE;
+	CombineSelf self() default org.atteo.xmlcombiner.CombineSelf.MERGE;
 
-	CombineChildren children() default org.atteo.config.xmlmerge.CombineChildren.MERGE;
+	CombineChildren children() default org.atteo.xmlcombiner.CombineChildren.MERGE;
 }
