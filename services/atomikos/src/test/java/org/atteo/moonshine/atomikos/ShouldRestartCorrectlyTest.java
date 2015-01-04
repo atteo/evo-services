@@ -24,7 +24,7 @@ import org.junit.Test;
 		+ "<config>"
 		+ "    <atomikos/>"
 		+ "</config>")
-public class ShouldRestartCorrectly extends MoonshineTest {
+public class ShouldRestartCorrectlyTest extends MoonshineTest {
 	@Inject
 	private UserTransaction userTransaction;
 
