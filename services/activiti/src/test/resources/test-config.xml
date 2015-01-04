@@ -9,8 +9,8 @@
         </bpmn-parse-handlers>
     </activiti>
     <transactional/>
-    <atomikos>
+    <btm>
         <transactionTimeout>5</transactionTimeout>
-    </atomikos>
+    </btm>
     <h2/>
 </config>

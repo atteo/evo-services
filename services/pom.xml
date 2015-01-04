@@ -43,6 +43,7 @@
 		<module>shiro-database-realm</module>
 		<module>shiro-test-utils</module>
 		<module>spring-data</module>
+		<module>transactional-annotation</module>
 		<module>transactional-filter</module>
 		<module>tomcat</module>
 		<module>webdriver</module>

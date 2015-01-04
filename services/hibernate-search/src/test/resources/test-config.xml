@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://moonshine.atteo.org/1.0 config.xsd">
-	<atomikos/>
-	<transactional/>
+	<btm/>
+	<transactional-annotation/>
 	<h2/>
 	<hibernate>
 		<initSchema>create</initSchema>

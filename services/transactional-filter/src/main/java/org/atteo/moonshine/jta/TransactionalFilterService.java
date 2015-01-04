@@ -33,7 +33,7 @@ public class TransactionalFilterService extends TopLevelService {
 	@XmlIDREF
 	@XmlElement
 	@ImportService
-	private TransactionalService transactional;
+	private JtaService transactional;
 
 	@XmlIDREF
 	@XmlElement

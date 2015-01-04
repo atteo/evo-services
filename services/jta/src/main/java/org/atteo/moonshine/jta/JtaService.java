@@ -20,6 +20,8 @@ import javax.transaction.UserTransaction;
 
 import org.atteo.moonshine.TopLevelService;
 
+import com.google.inject.Binder;
+
 /**
  * Marks services which implements JTA.
  *
@@ -29,5 +31,8 @@ import org.atteo.moonshine.TopLevelService;
  * </p>
  */
 public abstract class JtaService extends TopLevelService{
+	protected void configureCommon(Binder binder) {
+		binder.requestStaticInjection(Transaction.class);
+	}
 
 }

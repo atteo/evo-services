@@ -27,8 +27,8 @@ import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <atomikos/>"
-		+ "    <transactional/>"
+		+ "    <btm/>"
+		+ "    <transactional-annotation/>"
 		+ "    <h2/>"
 		+ "    <hibernate>"
 		+ "        <initSchema>create</initSchema>"
@@ -53,3 +53,4 @@ public class EntityManagerTest extends MoonshineTest {
 		assertFalse(entityManager.isOpen());
 	}
 }
+

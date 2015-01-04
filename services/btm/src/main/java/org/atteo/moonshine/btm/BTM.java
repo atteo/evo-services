@@ -55,6 +55,13 @@ public class BTM extends JtaService {
 	@XmlDefaultValue("${dataHome}/jta/logs/btm2.log")
 	private String logPart2FileName;
 
+	/**
+	 * The default timeout (in seconds) that is set for transactions when no timeout is specified.
+	 */
+	@XmlElement
+	@XmlDefaultValue("60")
+	private Integer transactionTimeout;
+
 	private BitronixTransactionManager transactionManager;
 
 	private static class BitronixDataSourceWrapper implements JtaDataSourceWrapper {
@@ -82,6 +89,10 @@ public class BTM extends JtaService {
 			// TODO: poolOptions.getReapTimeout();
 			dataSource.setTestQuery(testQuery);
 
+			// DDL statement cannot be executed within XA transaction
+			// So we need to allow non-XA statements during
+			dataSource.setAllowLocalTransactions(true);
+
 			return dataSource;
 		}
 
@@ -97,10 +108,22 @@ public class BTM extends JtaService {
 			PoolingConnectionFactory connectionFactory = new PoolingConnectionFactory();
 			connectionFactory.setUniqueName(name);
 			connectionFactory.setXaConnectionFactory(xaFactory);
-			connectionFactory.setMinPoolSize(poolOptions.getMinPoolSize());
-			connectionFactory.setMaxPoolSize(poolOptions.getMaxPoolSize());
-			connectionFactory.setMaxIdleTime(poolOptions.getMaxIdleTime());
-			connectionFactory.setMaxLifeTime(poolOptions.getMaxLifeTime());
+
+			if (poolOptions == null) {
+				poolOptions = new PoolOptions();
+			}
+			if (poolOptions.getMinPoolSize() != null) {
+				connectionFactory.setMinPoolSize(poolOptions.getMinPoolSize());
+			}
+			if (poolOptions.getMaxPoolSize() != null) {
+				connectionFactory.setMaxPoolSize(poolOptions.getMaxPoolSize());
+			}
+			if (poolOptions.getMaxIdleTime() != null) {
+				connectionFactory.setMaxIdleTime(poolOptions.getMaxIdleTime());
+			}
+			if (poolOptions.getMaxLifeTime() != null) {
+				connectionFactory.setMaxLifeTime(poolOptions.getMaxLifeTime());
+			}
 			// TODO: poolOptions.getReapTimeout();
 
 			return connectionFactory;
@@ -117,6 +140,8 @@ public class BTM extends JtaService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
+				configureCommon(binder());
+
 				LocalBitronixContext.initNewContext();
 
 				Configuration configuration = TransactionManagerServices.getConfiguration();
@@ -124,6 +149,7 @@ public class BTM extends JtaService {
 				configuration.setLogPart2Filename(logPart2FileName);
 				configuration.setDisableJmx(true);
 				configuration.setServerId(ManagementFactory.getRuntimeMXBean().getName());
+				configuration.setDefaultTransactionTimeout(transactionTimeout);
 
 				transactionManager = TransactionManagerServices.getTransactionManager();
 

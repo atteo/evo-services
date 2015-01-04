@@ -17,6 +17,7 @@ package org.atteo.moonshine.jta;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -24,12 +25,15 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.transaction.UserTransaction;
 
 /**
  * {@link Filter} which wraps the request handling inside JTA transaction.
  */
 @Singleton
 public class TransactionalFilter implements Filter {
+	@Inject
+	private UserTransaction userTransaction;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {

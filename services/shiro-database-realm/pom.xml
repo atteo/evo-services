@@ -18,6 +18,10 @@
 			<artifactId>spring-data</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>transactional-annotation</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 		</dependency>
@@ -37,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>atomikos</artifactId>
+			<artifactId>btm</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -1,3 +1,5 @@
+package org.atteo.moonshine.jta;
+
 /*
  * Copyright 2011 Atteo.
  *
@@ -13,21 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.atteo.moonshine.jta;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
-/**
- * Wraps method call inside transaction.
- *
- * <p>
- * You need to add {@link TransactionalService} to your configuration to support this annotation.
- * </p>
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD, ElementType.TYPE })
-public @interface Transactional {
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+public class TransactionalInterceptor implements MethodInterceptor {
+	@Override
+	public Object invoke(final MethodInvocation invocation) throws Throwable {
+		return Transaction.require(new Transaction.ReturningRunnable<Object, Throwable>() {
+			@Override
+			public Object run() throws Throwable {
+				return invocation.proceed();
+			}
+		});
+	}
 }

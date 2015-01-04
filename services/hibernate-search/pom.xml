@@ -20,7 +20,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>atomikos</artifactId>
+			<artifactId>btm</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -31,8 +31,8 @@ import com.google.inject.Inject;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <atomikos/>"
-		+ "    <transactional/>"
+		+ "    <btm/>"
+		+ "    <transactional-annotation/>"
 		+ "    <h2/>"
 		+ "    <hibernate>"
 		+ "        <initSchema>create</initSchema>"

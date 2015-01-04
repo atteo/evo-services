@@ -1,3 +1,5 @@
+package org.atteo.moonshine.jta;
+
 /*
  * Copyright 2011 Atteo.
  *
@@ -11,7 +13,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.atteo.moonshine.jta;
+
 
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlIDREF;
@@ -30,9 +32,9 @@ import com.google.inject.matcher.Matchers;
  * Provides support for &#064;{@link Transactional} annotation and {@link Transaction} helper.
  * </p>
  */
-@XmlRootElement(name = "transactional")
+@XmlRootElement(name = "transactional-annotation")
 @Singleton
-public class TransactionalService extends TopLevelService {
+public class TransactionalAnnotationService extends TopLevelService {
 	@XmlIDREF
 	@ImportService
 	private JtaService jtaService;
@@ -42,7 +44,6 @@ public class TransactionalService extends TopLevelService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				requestStaticInjection(Transaction.class);
 				TransactionalInterceptor interceptor = new TransactionalInterceptor();
 				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Transactional.class), interceptor);
 				bindInterceptor(Matchers.annotatedWith(Transactional.class), Matchers.any(), interceptor);

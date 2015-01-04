@@ -39,10 +39,10 @@ import com.google.inject.Inject;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <atomikos/>"
+		+ "    <btm/>"
 		+ "    <h2/>"
 		+ "    <hibernate/>"
-		+ "    <transactional/>"
+		+ "    <transactional-annotation/>"
 		+ "    <shiro>"
 		+ "        <realms>"
 		+ "            <database/>"

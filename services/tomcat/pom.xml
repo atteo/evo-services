@@ -32,7 +32,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>atomikos</artifactId>
+			<artifactId>btm</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

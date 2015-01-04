@@ -73,6 +73,11 @@ public class Transaction {
 				+ " to your configuration file.");
 		UserTransaction userTransaction = userTransactionProviders.get().get();
 
+		return require(userTransaction, runnable);
+	}
+
+	private static <T, E extends Throwable> T require(UserTransaction userTransaction,
+			ReturningRunnable<T, E> runnable) throws E {
 		boolean myTransaction = false;
 
 		try {

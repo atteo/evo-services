@@ -29,6 +29,7 @@ public class Hsqldb extends DatabaseService {
 	@XmlElement
 	@ImportService
 	private JtaService jtaService;
+
 	@XmlElement
 	private String url = "jdbc:hsqldb:mem:mymemdb";
 

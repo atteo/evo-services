@@ -30,9 +30,9 @@ import org.junit.Test;
 
 @MoonshineConfiguration(autoConfiguration = true, fromString = ""
 		+ "<config>"
-		+ "    <atomikos>"
+		+ "    <btm>"
 		+ "        <transactionTimeout>5</transactionTimeout>"
-		+ "    </atomikos>"
+		+ "    </btm>"
 		+ "</config>")
 public abstract class DatabaseTest extends MoonshineTest {
 	@Inject

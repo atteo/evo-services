@@ -86,7 +86,7 @@ public class Atomikos extends JtaService {
 
 	private synchronized static void turnOn() {
 		if (initialized) {
-			throw new IllegalStateException("Atomikos cannot be started two times in the same JVM");
+			throw new IllegalStateException("Atomikos cannot be started two times in the same JVM. Use BTM instead.");
 		}
 		initialized = true;
 	}
@@ -220,6 +220,8 @@ public class Atomikos extends JtaService {
 		return new PrivateModule() {
 			@Override
 			protected void configure() {
+				configureCommon(binder());
+
 				bind(UserTransactionManager.class).toProvider(new ManagerProvider()).in(Singleton.class);
 				bind(TransactionManager.class).to(UserTransactionManager.class);
 				expose(TransactionManager.class);

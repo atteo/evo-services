@@ -290,6 +290,16 @@
 			</dependency>
 			<dependency>
 				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>transactional-annotation</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
+				<artifactId>transactional-filter</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.atteo.moonshine</groupId>
 				<artifactId>webdriver</artifactId>
 				<version>${project.version}</version>
 			</dependency>
