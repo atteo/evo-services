@@ -60,57 +60,64 @@ public class Logback implements Logging {
 	private final LoggingCommandLineParameters parameters = new LoggingCommandLineParameters();
 
 	public static class MoonshineContextSelector implements ContextSelector {
-		private static final InheritableThreadLocal<LoggerContext> context = new InheritableThreadLocal<>();
+		private static final InheritableThreadLocal<LoggerContext> contexts = new InheritableThreadLocal<>();
 
-		public MoonshineContextSelector(LoggerContext c) {
-			context.set(c);
+		private LoggerContext defaultContext;
+
+		public MoonshineContextSelector(LoggerContext context) {
+			defaultContext = context;
 		}
 
 		/**
 		 * Starts new Logback context for this thread and all threads created from this thread.
 		 */
 		public static void initNewContext() {
-			LoggerContext c= new LoggerContext();
-			c.setName(Thread.currentThread().getName());
+			LoggerContext context = new LoggerContext();
+			context.setName(Thread.currentThread().getName());
 
 			// load logback.xml for a moment
 			try {
-				new ContextInitializer(c).autoConfig();
+				new ContextInitializer(context).autoConfig();
 			} catch (JoranException e) {
 				throw new RuntimeException(e);
 			}
 
-			context.set(c);
+			contexts.set(context);
 		}
 
 		@Override
 		public LoggerContext getLoggerContext() {
-			return context.get();
+			LoggerContext context = contexts.get();
+			if (context == null) {
+				return defaultContext;
+			} else {
+				return context;
+			}
 		}
 
 		@Override
 		public LoggerContext getLoggerContext(String name) {
-			LoggerContext c = context.get();
-			if (c.getName().equals(name)) {
-				return c;
+			LoggerContext context = contexts.get();
+			if (context.getName().equals(name)) {
+				return context;
 			} else {
-				return null;
+				return defaultContext;
 			}
 		}
 
 		@Override
 		public LoggerContext getDefaultLoggerContext() {
-			return context.get();
+			return contexts.get();
 		}
 
 		@Override
 		public LoggerContext detachLoggerContext(String loggerContextName) {
-			return context.get();
+			return contexts.get();
 		}
 
 		@Override
 		public List<String> getContextNames() {
-			return Arrays.asList(context.get().getName());
+			return Arrays.asList(contexts.get().getName());
 		}
 	}
 
