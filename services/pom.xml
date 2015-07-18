@@ -24,6 +24,7 @@
 		<module>hornetq</module>
 		<module>hsqldb</module>
 		<module>jax-rs</module>
+		<module>jersey</module>
 		<module>jetty</module>
 		<module>jminix</module>
 		<module>jmx</module>
@@ -59,7 +60,7 @@
 		<blueprints.version>2.5.0</blueprints.version>
 		<jetty.version>9.1.1.v20140108</jetty.version>
 		<shiro.version>1.2.2</shiro.version>
-		<tomcat.version>8.0.0-RC5</tomcat.version>
+		<tomcat.version>8.0.24</tomcat.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
