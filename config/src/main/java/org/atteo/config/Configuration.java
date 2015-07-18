@@ -318,7 +318,7 @@ public class Configuration {
 				JaxbBindings.iterate(root, binder, new CombineAssigner());
 
 				// Combine with parent
-				XmlCombiner combiner = new XmlCombiner(builder);
+				XmlCombiner combiner = new XmlCombiner(builder, "id");
 				combiner.combine(parentDocument);
 				combiner.combine(document);
 				document = combiner.buildDocument();
