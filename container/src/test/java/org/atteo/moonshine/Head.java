@@ -17,12 +17,18 @@ package org.atteo.moonshine;
 
 public class Head {
 	private final String name;
+	private final int numberOfEars;
 
-	public Head(String name) {
+	public Head(String name, int numberOfEars) {
 		this.name = name;
+		this.numberOfEars = numberOfEars;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public int getNumberOfEars() {
+		return numberOfEars;
 	}
 }

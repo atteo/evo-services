@@ -110,6 +110,26 @@ public class MoonshineTest {
 	}
 
 	@Test
+	public void shouldHandleIntegerProperties() throws MoonshineException, IOException {
+		// given
+		try (Moonshine moonshine = Moonshine.Factory.builder()
+				.homeDirectory("target/test-home/")
+				.addConfigurationFromString(""
+				+ "<config>"
+				+ "    <properties>"
+				+ "        <n>5</n>"
+				+ "    </properties>"
+				+ "    <head>"
+				+ "        <numberOfEars>${n}</numberOfEars>"
+				+ "    </head>"
+				+ "</config>")
+				.build()) {
+
+			// then
+		}
+	}
+
+	@Test
 	public void shouldAllowSingletonAndNonSingletonServicesToCoexist() throws MoonshineException, IOException {
 		// given
 		try (Moonshine moonshine = Moonshine.Factory.builder()

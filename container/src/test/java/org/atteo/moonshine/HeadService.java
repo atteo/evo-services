@@ -30,6 +30,9 @@ import com.google.inject.Module;
 		+ "<name>default-name</name>")
 public class HeadService extends TopLevelService {
 	@XmlElement
+	private int numberOfEars;
+
+	@XmlElement
 	private String name;
 
 	@Override
@@ -37,7 +40,7 @@ public class HeadService extends TopLevelService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(Head.class).toInstance(new Head(name));
+				bind(Head.class).toInstance(new Head(name, numberOfEars));
 			}
 		};
 	}
