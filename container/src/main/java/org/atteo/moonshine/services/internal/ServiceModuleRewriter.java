@@ -35,6 +35,9 @@ import com.google.inject.spi.InjectionRequest;
 import com.google.inject.spi.PrivateElements;
 
 public class ServiceModuleRewriter {
+	private ServiceModuleRewriter() {
+	}
+
 	/**
 	 * Annotate exposed bindings with Names.named(service.getId()).
 	 * Additionally request injection of service object.

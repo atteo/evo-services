@@ -30,6 +30,9 @@ import com.sun.tools.attach.VirtualMachine;
 
 public class JmxUtils {
 
+	private JmxUtils() {
+	}
+
 	public static long getVirtualMachinePid() {
 		String name = ManagementFactory.getRuntimeMXBean().getName();
 		return Long.parseLong(name.substring(0, name.indexOf('@')));

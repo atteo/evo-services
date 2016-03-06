@@ -22,6 +22,9 @@ import java.util.LinkedList;
 
 
 public class ReflectionUtils {
+	private ReflectionUtils() {
+	}
+
 	/**
 	 * Return all ancestors of a given class.
 	 *
