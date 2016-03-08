@@ -19,6 +19,9 @@ import javax.inject.Singleton;
 
 
 public class ReflectionTools {
+	private ReflectionTools() {
+	}
+
 	/**
 	 * Checks whether class is marked as singleton.
 	 */

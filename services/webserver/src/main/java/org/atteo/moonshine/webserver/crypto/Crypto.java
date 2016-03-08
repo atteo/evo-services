@@ -52,8 +52,11 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 public class Crypto {
+	private Crypto() {
+	}
+
 	public static void createSelfSignedCertificate(File keystore, String alias,
-			String keystorePassword) {
+												   String keystorePassword) {
 		try {
 			Provider bouncyCastleProvider = new BouncyCastleProvider();
 

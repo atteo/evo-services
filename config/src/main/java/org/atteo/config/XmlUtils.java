@@ -27,6 +27,9 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Node;
 
 public class XmlUtils {
+	private XmlUtils() {
+	}
+
 	public static String prettyPrint(Node node) {
 		try {
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();

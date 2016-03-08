@@ -29,6 +29,9 @@ import com.google.inject.spi.PrivateElements;
 
 public class GuiceBindingsHelper {
 
+	private GuiceBindingsHelper() {
+	}
+
 	public static void printServiceElements(List<? extends ServiceInfo> infos) {
 		for (ServiceInfo info : infos) {
 

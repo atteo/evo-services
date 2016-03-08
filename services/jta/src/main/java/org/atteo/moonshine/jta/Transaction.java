@@ -28,6 +28,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class Transaction {
+	private Transaction() {
+	}
+
 	public static interface Runnable {
 		void run();
 	}
