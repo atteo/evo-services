@@ -108,6 +108,12 @@ public class HibernateService extends JpaService {
 	private boolean showSql= false;
 
 	/**
+	 * SQL dialect.
+	 */
+	@XmlElement
+	private String dialect;
+
+	/**
 	 * List of HibernateService plugins.
 	 */
 	@XmlElementRef
@@ -252,6 +258,9 @@ public class HibernateService extends JpaService {
 			map.put(AvailableSettings.USE_SQL_COMMENTS, useSqlComments);
 			map.put(AvailableSettings.FORMAT_SQL, formatSql);
 			map.put(AvailableSettings.SHOW_SQL, showSql);
+			if (dialect != null) {
+				map.put(AvailableSettings.DIALECT, dialect);
+			}
 			map.put("javax.persistence.validation.factory", validatorFactory);
 
 			factory = provider.createContainerEntityManagerFactory(info, map);
