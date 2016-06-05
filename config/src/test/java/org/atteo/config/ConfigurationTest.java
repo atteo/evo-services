@@ -215,6 +215,23 @@ public class ConfigurationTest {
 		assertThat(file.toFile()).exists();
 	}
 
+	@Test
+	public void shouldHandleIntegerProperties() throws IOException, IncorrectConfigurationException {
+		// given
+		String config = ""
+			+ "<topLevel>"
+			+ "    <entry>"
+			+ "        <intValue>${intValue}</intValue>"
+			+ "    </entry>"
+			+ "</topLevel>";
+
+		// when
+		TopLevel result = parse(config, config);
+
+		// then
+		assertThat(result.entries.get(0).intValue).isEqualTo(5);
+	}
+
 	private TopLevel parse(String... documents) throws IOException,
 			IncorrectConfigurationException {
 		Configuration configuration = new Configuration();
