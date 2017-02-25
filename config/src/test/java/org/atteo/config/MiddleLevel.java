@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.atteo.xmlcombiner.CombineSelf;
 
-@XmlCombine(self = CombineSelf.OVERRIDE)
 public class MiddleLevel extends Entry {
 	@XmlElement
 	List<Entry> entry;

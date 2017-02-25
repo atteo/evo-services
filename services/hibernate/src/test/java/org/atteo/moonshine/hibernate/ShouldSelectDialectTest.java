@@ -21,7 +21,7 @@ import org.junit.Test;
 
 @MoonshineConfiguration(fromString = ""
 		+ "<config>"
-		+ "    <atomikos/>"
+		+ "    <btm/>"
 		+ "    <transactional/>"
 		+ "    <h2/>"
 		+ "    <hibernate>"

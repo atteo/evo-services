@@ -156,6 +156,8 @@
 								<compilerArguments>
 									<bootclasspath>${settings.localRepository}/javax/javaee-endorsed-api/6.0/javaee-endorsed-api-6.0.jar${path.separator}${sun.boot.class.path}</bootclasspath>
 								</compilerArguments>
+								<source>1.8</source>
+								<target>1.8</target>
 							</configuration>
 						</plugin>
 					</plugins>

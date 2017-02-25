@@ -15,9 +15,12 @@ package org.atteo.moonshine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
+
+import com.googlecode.catchexception.apis.BDDCatchException;
 import org.atteo.filtering.PropertyFilter;
 import org.atteo.filtering.PropertyNotFoundException;
 import org.atteo.filtering.PropertyResolver;
@@ -70,7 +73,7 @@ public class MoonshineTest {
 				.build()) {
 
 			// then
-			then(caughtException()).isInstanceOf(MoonshineException.class)
+			BDDCatchException.then(caughtException()).isInstanceOf(MoonshineException.class)
 					.hasMessage("Service '\"test\" SingletonService' is marked as singleton, but has an id specified");
 		}
 	}
@@ -87,7 +90,7 @@ public class MoonshineTest {
 				+ "</config>"))
 				.build()) {
 
-			then(caughtException()).isInstanceOf(MoonshineException.class)
+			BDDCatchException.then(caughtException()).isInstanceOf(MoonshineException.class)
 					.hasMessageContaining("Service 'SingletonService' is marked as singleton,"
 					+ " but is declared more than once in configuration file");
 		}
@@ -334,7 +337,7 @@ public class MoonshineTest {
 				.build()) {
 		}
 
-		then(caughtException()).isInstanceOf(IllegalStateException.class)
+		BDDCatchException.then(caughtException()).isInstanceOf(IllegalStateException.class)
 				.hasMessageContaining("Only services marked with @Singleton can bind with annotation");
 	}
 
@@ -350,7 +353,7 @@ public class MoonshineTest {
 				.build()) {
 		}
 
-		then(caughtException()).isInstanceOf(IllegalStateException.class)
+		BDDCatchException.then(caughtException()).isInstanceOf(IllegalStateException.class)
 				.hasMessageContaining("Only services marked with @Singleton can expose bindings with annotation");
 	}
 
@@ -365,7 +368,7 @@ public class MoonshineTest {
 				.build()) {
 		}
 
-		then(caughtException()).isInstanceOf(CreationException.class)
+		BDDCatchException.then(caughtException()).isInstanceOf(CreationException.class)
 				.hasMessageContaining("Explicit bindings are required and java.lang.String is not explicitly bound.");
 
 		assertThat(MissingDependencyService.configureCount).isEqualTo(1);
@@ -417,7 +420,7 @@ public class MoonshineTest {
 		}
 
 		// then
-		then(caughtException()).isInstanceOf(RuntimeException.class)
+		BDDCatchException.then(caughtException()).isInstanceOf(RuntimeException.class)
 				.hasMessage("Service CyclicServiceA depends on itself: CyclicServiceA -> CyclicServiceB -> CyclicServiceA");
 	}
 
@@ -472,7 +475,7 @@ public class MoonshineTest {
 
 		// then
 		File log1 = new File("target/test-home-1/logs/moonshine-1.log");
-		File log2 = new File("target/test-home-1/logs/moonshine-1.log");
+		File log2 = new File("target/test-home-2/logs/moonshine-2.log");
 
 		assertThat(log1.length()).isEqualTo(log2.length());
 	}

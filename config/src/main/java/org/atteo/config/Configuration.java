@@ -311,27 +311,14 @@ public class Configuration {
 		try {
 			document = builder.parse(stream);
 
-			// Unmarshall the parent document to assign combine attributes annotated on classes
 			Element root = parentDocument.getDocumentElement();
 			if (root != null) {
-				binder.unmarshal(root);
-				JaxbBindings.iterate(root, binder, new CombineAssigner());
-
 				// Combine with parent
 				XmlCombiner combiner = new XmlCombiner(builder, "id");
 				combiner.combine(parentDocument);
 				combiner.combine(document);
 				document = combiner.buildDocument();
 			}
-		} catch (UnmarshalException e) {
-			if (e.getLinkedException() != null) {
-				throw new IncorrectConfigurationException("Cannot parse configuration file: "
-						+ e.getLinkedException().getMessage(), e.getLinkedException());
-			} else {
-				throw new RuntimeException("Cannot parse configuration file", e);
-			}
-		} catch (JAXBException e) {
-			throw new IncorrectConfigurationException("Unmarshall error: " + e.getMessage(), e);
 		} catch (SAXException e) {
 			throw new IncorrectConfigurationException("Parse error: " + e.getMessage(), e);
 		}
@@ -411,65 +398,6 @@ public class Configuration {
 	 */
 	public Element getRootElement() {
 		return document.getDocumentElement();
-	}
-
-	/**
-	 * Combines several input XML documents and reads the configuration from it.
-	 *
-	 * <p>
-	 * This is equivalent to executing {@link #combine(InputStream)} for each stream
-	 * and then {@link #read(Class)} for rootClass.
-	 * </p>
-	 * @param rootClass the class to which unmarshal the DOM tree
-	 * @param <T> type of the rootClass
-	 * @param streams input streams with the configuration to combine
-	 * @return unmarshalled class tree, or null if no streams were provided
-	 * @throws IncorrectConfigurationException if configuration is incorrect
-	 * @throws IOException when cannot access configuration files
-	 */
-	public <T extends Configurable> T read(Class<T> rootClass, InputStream... streams)
-			throws IncorrectConfigurationException, IOException {
-		for (InputStream stream : streams) {
-			combine(stream);
-		}
-		return read(rootClass);
-	}
-
-
-	private static class CombineAssigner implements JaxbBindings.Runnable {
-		/**
-		 * Assigns {@link Configurable#combine} from the fields or class this objects unmarshals to.
-		 * @param element DOM element
-		 * @param object object into which DOM element was unmarshalled
-		 * @param field field which holds unmarshalled object
-		 */
-		@Override
-		public void run(Element element, Object object, Field field) {
-			if (field != null) {
-				setAttributesFromAnnotation(element, field.getAnnotation(XmlCombine.class));
-			}
-
-			if (object != null) {
-				setAttributesFromAnnotation(element, object.getClass().getAnnotation(XmlCombine.class));
-			}
-		}
-
-		private void setAttributesFromAnnotation(Element element, XmlCombine annotation) {
-			if (annotation != null) {
-				if (!element.hasAttribute(CombineSelf.ATTRIBUTE_NAME)) {
-					CombineSelf combineSelf = annotation.self();
-					if (combineSelf != null) {
-						element.setAttribute(CombineSelf.ATTRIBUTE_NAME, combineSelf.name());
-					}
-				}
-				if (!element.hasAttribute(CombineChildren.ATTRIBUTE_NAME)) {
-					CombineChildren combineChildren = annotation.children();
-					if (combineChildren != null) {
-						element.setAttribute(CombineChildren.ATTRIBUTE_NAME, combineChildren.name());
-					}
-				}
-			}
-		}
 	}
 
 	private static class DefaultsSetter implements JaxbBindings.Runnable {

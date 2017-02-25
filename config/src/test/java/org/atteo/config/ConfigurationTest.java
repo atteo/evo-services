@@ -65,7 +65,7 @@ public class ConfigurationTest {
 	public void append() throws IOException, IncorrectConfigurationException {
 		String parent =
 				"<topLevel>"
-				+ "<append>"
+				+ "<append combine.children='append'>"
 				+ "<entry>"
 				+ "<value>value</value>"
 				+ "</entry>"
@@ -235,13 +235,13 @@ public class ConfigurationTest {
 	private TopLevel parse(String... documents) throws IOException,
 			IncorrectConfigurationException {
 		Configuration configuration = new Configuration();
+		for (int i = 0; i < documents.length; i++) {
+			InputStream stream = new ByteArrayInputStream(documents[i].getBytes(StandardCharsets.UTF_8));
+			configuration.combine(stream);
+		}
 		Properties properties = new Properties();
 		properties.setProperty("intValue", "5");
 		configuration.filter(properties);
-		InputStream[] streams = new InputStream[documents.length];
-		for (int i = 0; i < documents.length; i++) {
-			streams[i] = new ByteArrayInputStream(documents[i].getBytes(StandardCharsets.UTF_8));
-		}
-		return configuration.read(TopLevel.class, streams);
+		return configuration.read(TopLevel.class);
 	}
 }

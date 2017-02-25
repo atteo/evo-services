@@ -33,7 +33,6 @@ public class TopLevel extends AbstractConfigurable {
 	List<Entry> entries;
 
 	@Valid
-	@XmlCombine(children = CombineChildren.APPEND)
 	@XmlElementWrapper(name = "append")
 	@XmlElementRef
 	List<Entry> append = new ArrayList<>();
