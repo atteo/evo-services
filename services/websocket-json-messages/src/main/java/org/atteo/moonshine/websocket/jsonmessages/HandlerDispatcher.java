@@ -46,12 +46,7 @@ public class HandlerDispatcher {
 	}
 
 	public <T> void addHandler(final T handler) {
-		this.addHandler((Class<T>)handler.getClass(), new Provider<T>() {
-			@Override
-			public T get() {
-				return handler;
-			}
-		});
+		this.addHandler((Class<T>)handler.getClass(), () -> handler);
 	}
 
 	public <T> SenderProvider<T> addSender(Class<T> klass) {
@@ -79,16 +74,13 @@ public class HandlerDispatcher {
 			}
 		}
 
-		return new SenderProvider<T>() {
-			@Override
-			public T get(Session session) {
-				try {
-					return proxyClass.getConstructor(new Class<?>[] { InvocationHandler.class }).newInstance(
-							new SenderInvocationHandler(session));
-				} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-						| IllegalArgumentException | InvocationTargetException ex) {
-					throw new RuntimeException(ex);
-				}
+		return (Session session) -> {
+			try {
+				return proxyClass.getConstructor(new Class<?>[] { InvocationHandler.class }).newInstance(
+						new SenderInvocationHandler(session));
+			} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+					| IllegalArgumentException | InvocationTargetException ex) {
+				throw new RuntimeException(ex);
 			}
 		};
 	}

@@ -121,17 +121,14 @@ public class Activiti extends TopLevelService {
                     ProcessEngineConfigurationImpl pec = (ProcessEngineConfigurationImpl) processEngineConfiguration;
                     if (pec.getPostBpmnParseHandlers() == null) {
                         pec.setPostBpmnParseHandlers(createAndGetHandlers());
-                        pec.setDelegateInterceptor(new DelegateInterceptor() {
-                            @Override
-                            public void handleInvocation(DelegateInvocation invocation) throws Exception {
-                                Object target = invocation.getTarget();
-                                if ((target instanceof JavaDelegate || target instanceof TaskListener ) ) {
-                                    injector.injectMembers(target);
-                                }
-
-                                invocation.proceed();
-                            }
-                        });
+                        pec.setDelegateInterceptor((DelegateInvocation invocation) -> {
+							Object target = invocation.getTarget();
+							if ((target instanceof JavaDelegate || target instanceof TaskListener ) ) {
+								injector.injectMembers(target);
+							}
+							
+							invocation.proceed();
+						});
                     }
                 } else {
                     log.info("BPMN parse handlers are ignored since handlers are only supported with " +

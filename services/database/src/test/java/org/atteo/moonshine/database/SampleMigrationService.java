@@ -34,21 +34,18 @@ public class SampleMigrationService extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		database.registerMigration(new DatabaseMigration() {
-			@Override
-			public void execute(final DataSource dataSource) {
-				try (final Connection connection = dataSource.getConnection();
-						final Statement statement = connection.createStatement()) {
-						try {
-							statement.execute("drop table users");
-						} catch (SQLException e) {
-							// ignore, table might not exist
-						}
-					statement.execute("create table users (name varchar(256))");
-					statement.execute("insert into users(name) values ('John')");
-				} catch (SQLException ex) {
-					throw new RuntimeException(ex);
+		database.registerMigration((final DataSource dataSource) -> {
+			try (final Connection connection = dataSource.getConnection();
+					final Statement statement = connection.createStatement()) {
+				try {
+					statement.execute("drop table users");
+				} catch (SQLException e) {
+					// ignore, table might not exist
 				}
+				statement.execute("create table users (name varchar(256))");
+				statement.execute("insert into users(name) values ('John')");
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);
 			}
 		});
 		return null;

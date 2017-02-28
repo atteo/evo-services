@@ -98,12 +98,7 @@ public class ServletContainer extends TopLevelService {
 	 * @param params servlet init parameters
 	 */
 	public <T extends Servlet> void addServlet(final T servlet, Map<String, String> params, String... patterns) {
-		Provider<T> provider = new Provider<T>() {
-			@Override
-			public T get() {
-				return servlet;
-			}
-		};
+		Provider<T> provider = () -> servlet;
 		servlets.add(new ServletOrFilterDefinition<>(provider, params, patterns, DEFAULT_PRIORITY));
 	}
 
@@ -170,12 +165,7 @@ public class ServletContainer extends TopLevelService {
 	 * @param params filter init parameters
 	 */
 	public <T extends Filter> void addFilter(final T filter, Map<String, String> params, int priority, String... patterns) {
-		Provider<T> provider = new Provider<T>() {
-			@Override
-			public T get() {
-				return filter;
-			}
-		};
+		Provider<T> provider = () -> filter;
 		filters.add(new ServletOrFilterDefinition<>(provider, params, patterns, priority));
 	}
 
@@ -207,12 +197,7 @@ public class ServletContainer extends TopLevelService {
 	 * @param listener listener to register
 	 */
 	public <T extends EventListener> void addListener(final T listener) {
-		listeners.add(new Provider<T>() {
-			@Override
-			public T get() {
-				return listener;
-			}
-		});
+		listeners.add((Provider<T>) () -> listener);
 	}
 
 	public void addServletContainerInitializer(ServletContainerInitializer initializer) {

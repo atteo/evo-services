@@ -46,32 +46,29 @@ public class Perf4JService extends TopLevelService {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Profiled.class), new MethodInterceptor() {
-					@Override
-					public Object invoke(final MethodInvocation invocation) throws Throwable {
-						Profiled annotation = invocation.getMethod().getAnnotation(Profiled.class);
-						return helper.runProfiledMethod(new AbstractJoinPoint() {
-							@Override
-							public Object proceed() throws Throwable {
-								return invocation.proceed();
-							}
-
-							@Override
-							public Object getExecutingObject() {
-								return invocation.getThis();
-							}
-
-							@Override
-							public Object[] getParameters() {
-								return invocation.getArguments();
-							}
-
-							@Override
-							public String getMethodName() {
-								return invocation.getMethod().getName();
-							}
-						}, annotation, new Slf4JStopWatch());
-					}
+				bindInterceptor(Matchers.any(), Matchers.annotatedWith(Profiled.class), (MethodInterceptor) (final MethodInvocation invocation) -> {
+					Profiled annotation = invocation.getMethod().getAnnotation(Profiled.class);
+					return helper.runProfiledMethod(new AbstractJoinPoint() {
+						@Override
+						public Object proceed() throws Throwable {
+							return invocation.proceed();
+						}
+						
+						@Override
+						public Object getExecutingObject() {
+							return invocation.getThis();
+						}
+						
+						@Override
+						public Object[] getParameters() {
+							return invocation.getArguments();
+						}
+						
+						@Override
+						public String getMethodName() {
+							return invocation.getMethod().getName();
+						}
+					}, annotation, new Slf4JStopWatch());
 				});
 			}
 		};

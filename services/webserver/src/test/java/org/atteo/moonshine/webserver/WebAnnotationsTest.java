@@ -44,7 +44,7 @@ public abstract class WebAnnotationsTest extends MoonshineTest {
 	}
 
 	@Test
-	public void testServletAndFilter() throws MalformedURLException, IOException {
+	public void testServletAndFilter() throws IOException {
 		URL url = new URL(webServerAddress.getUrl() + "/hello");
 		try (InputStream stream = url.openStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
@@ -53,7 +53,7 @@ public abstract class WebAnnotationsTest extends MoonshineTest {
 	}
 
 	@Test
-	public void testListener() throws MalformedURLException, IOException {
+	public void testListener() throws IOException {
 		assertThat(HelloListener.initialized);
 	}
 }

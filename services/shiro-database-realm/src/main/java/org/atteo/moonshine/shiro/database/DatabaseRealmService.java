@@ -55,11 +55,8 @@ public class DatabaseRealmService extends RealmService {
 		// we need to use the same database as JPA which we are using
 		database = jpa.getDatabaseService();
 
-		database.registerMigration(new DatabaseMigration() {
-			@Override
-			public void execute(DataSource dataSource) {
-				new LiquibaseFacade(dataSource).migrate("liquibase/database-realm.xml");
-			}
+		database.registerMigration((DataSource dataSource) -> {
+			new LiquibaseFacade(dataSource).migrate("liquibase/database-realm.xml");
 		});
 
 		return new PrivateModule() {

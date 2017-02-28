@@ -86,29 +86,20 @@ public class WebDriverHelper {
 			wait.withMessage(message);
 		}
 
-		return wait.until(new Function<WebDriver, T>() {
-
-			@Override
-			public T apply(WebDriver input) {
-				try {
-					return function.apply(input);
-				} catch (StaleElementReferenceException e) {
-					// Every now and then elements may be destroyed during the evaluation of 'function'
-					// and this exception might be thrown. It's safe to ignore here as 'function' will be
-					// called multiple times as long as it does not return true.
-					return null;
-				}
+		return wait.until((WebDriver input) -> {
+			try {
+				return function.apply(input);
+			} catch (StaleElementReferenceException e) {
+				// Every now and then elements may be destroyed during the evaluation of 'function'
+				// and this exception might be thrown. It's safe to ignore here as 'function' will be
+				// called multiple times as long as it does not return true.
+				return null;
 			}
 		});
 	}
 
 	public void waitUntilPath(final String path) {
-		waitUntil(new Function<WebDriver, Boolean>() {
-			@Override
-			public Boolean apply(WebDriver driver) {
-				return driver.getCurrentUrl().matches(".*" + path + "/?");
-			}
-		}, "Path did not change to '" + path + "'");
+		waitUntil((WebDriver driver1) -> driver1.getCurrentUrl().matches(".*" + path + "/?"), "Path did not change to '" + path + "'");
 	}
 
 	/**
@@ -122,22 +113,18 @@ public class WebDriverHelper {
 	 * @param elementLocator
 	 */
 	public void clickWhenReady(final By elementLocator) {
-		waitUntil(new Function<WebDriver, Boolean>() {
-
-			@Override
-			public Boolean apply(WebDriver input) {
-				WebElement element = input.findElement(elementLocator);
-
-				if (element != null && element.isDisplayed() && element.isEnabled()) {
-					try {
-						element.click();
-						return true;
-					} catch (WebDriverException e) {
-					}
+		waitUntil((WebDriver input) -> {
+			WebElement element = input.findElement(elementLocator);
+			
+			if (element != null && element.isDisplayed() && element.isEnabled()) {
+				try {
+					element.click();
+					return true;
+				} catch (WebDriverException e) {
 				}
-
-				return false;
 			}
+			
+			return false;
 		}, "Element is not clickable: " + elementLocator.toString());
 	}
 

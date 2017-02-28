@@ -19,6 +19,7 @@ import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.inject.Binder;
 import org.atteo.moonshine.injection.InjectMembers;
 
 import com.google.inject.AbstractModule;
@@ -35,16 +36,9 @@ public class InjectMemberService extends TopLevelService {
 
 	@Override
 	public Module configure() {
-		return new AbstractModule() {
-			@Override
-			protected void configure() {
-				bind(String.class).annotatedWith(Names.named("injected message")).toProvider(new Provider<String>() {
-					@Override
-					public String get() {
-						return subservice.getMessage();
-					}
-				});
-			}
-		};
+		return binder -> binder.bind(String.class).annotatedWith(Names.named("injected message"))
+			.toProvider(() -> {
+				return subservice.getMessage();
+			});
 	}
 }

@@ -34,14 +34,11 @@ public class MoonshineConfiguratorTest extends MoonshineTest {
 					+ "<config>"
 					+ "    <simple message = '${message}'/>"
 					+ "</config>");
-			builder.addPropertyResolver(new PropertyResolver() {
-				@Override
-				public String resolveProperty(String property, PropertyFilter pr) throws PropertyNotFoundException {
-					if ("message".equals(property)) {
-						return "Hello World";
-					}
-					return null;
+			builder.addPropertyResolver((String property, PropertyFilter pr) -> {
+				if ("message".equals(property)) {
+					return "Hello World";
 				}
+				return null;
 			});
 		}
 	}

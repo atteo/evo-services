@@ -38,22 +38,18 @@ public class RequestRule implements TestRule {
 		return new Statement() {
 			@Override
 			public void evaluate() throws Throwable {
-				ServletScopes.scopeRequest(new Callable<Object>() {
-					@Override
-					public Object call() throws Exception {
-						try {
-							base.evaluate();
-						} catch (RuntimeException | Error e) {
-							// don't wrap RuntimeExceptions
-							// don't wrap Errors either, JUnit throws this
-							throw e;
-						} catch (Throwable e) {
-							throw new RuntimeException(e);
-						}
-						return null;
+				ServletScopes.scopeRequest(() -> {
+					try {
+						base.evaluate();
+					} catch (RuntimeException | Error e) {
+						// don't wrap RuntimeExceptions
+						// don't wrap Errors either, JUnit throws this
+						throw e;
+					} catch (Throwable e) {
+						throw new RuntimeException(e);
 					}
-
-				}, new HashMap<Key<?>, Object>()).call();
+					return null;
+				}, new HashMap<>()).call();
 			}
 		};
 	}

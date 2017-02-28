@@ -53,13 +53,10 @@ public class DuplicateDetectionWrapper {
 				}
 			};
 		}
-		return new Module() {
-			@Override
-			public void configure(Binder binder) {
-				if (modules.add(module)) {
-					module.configure(createForwardingBinder(binder));
-					binder.install(ProviderMethodsModule.forModule(module));
-				}
+		return (Binder binder) -> {
+			if (modules.add(module)) {
+				module.configure(createForwardingBinder(binder));
+				binder.install(ProviderMethodsModule.forModule(module));
 			}
 		};
 	}

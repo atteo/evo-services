@@ -40,14 +40,11 @@ public class EntityManagerTest extends MoonshineTest {
 
 	@Test
 	public void shouldInjectEntityManager() {
-		Transaction.require(new Transaction.Runnable() {
-			@Override
-			public void run() {
-				assertTrue(entityManager.isOpen());
-				User entity = new User();
-				entity.setId(0);
-				entityManager.persist(entity);
-			}
+		Transaction.require((Transaction.Runnable) () -> {
+			assertTrue(entityManager.isOpen());
+			User entity = new User();
+			entity.setId(0);
+			entityManager.persist(entity);
 		});
 
 		assertFalse(entityManager.isOpen());

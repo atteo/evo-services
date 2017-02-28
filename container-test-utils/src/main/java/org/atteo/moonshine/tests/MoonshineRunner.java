@@ -136,23 +136,20 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 			}
 		}
 
-		configurators.add(new MoonshineConfigurator() {
-			@Override
-			public void configureMoonshine(Moonshine.Builder builder) {
-				for (Config config : iterationConfigs) {
-					if (!config.fromString().isEmpty()) {
-						builder.addConfigurationFromString(config.fromString());
-					}
+		configurators.add((MoonshineConfigurator) (Moonshine.Builder builder) -> {
+			for (Config config : iterationConfigs) {
+				if (!config.fromString().isEmpty()) {
+					builder.addConfigurationFromString(config.fromString());
 				}
-				builder.addModule(new AbstractModule() {
-					@Override
-					protected void configure() {
-						bind(new TypeLiteral<List<String>>() {}).annotatedWith(EnabledConfigs.class)
-								.toInstance(iterationIds);
-					}
-				});
-				builder.applicationName(klass.getSimpleName() + "[" + Joiner.on(",").join(iterationIds) + "]");
 			}
+			builder.addModule(new AbstractModule() {
+				@Override
+				protected void configure() {
+					bind(new TypeLiteral<List<String>>() {}).annotatedWith(EnabledConfigs.class)
+							.toInstance(iterationIds);
+				}
+			});
+			builder.applicationName(klass.getSimpleName() + "[" + Joiner.on(",").join(iterationIds) + "]");
 		});
 	}
 
@@ -202,21 +199,18 @@ public class MoonshineRunner extends BlockJUnit4ClassRunner {
 		}
 		if (annotation.autoConfiguration() || annotation.skipDefault() || !annotation.fromString().isEmpty()
 				|| annotation.arguments().length != 0) {
-			MoonshineConfigurator configurator = new MoonshineConfigurator() {
-				@Override
-				public void configureMoonshine(Moonshine.Builder builder) {
-					if (annotation.autoConfiguration()) {
-						builder.autoConfiguration();
-					}
-					if (annotation.skipDefault()) {
-						builder.skipDefaultConfigurationFiles();
-					}
-					if (!annotation.fromString().isEmpty()) {
-						builder.addConfigurationFromString(annotation.fromString());
-					}
-
-					builder.arguments(annotation.arguments());
+			MoonshineConfigurator configurator = (Moonshine.Builder builder) -> {
+				if (annotation.autoConfiguration()) {
+					builder.autoConfiguration();
 				}
+				if (annotation.skipDefault()) {
+					builder.skipDefaultConfigurationFiles();
+				}
+				if (!annotation.fromString().isEmpty()) {
+					builder.addConfigurationFromString(annotation.fromString());
+				}
+				
+				builder.arguments(annotation.arguments());
 			};
 			configurators.add(configurator);
 		}

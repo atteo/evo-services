@@ -128,13 +128,7 @@ public class ShiroService extends TopLevelService {
 						bind.to(DefaultWebSessionManager.class).asEagerSingleton();
 					}
 				});
-				FilterChainResolver filterChainResolver = new FilterChainResolver() {
-					@Override
-					public FilterChain getChain(ServletRequest request, ServletResponse response,
-							FilterChain chain) {
-						return null;
-					}
-				};
+				FilterChainResolver filterChainResolver = (ServletRequest request, ServletResponse response, FilterChain chain) -> null;
 				bind(FilterChainResolver.class).toInstance(filterChainResolver);
 
 				bind(GuiceShiroFilter.class).asEagerSingleton();

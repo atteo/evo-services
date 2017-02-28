@@ -35,7 +35,7 @@ public class WebJarsServiceTest extends MoonshineTest {
 	private WebServerAddress address;
 
 	@Test
-	public void shouldServetWebJar() throws MalformedURLException, IOException {
+	public void shouldServetWebJar() throws IOException {
 		// given
 		String host = address.getHost();
 		if (Strings.isNullOrEmpty(host)) {

@@ -45,16 +45,13 @@ public abstract class DatabaseTest extends MoonshineTest {
 
 	@Test
 	public void shouldSelectJohn() throws SQLException {
-		Transaction.require(new Transaction.ThrowingRunnable<SQLException>() {
-			@Override
-			public void run() throws SQLException {
-				try (Connection connection = dataSource.getConnection()) {
-					try (PreparedStatement statement = connection.prepareStatement("select * from users")) {
-						try (ResultSet result = statement.executeQuery()) {
-							assertThat(result.next()).isEqualTo(true);
-							assertThat(result.getString(1)).isEqualTo("John");
-							assertThat(result.next()).isEqualTo(false);
-						}
+		Transaction.require((Transaction.ThrowingRunnable<SQLException>) () -> {
+			try (Connection connection = dataSource.getConnection()) {
+				try (PreparedStatement statement = connection.prepareStatement("select * from users")) {
+					try (ResultSet result = statement.executeQuery()) {
+						assertThat(result.next()).isEqualTo(true);
+						assertThat(result.getString(1)).isEqualTo("John");
+						assertThat(result.next()).isEqualTo(false);
 					}
 				}
 			}

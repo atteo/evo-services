@@ -89,12 +89,7 @@ public class Resteasy extends Jaxrs {
 	public void start() {
 		for (final JaxrsResource<?> resourceWithProvider : getResources()) {
 			final ResourceFactory resourceFactory = new GuiceResourceFactory(
-					new com.google.inject.Provider<Object>() {
-						@Override
-						public Object get() {
-							return resourceWithProvider.getProvider().get();
-						}
-					}, resourceWithProvider.getResourceClass());
+					(com.google.inject.Provider<Object>) resourceWithProvider.getProvider()::get, resourceWithProvider.getResourceClass());
 			filterDispatcher.getDispatcher().getRegistry().addResourceFactory(resourceFactory);
 		}
 

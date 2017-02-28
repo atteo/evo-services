@@ -178,19 +178,16 @@ public class ScopedIdResolver extends IDResolver {
 	@Override
 	public Callable<?> resolve(final Object id, @SuppressWarnings("rawtypes") final Class targetType)
 			throws SAXException {
-		return new Callable<Object>() {
-			@Override
-			public Object call() throws Exception {
-				Key key = new Key(targetType, id);
-				Object value =  map.get(key);
-				if (value == Values.NON_UNIQUE) {
-					ValidationEvent event = new NotUniqueIdValidationEvent(key);
-					if (!eventHandler.handleEvent(event)) {
-						throw new SAXException(event.getMessage());
-					}
+		return () -> {
+			Key key = new Key(targetType, id);
+			Object value =  map.get(key);
+			if (value == Values.NON_UNIQUE) {
+				ValidationEvent event = new NotUniqueIdValidationEvent(key);
+				if (!eventHandler.handleEvent(event)) {
+					throw new SAXException(event.getMessage());
 				}
-				return value;
 			}
+			return value;
 		};
 	}
 

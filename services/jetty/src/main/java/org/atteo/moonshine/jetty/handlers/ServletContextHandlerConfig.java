@@ -60,7 +60,7 @@ public class ServletContextHandlerConfig extends HandlerConfig implements Servic
 				Iterable<ServletContainerInitializer> initializers = servletContainer.getInitializers();
 				for (ServletContainerInitializer servletContainerInitializer : initializers) {
 					try {
-						servletContainerInitializer.onStartup(Collections.<Class<?>>emptySet(),
+						servletContainerInitializer.onStartup(Collections.emptySet(),
 								handler.getServletContext());
 					} catch (ServletException ex) {
 						throw new RuntimeException(ex);

@@ -45,16 +45,13 @@ public class TransactionalServiceTest extends MoonshineTest {
     @Test
     public void shouldRequireTransaction() throws SystemException {
         assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_NO_TRANSACTION);
-        Transaction.require(new Transaction.Runnable() {
-            @Override
-            public void run() {
-                try {
-                    assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_ACTIVE);
-                } catch (SystemException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
+        Transaction.require((Transaction.Runnable) () -> {
+			try {
+				assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_ACTIVE);
+			} catch (SystemException ex) {
+				throw new RuntimeException(ex);
+			}
+		});
         assertThat(userTransaction.getStatus()).isEqualTo(Status.STATUS_NO_TRANSACTION);
     }
 

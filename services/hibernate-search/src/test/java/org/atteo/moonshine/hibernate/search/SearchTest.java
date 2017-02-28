@@ -40,28 +40,25 @@ public class SearchTest extends MoonshineTest {
 
 	@Before
 	public void setup() throws ParseException, InterruptedException {
-		Transaction.require(new Transaction.Runnable() {
-			@Override
-			public void run() {
-				EntityManager manager = factory.createEntityManager();
-
-				Author author = new Author();
-				author.setName("Juliusz Słowacki");
-
-				Book book = new Book();
-				book.setTitle("Kordian");
-				try {
-					book.setPublicationDate(new SimpleDateFormat("yyyy-MM-dd").parse("1834-01-01"));
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
-				book.getAuthors().add(author);
-
-				manager.persist(author);
-				manager.persist(book);
-				manager.flush();
-				manager.close();
+		Transaction.require((Transaction.Runnable) () -> {
+			EntityManager manager = factory.createEntityManager();
+			
+			Author author = new Author();
+			author.setName("Juliusz Słowacki");
+			
+			Book book = new Book();
+			book.setTitle("Kordian");
+			try {
+				book.setPublicationDate(new SimpleDateFormat("yyyy-MM-dd").parse("1834-01-01"));
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
 			}
+			book.getAuthors().add(author);
+			
+			manager.persist(author);
+			manager.persist(book);
+			manager.flush();
+			manager.close();
 		});
 	}
 

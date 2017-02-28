@@ -78,12 +78,7 @@ public class Jersey extends Jaxrs {
 				params.put(ServletContainer.PROPERTY_FILTER_CONTEXT_PATH, prefix);
 
 				bind(GuiceContainer.class);
-				servletContainer.addFilter(new javax.inject.Provider<JerseyContainer>() {
-					@Override
-					public JerseyContainer get() {
-						return new JerseyContainer();
-					}
-				}, params, prefix + "/*");
+				servletContainer.addFilter((Provider<JerseyContainer>) JerseyContainer::new, params, prefix + "/*");
 
 				registerResources(binder());
 			}

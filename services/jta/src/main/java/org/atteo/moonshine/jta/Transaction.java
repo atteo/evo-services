@@ -52,22 +52,16 @@ public class Transaction {
 	}
 
 	public static void require(final Runnable runnable) {
-		require(new ReturningRunnable<Void, RuntimeException>() {
-			@Override
-			public Void run() {
-				runnable.run();
-				return null;
-			}
+		require(() -> {
+			runnable.run();
+			return null;
 		});
 	}
 
 	public static <E extends Throwable> void require(final ThrowingRunnable<E> runnable) throws E {
-		require(new ReturningRunnable<Void, E>() {
-			@Override
-			public Void run() throws E {
-				runnable.run();
-				return null;
-			}
+		require(() -> {
+			runnable.run();
+			return null;
 		});
 	}
 

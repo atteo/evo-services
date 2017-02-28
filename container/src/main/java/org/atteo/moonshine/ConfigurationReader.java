@@ -103,25 +103,12 @@ public class ConfigurationReader {
 		Iterable<Class<? extends Service>> services = ClassFilter.only()
 				.topLevel()
 				.withoutModifiers(Modifier.ABSTRACT)
-				.satisfying(new ClassFilter.Predicate() {
-					@Override
-					public boolean matches(Class<?> type) {
-						return TopLevelService.class.isAssignableFrom(type);
-					}
-				})
-				.satisfying(new ClassFilter.Predicate() {
-					@Override
-					public boolean matches(Class<?> type) {
-						return !containsRequiredFieldWithoutDefault(type);
-					}
-				})
-				.satisfying(new ClassFilter.Predicate() {
-					@Override
-					public boolean matches(Class<?> type) {
-						ServiceConfiguration annotation = type.getAnnotation(ServiceConfiguration.class);
-						return annotation == null || annotation.auto();
-					}
-				})
+				.satisfying(TopLevelService.class::isAssignableFrom)
+				.satisfying((Class<?> type) -> !containsRequiredFieldWithoutDefault(type))
+				.satisfying((Class<?> type) -> {
+					ServiceConfiguration annotation = type.getAnnotation(ServiceConfiguration.class);
+					return annotation == null || annotation.auto();
+		})
 				.from(ClassIndex.getSubclasses(Service.class));
 
 		StringBuilder builder = new StringBuilder();

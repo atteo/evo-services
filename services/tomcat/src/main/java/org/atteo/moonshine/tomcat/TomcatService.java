@@ -208,7 +208,7 @@ public class TomcatService extends WebServerService {
 		for (HostConfig host : hosts) {
 			for (ContextConfig context : host.getContexts()) {
 				if (context instanceof Service) {
-					result.add((Service) context);
+					result.add(context);
 				}
 			}
 		}

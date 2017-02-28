@@ -23,11 +23,6 @@ import org.aopalliance.intercept.MethodInvocation;
 public class TransactionalInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(final MethodInvocation invocation) throws Throwable {
-		return Transaction.require(new Transaction.ReturningRunnable<Object, Throwable>() {
-			@Override
-			public Object run() throws Throwable {
-				return invocation.proceed();
-			}
-		});
+		return Transaction.require(invocation::proceed);
 	}
 }

@@ -60,32 +60,29 @@ public class InjectMembersModule implements Module, TypeListener {
 
 	private <T> InjectionListener<T> generateListener(final Collection<Field> fields,
 			final Provider<Injector> injectorProvider) {
-		return new InjectionListener<T>() {
-			@Override
-			public void afterInjection(T instance) {
-				for (Field field : fields) {
-					boolean wasAccessible = field.isAccessible();
-					field.setAccessible(true);
-					Injector injector = injectorProvider.get();
-
-					try {
-						Object object = field.get(instance);
-						if (object == null) {
-							continue;
-						}
-
-						if (object instanceof Collection) {
-							for (Object o : (Collection<?>) object) {
-								injector.injectMembers(o);
-							}
-						} else {
-							injector.injectMembers(object);
-						}
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
+		return (T instance) -> {
+			for (Field field : fields) {
+				boolean wasAccessible = field.isAccessible();
+				field.setAccessible(true);
+				Injector injector = injectorProvider.get();
+				
+				try {
+					Object object = field.get(instance);
+					if (object == null) {
+						continue;
 					}
-					field.setAccessible(wasAccessible);
+					
+					if (object instanceof Collection) {
+						for (Object o : (Collection<?>) object) {
+							injector.injectMembers(o);
+						}
+					} else {
+						injector.injectMembers(object);
+					}
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
 				}
+				field.setAccessible(wasAccessible);
 			}
 		};
 	}

@@ -61,12 +61,7 @@ public class RmiRegistry extends TopLevelService {
 				UnicastRef ref = (UnicastRef) ((RegistryImpl)registry).getRef();
 				final int port = ref.getLiveRef().getPort();
 
-				RmiRegistryPort portProvider = new RmiRegistryPort() {
-					@Override
-					public int getPort() {
-						return port;
-					}
-				};
+				RmiRegistryPort portProvider = () -> port;
 
 				if (getId() != null) {
 					bind(RmiRegistryPort.class).annotatedWith(Names.named(getId())).toInstance(portProvider);

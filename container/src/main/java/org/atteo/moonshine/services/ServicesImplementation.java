@@ -119,11 +119,8 @@ class ServicesImplementation implements Services, Services.Builder {
 			public void configureServlets() {
 				binder().requireExplicitBindings();
 				binder().bind(new TypeLiteral<List<? extends ServiceInfo>>() {})
-						.toProvider(new Provider<List<? extends ServiceWrapper>>() {
-							@Override
-							public List<? extends ServiceWrapper> get() {
-								return getServiceElements();
-							}
+						.toProvider(() -> {
+							return getServiceElements();
 						});
 			}
 		});
@@ -365,12 +362,9 @@ class ServicesImplementation implements Services, Services.Builder {
 								+ " be specified on a field of type " + Service.class.getSimpleName());
 					}
 
-					AccessController.doPrivileged(new PrivilegedAction<Void>() {
-						@Override
-						public Void run() {
-							field.setAccessible(true);
-							return null;
-						}
+					AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+						field.setAccessible(true);
+						return null;
 					});
 					Service importedService;
 					try {
@@ -508,7 +502,7 @@ class ServicesImplementation implements Services, Services.Builder {
 
 		while (!set.isEmpty()) {
 			ServiceWrapper service = set.iterator().next();
-			addService(service, set, new ArrayList<ServiceWrapper>(), sorted);
+			addService(service, set, new ArrayList<>(), sorted);
 		}
 		return sorted;
 	}

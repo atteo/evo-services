@@ -43,11 +43,8 @@ public class TransactionalFilter implements Filter {
 	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
 			throws IOException, ServletException {
 		try {
-			Transaction.require(new Transaction.ThrowingRunnable<Exception>() {
-				@Override
-				public void run() throws IOException, ServletException {
-					chain.doFilter(request, response);
-				}
+			Transaction.require((Transaction.ThrowingRunnable<Exception>) () -> {
+				chain.doFilter(request, response);
 			});
 		} catch (RuntimeException | ServletException | IOException e) {
 			throw e;

@@ -44,7 +44,7 @@ public class TomcatServiceTest extends MoonshineTest {
 	private WebServerAddress webServerAddress;
 
 	@Test
-	public void shouldRegisterServlet() throws MalformedURLException, IOException {
+	public void shouldRegisterServlet() throws IOException {
 		URL url = new URL(webServerAddress.getUrl() + "/servlet");
 		try (InputStream stream = url.openStream()) {
 			String result = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));

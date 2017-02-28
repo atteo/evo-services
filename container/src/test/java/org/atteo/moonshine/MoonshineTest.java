@@ -20,6 +20,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.BDDAssertions.then;
 
+import com.google.inject.Binder;
+import com.google.inject.Module;
 import com.googlecode.catchexception.apis.BDDCatchException;
 import org.atteo.filtering.PropertyFilter;
 import org.atteo.filtering.PropertyNotFoundException;
@@ -178,12 +180,8 @@ public class MoonshineTest {
 				+ "        <subservice/>"
 				+ "    </injectmembers>"
 				+ "</config>")
-				.addModule(new AbstractModule() {
-					@Override
-					protected void configure() {
-						bind(String.class).annotatedWith(Names.named("message")).toInstance("Message");
-					}
-				})
+				.addModule(binder -> binder.bind(String.class).annotatedWith(Names.named("message"))
+					.toInstance("Message"))
 				.build()) {
 			moonshine.start();
 
@@ -209,16 +207,12 @@ public class MoonshineTest {
 				+ "        </equals>"
 				+ "    </assertions>"
 				+ "</config>")
-				.addPropertyResolver(new PropertyResolver() {
-					@Override
-					public String resolveProperty(String property, PropertyFilter filter)
-							throws PropertyNotFoundException {
-						if ("property".equals(property)) {
-							return "value";
-						}
-						throw new PropertyNotFoundException(property);
+				.addPropertyResolver((String property, PropertyFilter filter) -> {
+					if ("property".equals(property)) {
+						return "value";
 					}
-				})
+					throw new PropertyNotFoundException(property);
+		})
 				.build()) {
 
 			moonshine.start();

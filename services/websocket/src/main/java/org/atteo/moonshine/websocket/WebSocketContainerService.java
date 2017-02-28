@@ -101,7 +101,7 @@ public abstract class WebSocketContainerService extends TopLevelService {
 		};
 	}
 
-	public static interface EndpointBuilder<T> {
+	public interface EndpointBuilder<T> {
 		EndpointBuilder<T> pattern(String pattern);
 		EndpointBuilder<T> provider(Provider<? extends T> provider);
 		EndpointBuilder<T> addEncoder(Class<? extends Encoder> encoder);

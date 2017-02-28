@@ -46,12 +46,7 @@ public class MetricsTest extends MoonshineTest {
 	public void shouldMeterManuallyRegistered() throws IOException, InterruptedException, JMException {
 		// given
 		final String metricName = MetricRegistry.name(MetricsTest.class, "constant");
-		metrics.register(metricName, new Gauge<Long>() {
-			@Override
-			public Long getValue() {
-				return 3l;
-			}
-		});
+		metrics.register(metricName, (Gauge<Long>) () -> 3l);
 
 		// when
 		ObjectName objectName = ObjectName.getInstance("metrics:name=" + MetricsTest.class.getName() + ".constant");

@@ -35,12 +35,7 @@ public class CustomJtaPlatform implements JtaPlatform {
 	private Provider<UserTransaction> userTransaction;
 
 	private final JtaSynchronizationStrategy synchronizationStrategy =
-			new TransactionManagerBasedSynchronizationStrategy(new TransactionManagerAccess() {
-		@Override
-		public TransactionManager getTransactionManager() {
-			return retrieveTransactionManager();
-		}
-	});
+			new TransactionManagerBasedSynchronizationStrategy(this::retrieveTransactionManager);
 
 	@Override
 	public TransactionManager retrieveTransactionManager() {

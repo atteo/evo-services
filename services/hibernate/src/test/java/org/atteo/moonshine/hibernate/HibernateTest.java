@@ -46,31 +46,25 @@ public class HibernateTest extends MoonshineTest {
 	@Test
 	public void shouldSaveUser() {
 		final User u = new User();
-		Transaction.require(new Transaction.Runnable() {
-			@Override
-			public void run() {
-				EntityManager manager = factory.createEntityManager();
-				u.setId(7);
-				u.setName("frank");
-				manager.persist(u);
-
-				manager.flush();
-				manager.close();
-			}
+		Transaction.require((Transaction.Runnable) () -> {
+			EntityManager manager = factory.createEntityManager();
+			u.setId(7);
+			u.setName("frank");
+			manager.persist(u);
+			
+			manager.flush();
+			manager.close();
 		});
 
 		final int id = u.getId();
 
-		Transaction.require(new Transaction.Runnable() {
-			@Override
-			public void run() {
-				EntityManager manager = factory.createEntityManager();
-				User loaded = manager.find(User.class, id);
-
-				assertNotNull(loaded);
-				assertEquals(u.getName(), loaded.getName());
-				manager.close();
-			}
+		Transaction.require((Transaction.Runnable) () -> {
+			EntityManager manager = factory.createEntityManager();
+			User loaded = manager.find(User.class, id);
+			
+			assertNotNull(loaded);
+			assertEquals(u.getName(), loaded.getName());
+			manager.close();
 		});
 	}
 

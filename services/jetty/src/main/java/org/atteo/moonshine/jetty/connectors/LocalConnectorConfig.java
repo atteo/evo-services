@@ -50,12 +50,7 @@ public class LocalConnectorConfig extends ConnectorConfig {
 		return new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(LocalConnector.class).toProvider(new Provider<LocalConnector>() {
-					@Override
-					public LocalConnector get() {
-						return connector;
-					}
-				});
+				bind(LocalConnector.class).toProvider((Provider<LocalConnector>) () -> connector);
 			}
 		};
 	}

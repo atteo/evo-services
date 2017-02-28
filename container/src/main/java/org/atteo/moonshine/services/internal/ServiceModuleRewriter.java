@@ -44,39 +44,36 @@ public class ServiceModuleRewriter {
 	 */
 	public static List<Element> annotateExposedWithId(final List<Element> elements, final Service service) {
 		final boolean singleton = ReflectionTools.isSingleton(service.getClass());
-		return Elements.getElements(new Module() {
-			@Override
-			public void configure(final Binder binder) {
-				final PrivateBinder privateBinder = binder.newPrivateBinder();
-				privateBinder.requestInjection(service);
-
-				for (Element element : elements) {
-					element.acceptVisitor(new DefaultElementVisitor<Void>() {
-						@Override
-						public Void visit(PrivateElements privateElements) {
-							annotateExposedWithId(privateBinder, privateElements, service);
-							return null;
+		return Elements.getElements((Module) (final Binder binder) -> {
+			final PrivateBinder privateBinder = binder.newPrivateBinder();
+			privateBinder.requestInjection(service);
+			
+			for (Element element : elements) {
+				element.acceptVisitor(new DefaultElementVisitor<Void>() {
+					@Override
+					public Void visit(PrivateElements privateElements) {
+						annotateExposedWithId(privateBinder, privateElements, service);
+						return null;
+					}
+					
+					@Override
+					public <T> Void visit(Binding<T> binding) {
+						binding.applyTo(privateBinder);
+						Key<T> oldKey = binding.getKey();
+						if (!singleton && !Strings.isNullOrEmpty(service.getId())) {
+							bindKey(privateBinder, oldKey, Names.named(service.getId()));
+						} else {
+							privateBinder.expose(oldKey);
 						}
-
-						@Override
-						public <T> Void visit(Binding<T> binding) {
-							binding.applyTo(privateBinder);
-							Key<T> oldKey = binding.getKey();
-							if (!singleton && !Strings.isNullOrEmpty(service.getId())) {
-								bindKey(privateBinder, oldKey, Names.named(service.getId()));
-							} else {
-								privateBinder.expose(oldKey);
-							}
-							return null;
-						}
-
-						@Override
-						protected Void visitOther(Element element) {
-							element.applyTo(binder);
-							return null;
-						}
-					});
-				}
+						return null;
+					}
+					
+					@Override
+					protected Void visitOther(Element element) {
+						element.applyTo(binder);
+						return null;
+					}
+				});
 			}
 		});
 	}
@@ -117,32 +114,29 @@ public class ServiceModuleRewriter {
 	 */
 	public static List<Element> importBindings(final ServiceWrapper service,
 			final List<ServiceWrapper> services, final List<String> hints) {
-		return Elements.getElements(new Module() {
-			@Override
-			public void configure(final Binder binder) {
-				final PrivateBinder privateBinder = binder.newPrivateBinder();
-				for (Element element : service.getElements()) {
-					element.acceptVisitor(new DefaultElementVisitor<Void>() {
-						@Override
-						public Void visit(PrivateElements privateElements) {
-							importBindings(privateBinder, privateElements, service, services, hints);
-							return null;
-						}
-
-						@Override
-						public Void visit(InjectionRequest<?> injectionRequest) {
-							injectionRequest.applyTo(privateBinder);
-							return null;
-						}
-
-						@Override
-						protected Void visitOther(Element element) {
-							// copy all elements
-							element.applyTo(binder);
-							return null;
-						}
-					});
-				}
+		return Elements.getElements((Module) (final Binder binder) -> {
+			final PrivateBinder privateBinder = binder.newPrivateBinder();
+			for (Element element : service.getElements()) {
+				element.acceptVisitor(new DefaultElementVisitor<Void>() {
+					@Override
+					public Void visit(PrivateElements privateElements) {
+						importBindings(privateBinder, privateElements, service, services, hints);
+						return null;
+					}
+					
+					@Override
+					public Void visit(InjectionRequest<?> injectionRequest) {
+						injectionRequest.applyTo(privateBinder);
+						return null;
+					}
+					
+					@Override
+					protected Void visitOther(Element element) {
+						// copy all elements
+						element.applyTo(binder);
+						return null;
+					}
+				});
 			}
 		});
 	}

@@ -201,11 +201,8 @@ public class Configuration {
 	 */
 	public Configuration(Iterable<Class<? extends Configurable>> klasses) {
 		this.klasses = klasses;
-		propertyFilter = Filtering.getFilter(new PropertyResolver() {
-			@Override
-			public String resolveProperty(String name, PropertyFilter filter) throws PropertyNotFoundException {
-				throw new PropertyNotFoundException(name);
-			}
+		propertyFilter = Filtering.getFilter((PropertyResolver) (String name, PropertyFilter filter) -> {
+			throw new PropertyNotFoundException(name);
 		});
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -226,12 +223,7 @@ public class Configuration {
 			binder = context.createBinder();
 			// JAXB Moxy does not allow to set resolver on binder
 //			binder.setProperty(UnmarshallerProperties.ID_RESOLVER, new ScopedIdResolver());
-			binder.setEventHandler(new ValidationEventHandler() {
-				@Override
-				public boolean handleEvent(ValidationEvent event) {
-					return true;
-				}
-			});
+			binder.setEventHandler((ValidationEvent event) -> true);
 			document = builder.newDocument();
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException("Cannot configure XML parser", e);
@@ -345,21 +337,18 @@ public class Configuration {
 			binder = context.createBinder();
 			// JAXB Moxy does not allow to set resolver on binder
 //			binder.setProperty(UnmarshallerProperties.ID_RESOLVER, new ScopedIdResolver());
-			binder.setEventHandler(new ValidationEventHandler() {
-				@Override
-				public boolean handleEvent(ValidationEvent event) {
-					if (event.getLocator().getLineNumber() != -1) {
-						errors.append("\n  At line ").append(event.getLocator().getLineNumber());
-					} else if (event.getLocator().getNode() != null &&
-					    event.getLocator().getNode().getParentNode() != null) {
-						errors.append("\n  In <");
-						errors.append(event.getLocator().getNode().getParentNode().getNodeName());
-						errors.append(">");
-					}
-
-					errors.append(": ").append(event.getMessage());
-					return false;
+			binder.setEventHandler((ValidationEvent event) -> {
+				if (event.getLocator().getLineNumber() != -1) {
+					errors.append("\n  At line ").append(event.getLocator().getLineNumber());
+				} else if (event.getLocator().getNode() != null &&
+						event.getLocator().getNode().getParentNode() != null) {
+					errors.append("\n  In <");
+					errors.append(event.getLocator().getNode().getParentNode().getNodeName());
+					errors.append(">");
 				}
+				
+				errors.append(": ").append(event.getMessage());
+				return false;
 			});
 			result = rootClass.cast(binder.unmarshal(document.getDocumentElement()));
 			JaxbBindings.iterate(document.getDocumentElement(), binder,

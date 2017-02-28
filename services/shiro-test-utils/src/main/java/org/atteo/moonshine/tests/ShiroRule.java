@@ -33,18 +33,15 @@ public class ShiroRule implements TestRule {
 			public void evaluate() throws Throwable {
 				Subject.Builder builder = new Subject.Builder();
 				Subject subject = builder.buildSubject();
-				subject.execute(new Callable<Object>() {
-					@Override
-					public Object call() throws Exception {
-						try {
-							base.evaluate();
-						} catch (Exception | Error e) {
-							throw e;
-						} catch (Throwable e) {
-							throw new RuntimeException(e);
-						}
-						return null;
+				subject.execute(() -> {
+					try {
+						base.evaluate();
+					} catch (Exception | Error e) {
+						throw e;
+					} catch (Throwable e) {
+						throw new RuntimeException(e);
 					}
+					return null;
 				});
 			}
 		};

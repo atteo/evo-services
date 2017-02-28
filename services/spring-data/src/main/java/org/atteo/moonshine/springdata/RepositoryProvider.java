@@ -41,12 +41,7 @@ public class RepositoryProvider<T> implements Provider<T> {
 
 	@Override
 	public T get() {
-		return Transaction.require(new Transaction.ReturningRunnable<T, RuntimeException>() {
-			@Override
-			public T run() throws RuntimeException {
-				return factory.getRepository(klass);
-			}
-		});
+		return Transaction.require(() -> factory.getRepository(klass));
 	}
 
 }

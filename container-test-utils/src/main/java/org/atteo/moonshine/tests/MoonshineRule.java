@@ -144,11 +144,8 @@ public class MoonshineRule implements TestRule {
 		try {
 			Moonshine.Builder builder = Moonshine.Factory.builder();
 
-			Module testClassModule = new Module() {
-				@Override
-				public void configure(Binder binder) {
-					binder.bind(testClass);
-				}
+			Module testClassModule = (Binder binder) -> {
+				binder.bind(testClass);
 			};
 
 			final Field fields[] = testClass.getDeclaredFields();
@@ -160,20 +157,16 @@ public class MoonshineRule implements TestRule {
 				}
 			}
 
-			Module mocksModule = new Module() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public void configure(final Binder binder) {
-					// TODO: add support for binding annotated objects
-					for (Class<?> klass : mocks.keySet()) {
-						@SuppressWarnings("rawtypes")
-						final TypeLiteral t = TypeLiteral.get(klass);
-						final Object object = mocks.get(klass);
-						binder.bind(t).toInstance(object);
-					}
-
-					binder.requestStaticInjection(testClass);
+			Module mocksModule = (final Binder binder) -> {
+				// TODO: add support for binding annotated objects
+				for (Class<?> klass : mocks.keySet()) {
+					@SuppressWarnings("rawtypes")
+					final TypeLiteral t = TypeLiteral.get(klass);
+					final Object object = mocks.get(klass);
+					binder.bind(t).toInstance(object);
 				}
+				
+				binder.requestStaticInjection(testClass);
 			};
 
 			builder.applicationName(testClass.getSimpleName());
@@ -229,18 +222,13 @@ public class MoonshineRule implements TestRule {
 	 * @return the method rule to use with JUnit
 	 */
 	public MethodRule injectMembers(Object object) {
-		return new MethodRule() {
+		return (final Statement base, FrameworkMethod method, final Object target) -> new Statement() {
 			@Override
-			public Statement apply(final Statement base, FrameworkMethod method, final Object target) {
-				return new Statement() {
-					@Override
-					public void evaluate() throws Throwable {
-						if (getGlobalInjector() != null) {
-							getGlobalInjector().injectMembers(target);
-						}
-						base.evaluate();
-					}
-				};
+			public void evaluate() throws Throwable {
+				if (getGlobalInjector() != null) {
+					getGlobalInjector().injectMembers(target);
+				}
+				base.evaluate();
 			}
 		};
 	}
